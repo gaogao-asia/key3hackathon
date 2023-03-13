@@ -1,6 +1,6 @@
 [
     {
-        "name":"Backlog",
+        "name":"未着手",
         "items": [
             {
                 "id":1,
@@ -29,7 +29,7 @@
         ]
     },
     {
-        "name":"In Progress",
+        "name":"作業中",
         "items": [
             {
                 "id":3,
@@ -46,7 +46,7 @@
         ]
     },
     {
-        "name":"In Review",
+        "name":"レビュー中",
         "items": [
             {
                 "id":4,
@@ -75,7 +75,7 @@
         ]
     },
     {
-        "name":"Completed",
+        "name":"完了",
         "items": [
             {
                 "id":6,
