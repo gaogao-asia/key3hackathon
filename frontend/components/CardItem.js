@@ -9,7 +9,7 @@ import {
 } from "@heroicons/react/outline";
 import { Draggable } from "react-beautiful-dnd";
 
-function CardItem({ data, index }) {
+function CardItem({ data, index, onClick }) {
   return (
     <Draggable index={index} draggableId={data.id.toString()}>
       {(provided) => (
@@ -18,6 +18,7 @@ function CardItem({ data, index }) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className="bg-white rounded-md p-3 m-3 mt-0 last:mb-0"
+          onClick={onClick}
         >
           <label
             className={`bg-gradient-to-r
