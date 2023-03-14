@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/outline";
 import CardItem from "../components/CardItem";
 import BoardData from "../data/board-data.json";
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 
@@ -24,6 +25,8 @@ export default function Home() {
   const [boardData, setBoardData] = useState(BoardData);
   const [showForm, setShowForm] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(0);
+  const [modal, setModal] = useState(false);
+  const toggle = () => setModal(!modal);
 
   useEffect(() => {
     if (process.browser) {
@@ -73,6 +76,26 @@ export default function Home() {
       }
     }
   }
+
+  const handleModalMount = () => {
+    const modalContainer = document.querySelector('.modal');
+    document.body.appendChild(modalContainer);
+  };
+
+  // render the modal content of the cardItem that was clicked
+  const onClickCardItem = () => {
+    console.log("test")
+    toggle();
+  }
+
+  const renderModal = () => (
+    <Modal isOpen={modal} toggle={toggle} centered={true} unmountOnClose={true}>
+      <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+      <ModalBody>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      </ModalBody>
+    </Modal>
+  );
 
   return (
     <Layout>
@@ -165,6 +188,7 @@ export default function Home() {
                                       data={item}
                                       index={iIndex}
                                       className="m-3"
+                                      onClick={onClickCardItem}
                                     />
                                   );
                                 })}
@@ -200,6 +224,8 @@ export default function Home() {
           </DragDropContext>
         )}
       </div>
+      {renderModal()}
+      <div className="modal" onMount={handleModalMount} />
     </Layout>
   );
 }
