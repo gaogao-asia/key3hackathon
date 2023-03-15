@@ -1,0 +1,68 @@
+{
+    "methods": {
+        "initialize(uint256)": {
+            "stateMutability": "nonpayable",
+            "code": "function initialize(uint256 _unlockTime) external nonpayable",
+            "inputs": {
+                "_unlockTime": {
+                    "type": "uint256"
+                }
+            },
+            "outputs": {}
+        },
+        "owner()": {
+            "stateMutability": "view",
+            "code": "function owner() external view returns (address payable)",
+            "inputs": {},
+            "outputs": {
+                "_0": {
+                    "type": "address payable"
+                }
+            }
+        },
+        "unlockTime()": {
+            "stateMutability": "view",
+            "code": "function unlockTime() external view returns (uint256)",
+            "inputs": {},
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            }
+        },
+        "withdraw()": {
+            "stateMutability": "nonpayable",
+            "code": "function withdraw() external nonpayable",
+            "inputs": {},
+            "outputs": {}
+        }
+    },
+    "events": {
+        "Initialized": {
+            "code": "event Initialized(uint8 version)",
+            "inputs": {
+                "version": {
+                    "type": "uint8",
+                    "indexed": false
+                }
+            },
+            "details": "Triggered when the contract has been initialized or reinitialized."
+        },
+        "Withdrawal": {
+            "code": "event Withdrawal(uint256 amount, uint256 when)",
+            "inputs": {
+                "amount": {
+                    "type": "uint256",
+                    "indexed": false
+                },
+                "when": {
+                    "type": "uint256",
+                    "indexed": false
+                }
+            }
+        }
+    },
+    "errors": {},
+    "path": "",
+    "name": "Lock"
+}
