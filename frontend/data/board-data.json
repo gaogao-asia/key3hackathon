@@ -5,7 +5,7 @@
             {
                 "id":1,
                 "priority": 0,
-                "title": "Company website redesign.",
+                "title": "ホームページ作成",
                 "chat": 1,
                 "attachment": 2,
                 "assignees": [
@@ -17,7 +17,19 @@
             {
                 "id":2,
                 "priority": 2,
-                "title": "Mobile app login process prototype.",
+                "title": "iOSアプリプロトタイプ作成",
+                "chat": 10,
+                "attachment": 4,
+                "assignees": [
+                    {
+                        "avt": "https://randomuser.me/api/portraits/men/67.jpg"
+                    }
+                ]
+            }, 
+            {
+                "id":9,
+                "priority": 2,
+                "title": "広告作成",
                 "chat": 10,
                 "attachment": 4,
                 "assignees": [
@@ -34,12 +46,48 @@
             {
                 "id":3,
                 "priority": 1,
-                "title": "Research and strategy for upcoming project.",
+                "title": "戦略リサーチ",
                 "chat": 0,
                 "attachment": 3,
                 "assignees": [
                     {
                         "avt": "https://randomuser.me/api/portraits/men/79.jpg"
+                    }
+                ]
+            }, 
+            {
+                "id":10,
+                "priority": 1,
+                "title": "予算策定",
+                "chat": 0,
+                "attachment": 3,
+                "assignees": [
+                    {
+                        "avt": "https://randomuser.me/api/portraits/men/79.jpg"
+                    }
+                ]
+            }, 
+            {
+                "id":11,
+                "priority": 1,
+                "title": "営業資料作成",
+                "chat": 0,
+                "attachment": 3,
+                "assignees": [
+                    {
+                        "avt": "https://randomuser.me/api/portraits/men/73.jpg"
+                    }
+                ]
+            }, 
+            {
+                "id":12,
+                "priority": 1,
+                "title": "営業戦略策定",
+                "chat": 0,
+                "attachment": 3,
+                "assignees": [
+                    {
+                        "avt": "https://randomuser.me/api/portraits/men/73.jpg"
                     }
                 ]
             }
@@ -51,7 +99,7 @@
             {
                 "id":4,
                 "priority": 2,
-                "title": "Dashboard layout redesign.",
+                "title": "ダッシュボード作成",
                 "chat": 13,
                 "attachment": 2,
                 "assignees": [
@@ -63,7 +111,7 @@
             {
                 "id":5,
                 "priority": 0,
-                "title": "Social media posts",
+                "title": "オンボーディング資料作成",
                 "chat": 0,
                 "attachment": 0,
                 "assignees": [
@@ -80,7 +128,7 @@
             {
                 "id":6,
                 "priority": 0,
-                "title": "Review client spec document and give feedback.",
+                "title": "予定表作成",
                 "chat": 13,
                 "attachment": 2,
                 "assignees": [
@@ -92,7 +140,7 @@
             {
                 "id":7,
                 "priority": 1,
-                "title": "Navigation designs",
+                "title": "品質戦略 会議用資料作成",
                 "chat": 0,
                 "attachment": 0,
                 "assignees": [
@@ -104,7 +152,7 @@
             {
                 "id":8,
                 "priority": 2,
-                "title": "Create style guide based on previous feedback",
+                "title": "デザイン資料の作成",
                 "chat": 5,
                 "attachment": 2,
                 "assignees": [
