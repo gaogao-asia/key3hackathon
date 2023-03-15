@@ -216,7 +216,12 @@ export default function Home() {
         )}
       </div>
       <CustomModal 
-        data={{ title: "ホームページ制作" }} 
+        data={{ 
+          title: "ホームページ制作", 
+          description: "新規事業を印象付けるためのホームページを制作する。", 
+          status: "ToDo", 
+          assignee: "トヨタ タロウ"
+        }} 
         modalIsOpen={modalIsOpen} 
         handleModalClose={handleModalClose} 
       />
