@@ -11,10 +11,10 @@ import CardItem from "../components/CardItem";
 import BoardData from "../data/board-data.json";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
-import Modal from 'react-modal';
+import CustomModal from "../components/CustomModal";
 
 function createGuidId() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
@@ -51,10 +51,10 @@ export default function Home() {
   };
 
   const onTextAreaKeyPress = (e) => {
-    if(e.keyCode === 13) //Enter
+    if (e.keyCode === 13) //Enter
     {
       const val = e.target.value;
-      if(val.length === 0) {
+      if (val.length === 0) {
         setShowForm(false);
       }
       else {
@@ -63,7 +63,7 @@ export default function Home() {
           id: createGuidId(),
           title: val,
           priority: 0,
-          chat:0,
+          chat: 0,
           attachment: 0,
           assignees: []
         }
@@ -79,10 +79,14 @@ export default function Home() {
   const handleModalOpen = () => {
     setModalIsOpen(true);
   };
-  
+
   const handleModalClose = () => {
     setModalIsOpen(false);
   };
+
+  const onClickCardItem = () => {
+    handleModalOpen(true)
+  }
 
   return (
     <Layout>
@@ -166,7 +170,7 @@ export default function Home() {
                             </h4>
 
                             <div className="overflow-y-auto overflow-x-hidden h-auto"
-                            style={{maxHeight:'calc(100vh - 290px)'}}>
+                              style={{ maxHeight: 'calc(100vh - 290px)' }}>
                               {board.items.length > 0 &&
                                 board.items.map((item, iIndex) => {
                                   return (
@@ -175,25 +179,25 @@ export default function Home() {
                                       data={item}
                                       index={iIndex}
                                       className="m-3"
-                                      onClick={handleModalOpen}
+                                      onClick={onClickCardItem}
                                     />
                                   );
                                 })}
                               {provided.placeholder}
                             </div>
-                            
+
                             {
                               showForm && selectedBoard === bIndex ? (
                                 <div className="p-3">
-                                  <textarea className="border-gray-300 rounded focus:ring-purple-400 w-full" 
-                                  rows={3} placeholder="Task info" 
-                                  data-id={bIndex}
-                                  onKeyDown={(e) => onTextAreaKeyPress(e)}/>
+                                  <textarea className="border-gray-300 rounded focus:ring-purple-400 w-full"
+                                    rows={3} placeholder="Task info"
+                                    data-id={bIndex}
+                                    onKeyDown={(e) => onTextAreaKeyPress(e)} />
                                 </div>
-                              ): (
+                              ) : (
                                 <button
                                   className="flex justify-center items-center my-3 space-x-2 text-lg"
-                                  onClick={() => {setSelectedBoard(bIndex); setShowForm(true);}}
+                                  onClick={() => { setSelectedBoard(bIndex); setShowForm(true); }}
                                 >
                                   <span>Add task</span>
                                   <PlusCircleIcon className="w-5 h-5 text-gray-500" />
@@ -211,10 +215,11 @@ export default function Home() {
           </DragDropContext>
         )}
       </div>
-      <Modal isOpen={modalIsOpen} onRequestClose={handleModalClose}>
-        <h2>Modal Title</h2>
-        <p>Modal Content</p>
-      </Modal>
+      <CustomModal 
+        data={{ title: "ホームページ制作" }} 
+        modalIsOpen={modalIsOpen} 
+        handleModalClose={handleModalClose} 
+      />
     </Layout>
   );
 }

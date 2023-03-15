@@ -76,7 +76,6 @@ function CardItem({ data, index, onClick }) {
             </ul>
           </div>
         </div>
-        
       )}
     </Draggable>
   );
