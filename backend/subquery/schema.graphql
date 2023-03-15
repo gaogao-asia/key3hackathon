@@ -1,0 +1,15 @@
+type Dao @entity {
+  id: ID! # Hex of DAO ID (uint256)
+  daoID: BigInt!
+  name: String!
+  metadataURI: String!
+  isPrivate: Boolean!
+
+  createdTxHash: String!
+  createdAt: BigInt!
+  createdBlockHeight: BigInt!
+
+  # createdBy
+  # members
+  # tasks
+}
