@@ -11,6 +11,7 @@ import CardItem from "../components/CardItem";
 import BoardData from "../data/board-data.json";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
+import Modal from 'react-modal';
 
 function createGuidId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -24,6 +25,7 @@ export default function Home() {
   const [boardData, setBoardData] = useState(BoardData);
   const [showForm, setShowForm] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(0);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   useEffect(() => {
     if (process.browser) {
@@ -73,6 +75,14 @@ export default function Home() {
       }
     }
   }
+
+  const handleModalOpen = () => {
+    setModalIsOpen(true);
+  };
+  
+  const handleModalClose = () => {
+    setModalIsOpen(false);
+  };
 
   return (
     <Layout>
@@ -165,6 +175,7 @@ export default function Home() {
                                       data={item}
                                       index={iIndex}
                                       className="m-3"
+                                      onClick={handleModalOpen}
                                     />
                                   );
                                 })}
@@ -200,6 +211,10 @@ export default function Home() {
           </DragDropContext>
         )}
       </div>
+      <Modal isOpen={modalIsOpen} onRequestClose={handleModalClose}>
+        <h2>Modal Title</h2>
+        <p>Modal Content</p>
+      </Modal>
     </Layout>
   );
 }
