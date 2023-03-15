@@ -13,10 +13,10 @@ function TopBar(props) {
                 outline-none focus:ring-0 text-lg"/>
             </div>
             <div className="flex space-x-6">
-                <AtSymbolIcon className="w-7 h-7 text-white"/>
+                {/* <AtSymbolIcon className="w-7 h-7 text-white"/> */}
                 <BellIcon className="w-7 h-7 text-white"/>
                 <div className="flex items-center text-white">
-                    <h3 className="font-bold mr-3">Mr. TOYOTA</h3>
+                    <h3 className="font-bold mr-3">トヨタ タロウ</h3>
                     <Image src="https://randomuser.me/api/portraits/men/75.jpg"
                         width="36" height="36" objectFit="cover"
                         className=" rounded-full "/>

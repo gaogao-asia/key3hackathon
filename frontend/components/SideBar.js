@@ -6,7 +6,7 @@ function SideBar(props) {
     return (
         <div className="fixed inset-y-0 left-0 bg-white w-40">
             <h1 className="flex items-center justify-center text-2xl
-            h-16 bg-purple-600 text-white font-bold">Key3Hack</h1>
+            h-16 bg-purple-600 text-white font-bold">TrustX</h1>
 
             <ul className="flex flex-col text-lg h-full">
                 <li className="flex justify-center items-center flex-col
