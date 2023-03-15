@@ -1,0 +1,126 @@
+{
+    "methods": {
+        "addMembers(uint256,address[])": {
+            "stateMutability": "nonpayable",
+            "code": "function addMembers(uint256 daoID, address[] newMembers) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "newMembers": {
+                    "type": "address[]"
+                }
+            },
+            "outputs": {}
+        },
+        "createDAO(string,string,bool,address[])": {
+            "stateMutability": "nonpayable",
+            "code": "function createDAO(string name, string metadataURI, bool isPrivate, address[] members) external nonpayable returns (uint256)",
+            "inputs": {
+                "name": {
+                    "type": "string"
+                },
+                "metadataURI": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "bool"
+                },
+                "members": {
+                    "type": "address[]"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            }
+        },
+        "initialize()": {
+            "stateMutability": "nonpayable",
+            "code": "function initialize() external nonpayable",
+            "inputs": {},
+            "outputs": {}
+        },
+        "paused()": {
+            "stateMutability": "view",
+            "code": "function paused() external view returns (bool)",
+            "inputs": {},
+            "outputs": {
+                "_0": {
+                    "type": "bool"
+                }
+            },
+            "details": "Returns true if the contract is paused, and false otherwise."
+        }
+    },
+    "events": {
+        "DAOCreated": {
+            "code": "event DAOCreated(uint256 daoID, string name, string metadataURI, bool isPrivate)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": false
+                },
+                "name": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "metadataURI": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "isPrivate": {
+                    "type": "bool",
+                    "indexed": false
+                }
+            }
+        },
+        "DAOMembersAdded": {
+            "code": "event DAOMembersAdded(uint256 indexed daoID, address[] members)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "members": {
+                    "type": "address[]",
+                    "indexed": false
+                }
+            }
+        },
+        "Initialized": {
+            "code": "event Initialized(uint8 version)",
+            "inputs": {
+                "version": {
+                    "type": "uint8",
+                    "indexed": false
+                }
+            },
+            "details": "Triggered when the contract has been initialized or reinitialized."
+        },
+        "Paused": {
+            "code": "event Paused(address account)",
+            "inputs": {
+                "account": {
+                    "type": "address",
+                    "indexed": false
+                }
+            },
+            "details": "Emitted when the pause is triggered by `account`."
+        },
+        "Unpaused": {
+            "code": "event Unpaused(address account)",
+            "inputs": {
+                "account": {
+                    "type": "address",
+                    "indexed": false
+                }
+            },
+            "details": "Emitted when the pause is lifted by `account`."
+        }
+    },
+    "errors": {},
+    "path": "",
+    "name": "TrustX"
+}

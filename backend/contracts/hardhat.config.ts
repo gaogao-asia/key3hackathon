@@ -6,7 +6,9 @@ import "@openzeppelin/hardhat-upgrades";
 import "hardhat-watcher";
 import "@primitivefi/hardhat-dodoc";
 
-require("dotenv");
+require("dotenv").config();
+
+const PRIVATE_KEYS = (process.env.PRIVATE_KEYS ?? "").split(",");
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -40,6 +42,12 @@ const config: HardhatUserConfig = {
   dodoc: {
     runOnCompile: true,
     debugMode: true,
+  },
+  networks: {
+    shibuya: {
+      accounts: PRIVATE_KEYS,
+      url: "https://evm.shibuya.astar.network",
+    },
   },
 };
 

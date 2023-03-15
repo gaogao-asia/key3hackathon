@@ -1,13 +1,11 @@
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  const Lock = await ethers.getContractFactory("Lock");
-  const instance = await upgrades.deployProxy(Lock, [
-    new Date().getTime() + 10,
-  ]);
+  const TrustX = await ethers.getContractFactory("TrustX");
+  const instance = await upgrades.deployProxy(TrustX, []);
   await instance.deployed();
 
-  console.log(`Lock v1 deployed: ${instance.address}`);
+  console.log(`TrustX v1 deployed: ${instance.address}`);
 }
 
 main().catch((error) => {
