@@ -20,7 +20,7 @@ function CardItem({ data, index, onClick }) {
           className="bg-white rounded-md p-3 m-3 mt-0 last:mb-0"
           onClick={onClick}
         >
-          <label
+          {/* <label
             className={`bg-gradient-to-r
               px-2 py-1 rounded text-white text-sm
               ${
@@ -37,7 +37,7 @@ function CardItem({ data, index, onClick }) {
               : data.priority === 1
               ? "Medium Priority"
               : "High Priority"}
-          </label>
+          </label> */}
           <h5 className="text-md my-3 text-lg leading-6">{data.title}</h5>
           <div className="flex justify-between">
             <div className="flex space-x-2 items-center">
