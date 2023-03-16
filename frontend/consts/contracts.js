@@ -1,0 +1,2 @@
+export const TRUST_X_CONTRACT_SHIBUYA =
+  "0xed9F7e70562D53c3feeddA38894e6fb63E0c1CFc";
