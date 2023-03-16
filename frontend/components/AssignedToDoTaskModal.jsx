@@ -114,7 +114,7 @@ const AssignedToDoTaskModal = ({ data, visible, onOk, onCancel }) => {
 
     return (
         <Modal
-            title="新規タスク"
+            title="未着手タスク"
             open={visible}
             onOk={handleOk}
             onCancel={handleCancel}

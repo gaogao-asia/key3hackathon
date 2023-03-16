@@ -13,6 +13,7 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 import CreateTaskModal from "../components/CreateTaskModal";
 import AssignedToDoTaskModal from "../components/AssignedToDoTaskModal"
+import InProgressTaskModal from "../components/InProgressTaskModal"
 
 function createGuidId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -29,6 +30,7 @@ export default function Home() {
   // AssignedToDoTaskModal用のstate
   const [assignedToDoTaskVisible, setAssignedToDoTaskVisible] = useState(false);
   // InProgressTaskModal用のstate
+  const [inProgressTaskVisible, setInProgressTaskVisible] = useState(false);
   // TaskReviewerModal用のstate
 
   const handleSave = (task) => {
@@ -60,6 +62,8 @@ export default function Home() {
 
   // ToDo: タスク開始機能の実装
 
+  // ToDo: レビュー依頼機能の実装
+
   const onClickCardItem = () => {
     console.log("clicked");
   }
@@ -72,12 +76,20 @@ export default function Home() {
     setAssignedToDoTaskVisible(true)
   }
 
+  const onClickInProgressTaskCardItem = () => {
+    setInProgressTaskVisible(true)
+  }
+
   const onCancelCreate = () => {
     setCreateTaskVisible(false);
   }
 
   const onCancelAssigned = () => {
     setAssignedToDoTaskVisible(false);
+  }
+
+  const onCancelInProgress = () => {
+    setInProgressTaskVisible(false);
   }
 
   // よくわからんデフォルトのコード
@@ -111,7 +123,7 @@ export default function Home() {
         {/* Board header */}
         <div className="flex flex-initial justify-between">
           <div className="flex items-center">
-            <h4 className="text-4xl font-bold text-gray-600">タスク管理</h4>
+            <h4 className="text-4xl font-bold text-gray-600">タスク・カンバン管理</h4>
             <ChevronDownIcon
               className="w-9 h-9 text-gray-500 rounded-full
             p-1 bg-white ml-5 shadow-xl"
@@ -199,7 +211,9 @@ export default function Home() {
                                       className="m-3"
                                       onClick={
                                         board.name === "未着手" ? 
-                                        onClickAssignedToDoTaskCardItem : 
+                                        onClickAssignedToDoTaskCardItem :
+                                        board.name === "作業中" ?  
+                                        onClickInProgressTaskCardItem :
                                         onClickCardItem
                                       }
                                     />
@@ -257,6 +271,19 @@ export default function Home() {
         visible={assignedToDoTaskVisible}
         onOk={onCancelAssigned} // ToDo: タスク開始機能
         onCancel={onCancelAssigned}
+      />
+      <InProgressTaskModal
+        data={{
+          title: "戦略リサーチ",
+          description: "新規事業を成功させるための戦略を調査する。",
+          status: "In Progress",
+          assignees: ["user3"],
+          reviewers: ["user2"], 
+          skills: ["プランニング#065535", "問題解決#ffd700"]
+        }}
+        visible={inProgressTaskVisible}
+        onOk={onCancelInProgress} // ToDo: レビュー依頼機能
+        onCancel={onCancelInProgress}
       />
     </Layout>
   );
