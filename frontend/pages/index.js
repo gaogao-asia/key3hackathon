@@ -141,7 +141,6 @@ export default function Home() {
               <button
                 className="border border-dashed flex items-center w-9 h-9 border-gray-500 justify-center
                 rounded-full"
-                onClick={showModal}
               >
                 <PlusIcon className="w-5 h-5 text-gray-500" />
               </button>
@@ -164,7 +163,8 @@ export default function Home() {
                         >
                           <div
                             className={`bg-gray-100 rounded-md shadow-md
-                            flex flex-col relative overflow-hidden
+                            flex flex-col relative overflow-hidden 
+                            ${board.name !== "未着手" && "pb-5"}
                             ${snapshot.isDraggingOver && "bg-green-100"}`}
                           >
                             <span
@@ -196,19 +196,24 @@ export default function Home() {
                             </div>
 
                             {
-                              showForm && selectedBoard === bIndex ? (
-                                <div className="p-3">
-                                  <textarea className="border-gray-300 rounded focus:ring-purple-400 w-full"
-                                    rows={3} placeholder="Task info"
-                                    data-id={bIndex}
-                                    onKeyDown={(e) => onTextAreaKeyPress(e)} />
-                                </div>
-                              ) : (
+                              // showForm && selectedBoard === bIndex (
+                                  // <div className="p-3">
+                                  // <textarea className="border-gray-300 rounded focus:ring-purple-400 w-full"
+                                    // rows={3} placeholder="Task info"
+                                    // data-id={bIndex}
+                                    // onKeyDown={(e) => onTextAreaKeyPress(e)} />
+                                // </div>
+                              // ) :
+                              board.name === "未着手" && (
                                 <button
                                   className="flex justify-center items-center my-3 space-x-2 text-lg"
-                                  onClick={() => { setSelectedBoard(bIndex); setShowForm(true); }}
+                                  onClick={() => { 
+                                    setSelectedBoard(bIndex); 
+                                    // setShowForm(true); 
+                                    handleModalOpen();
+                                  }}
                                 >
-                                  <span>Add task</span>
+                                  <span>タスクを追加</span>
                                   <PlusCircleIcon className="w-5 h-5 text-gray-500" />
                                 </button>
                               )
