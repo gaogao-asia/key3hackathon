@@ -12,7 +12,7 @@ const tagRender = (props) => {
 
     return (
         <Tag
-            color={value}
+            color={value.slice(-7)}
             onMouseDown={onPreventMouseDown}
             closable={closable}
             onClose={onClose}
@@ -81,7 +81,7 @@ const CreateTaskModal = ({ data, visible, onOk, onCancel }) => {
 
     const skillTagOptions = skills.map((skill, index) => ({
         label: skill,
-        value: colors[index],
+        value: skill + colors[index],
         // color: colors[index]
     }));
 
