@@ -5,6 +5,7 @@ import "hardhat-gas-reporter";
 import "@openzeppelin/hardhat-upgrades";
 import "hardhat-watcher";
 import "@primitivefi/hardhat-dodoc";
+import { ethers } from "ethers";
 
 require("dotenv").config();
 
@@ -44,6 +45,13 @@ const config: HardhatUserConfig = {
     debugMode: true,
   },
   networks: {
+    hardhat: {
+      accounts:
+        PRIVATE_KEYS.map((pk) => ({
+          privateKey: pk,
+          balance: ethers.utils.parseEther('1000000').toString(),
+        }))
+    },
     shibuya: {
       accounts: PRIVATE_KEYS,
       url: "https://evm.shibuya.astar.network",
