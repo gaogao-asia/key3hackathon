@@ -23,7 +23,7 @@ const tagRender = (props) => {
     )
 }
 
-function CustomModal({ data, visible, onCancel }) {
+function CustomModal({ data, visible, onOk, onCancel }) {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
@@ -57,34 +57,46 @@ function CustomModal({ data, visible, onCancel }) {
     ];
 
     const colors = [
-        "#ff80ed", 
-        "#065535", 
-        "#000000", 
-        "#133337", 
-        "#ffc0cb", 
-        "#c0d6e4", 
-        "#ffe4e1", 
-        "#008080", 
-        "#ff0000", 
-        "#e6e6fa", 
-        "#ffd700", 
-        "#00ffff", 
-        "#ffa500", 
-        "#ff7373", 
-        "#0000ff", 
-        "#c6e2ff", 
-        "#40e0d0", 
-        "#d3ffce", 
-        "#f0f8ff", 
+        "#ff80ed",
+        "#065535",
+        "#000000",
+        "#133337",
+        "#ffc0cb",
+        "#c0d6e4",
+        "#ffe4e1",
+        "#008080",
+        "#ff0000",
+        "#e6e6fa",
+        "#ffd700",
+        "#00ffff",
+        "#ffa500",
+        "#ff7373",
+        "#0000ff",
+        "#c6e2ff",
+        "#40e0d0",
+        "#d3ffce",
+        "#f0f8ff",
         "#b0e0e6"
     ];
 
-
     const skillTagOptions = skills.map((skill, index) => ({
         label: skill,
-        value: colors[index], 
+        value: colors[index],
         // color: colors[index]
     }));
+
+    const handleOk = () => {
+        console.log(form.getFieldsValue)
+        onOk(form.getFieldsValue);
+        form.resetFields();
+    }
+
+    const onFinish = (values) => {
+        console.log(values)
+        onOk(values)
+        form.resetFields()
+        onCancel()
+    }
 
     const handleCancel = () => {
         form.resetFields();
@@ -95,11 +107,12 @@ function CustomModal({ data, visible, onCancel }) {
         <Modal
             title="新規タスク"
             open={visible}
-            onOk={console.log("ok")}
-            onCancel={onCancel}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={false}
             destroyOnClose
         >
-            <Form form={form} layout="vertical">
+            <Form form={form} onFinish={onFinish} layout="vertical">
                 <Form.Item
                     label="タスク名"
                     name="title"
@@ -149,6 +162,11 @@ function CustomModal({ data, visible, onCancel }) {
                         tagRender={tagRender}
                     />
                 </Form.Item>
+                <div class="flex justify-end items-center">
+                    <Button type="primary" htmlType="submit">
+                        保存
+                    </Button>
+                </div>
             </Form>
         </Modal>
     );

@@ -23,14 +23,40 @@ function createGuidId() {
 export default function Home() {
   const [ready, setReady] = useState(false);
   const [boardData, setBoardData] = useState(BoardData);
-  const [showForm, setShowForm] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(0);
   const [visible, setVisible] = useState(false);
+
+  const handleSave = (task) => {
+    // 中身はチェーンにsaveするとかになる？
+
+    // const boardId = e.target.attributes['data-id'].value;
+    const boardId = 0
+    const item = {
+      id: createGuidId(),
+      title: task.title,
+      description: task.description,
+      priority: 0,
+      chat: 0,
+      attachment: 0,
+      assignees: task.assignees ? task.assignees.map((assignee) => {
+        return {
+          name: assignee.name,
+          avt: "/user_01.png"
+        }
+      }) : [], 
+      reviewers: task.reviewers ?? []
+    }
+
+    let newBoardData = boardData;
+    newBoardData[boardId].items.push(item);
+    setBoardData(newBoardData);
+    // e.target.value = '';
+  }
 
   const showModal = () => {
     setVisible(true);
   };
-  
+
   const handleCancel = () => {
     setVisible(false);
   };
@@ -62,25 +88,19 @@ export default function Home() {
     if (e.keyCode === 13) //Enter
     {
       const val = e.target.value;
-      if (val.length === 0) {
-        setShowForm(false);
+      const boardId = e.target.attributes['data-id'].value;
+      const item = {
+        id: createGuidId(),
+        title: val,
+        priority: 0,
+        chat: 0,
+        attachment: 0,
+        assignees: []
       }
-      else {
-        const boardId = e.target.attributes['data-id'].value;
-        const item = {
-          id: createGuidId(),
-          title: val,
-          priority: 0,
-          chat: 0,
-          attachment: 0,
-          assignees: []
-        }
-        let newBoardData = boardData;
-        newBoardData[boardId].items.push(item);
-        setBoardData(newBoardData);
-        setShowForm(false);
-        e.target.value = '';
-      }
+      let newBoardData = boardData;
+      newBoardData[boardId].items.push(item);
+      setBoardData(newBoardData);
+      e.target.value = '';
     }
   }
 
@@ -197,18 +217,18 @@ export default function Home() {
 
                             {
                               // showForm && selectedBoard === bIndex (
-                                  // <div className="p-3">
-                                  // <textarea className="border-gray-300 rounded focus:ring-purple-400 w-full"
-                                    // rows={3} placeholder="Task info"
-                                    // data-id={bIndex}
-                                    // onKeyDown={(e) => onTextAreaKeyPress(e)} />
-                                // </div>
+                              // <div className="p-3">
+                              // <textarea className="border-gray-300 rounded focus:ring-purple-400 w-full"
+                              // rows={3} placeholder="Task info"
+                              // data-id={bIndex}
+                              // onKeyDown={(e) => onTextAreaKeyPress(e)} />
+                              // </div>
                               // ) :
                               board.name === "未着手" && (
                                 <button
                                   className="flex justify-center items-center my-3 space-x-2 text-lg"
-                                  onClick={() => { 
-                                    setSelectedBoard(bIndex); 
+                                  onClick={() => {
+                                    setSelectedBoard(bIndex);
                                     // setShowForm(true); 
                                     handleModalOpen();
                                   }}
@@ -229,16 +249,17 @@ export default function Home() {
           </DragDropContext>
         )}
       </div>
-      <CustomModal 
-        data={{ 
-          title: "ホームページ制作", 
-          description: "新規事業を印象付けるためのホームページを制作する。", 
-          status: "ToDo", 
-          assignees: ["トヨタ タロウ"], 
+      <CustomModal
+        data={{
+          title: "ホームページ制作",
+          description: "新規事業を印象付けるためのホームページを制作する。",
+          status: "ToDo",
+          assignees: ["トヨタ タロウ"],
           reviewers: ["トヨタ ハジメ"]
-        }} 
-        visible={visible} 
-        onCancel={handleModalClose} 
+        }}
+        visible={visible}
+        onOk={handleSave}
+        onCancel={handleModalClose}
       />
     </Layout>
   );
