@@ -18,7 +18,7 @@ function TopBar(props) {
                 <BellIcon className="w-7 h-7 text-white"/>
                 <div className="flex items-center text-white">
                     <h3 className="font-bold mr-3">トヨタ タロウ</h3>
-                    <Image src="https://randomuser.me/api/portraits/men/75.jpg"
+                    <Image src="/user_05.png"
                         width="36" height="36" objectFit="cover"
                         className=" rounded-full "/>
                 </div>

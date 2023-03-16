@@ -11,7 +11,9 @@ import CardItem from "../components/CardItem";
 import BoardData from "../data/board-data.json";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
-import CustomModal from "../components/CustomModal";
+import CreateTaskModal from "../components/CreateTaskModal";
+import AssignedToDoTaskModal from "../components/AssignedToDoTaskModal"
+import InProgressTaskModal from "../components/InProgressTaskModal"
 
 function createGuidId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -23,16 +25,81 @@ function createGuidId() {
 export default function Home() {
   const [ready, setReady] = useState(false);
   const [boardData, setBoardData] = useState(BoardData);
-  const [showForm, setShowForm] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(0);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [createTaskVisible, setCreateTaskVisible] = useState(false);
+  // AssignedToDoTaskModal用のstate
+  const [assignedToDoTaskVisible, setAssignedToDoTaskVisible] = useState(false);
+  // InProgressTaskModal用のstate
+  const [inProgressTaskVisible, setInProgressTaskVisible] = useState(false);
+  // TaskReviewerModal用のstate
 
+  const handleSave = (task) => {
+    // 中身はチェーンにsaveするとかになる？
+
+    // const boardId = e.target.attributes['data-id'].value;
+    const boardId = 0
+    const item = {
+      id: createGuidId(),
+      title: task.title,
+      description: task.description,
+      priority: 0,
+      chat: 0,
+      attachment: 0,
+      assignees: task.assignees ? task.assignees.map((assignee) => {
+        return {
+          name: assignee.name,
+          avt: "/user_01.png"
+        }
+      }) : [], 
+      reviewers: task.reviewers ?? []
+    }
+
+    let newBoardData = boardData;
+    newBoardData[boardId].items.push(item);
+    setBoardData(newBoardData);
+    // e.target.value = '';
+  }
+
+  // ToDo: タスク開始機能の実装
+
+  // ToDo: レビュー依頼機能の実装
+
+  const onClickCardItem = () => {
+    console.log("clicked");
+  }
+
+  const onClickCreateTaskCardItem = () => {
+    setCreateTaskVisible(true)
+  }
+
+  const onClickAssignedToDoTaskCardItem = () => {
+    setAssignedToDoTaskVisible(true)
+  }
+
+  const onClickInProgressTaskCardItem = () => {
+    setInProgressTaskVisible(true)
+  }
+
+  const onCancelCreate = () => {
+    setCreateTaskVisible(false);
+  }
+
+  const onCancelAssigned = () => {
+    setAssignedToDoTaskVisible(false);
+  }
+
+  const onCancelInProgress = () => {
+    setInProgressTaskVisible(false);
+  }
+
+  // よくわからんデフォルトのコード
   useEffect(() => {
     if (process.browser) {
       setReady(true);
     }
   }, []);
 
+  // Drag & Dropあんま関係なし
   const onDragEnd = (re) => {
     if (!re.destination) return;
     let newBoardData = boardData;
@@ -50,51 +117,13 @@ export default function Home() {
     setBoardData(newBoardData);
   };
 
-  const onTextAreaKeyPress = (e) => {
-    if (e.keyCode === 13) //Enter
-    {
-      const val = e.target.value;
-      if (val.length === 0) {
-        setShowForm(false);
-      }
-      else {
-        const boardId = e.target.attributes['data-id'].value;
-        const item = {
-          id: createGuidId(),
-          title: val,
-          priority: 0,
-          chat: 0,
-          attachment: 0,
-          assignees: []
-        }
-        let newBoardData = boardData;
-        newBoardData[boardId].items.push(item);
-        setBoardData(newBoardData);
-        setShowForm(false);
-        e.target.value = '';
-      }
-    }
-  }
-
-  const handleModalOpen = () => {
-    setModalIsOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setModalIsOpen(false);
-  };
-
-  const onClickCardItem = () => {
-    handleModalOpen(true)
-  }
-
   return (
     <Layout>
       <div className="p-10 flex flex-col h-screen">
         {/* Board header */}
         <div className="flex flex-initial justify-between">
           <div className="flex items-center">
-            <h4 className="text-4xl font-bold text-gray-600">タスク管理</h4>
+            <h4 className="text-4xl font-bold text-gray-600">タスク・カンバン管理</h4>
             <ChevronDownIcon
               className="w-9 h-9 text-gray-500 rounded-full
             p-1 bg-white ml-5 shadow-xl"
@@ -104,7 +133,7 @@ export default function Home() {
           <ul className="flex space-x-3">
             <li>
               <Image
-                src="https://randomuser.me/api/portraits/men/75.jpg"
+                src="/user_01.png"
                 width="36"
                 height="36"
                 objectFit="cover"
@@ -113,7 +142,7 @@ export default function Home() {
             </li>
             <li>
               <Image
-                src="https://randomuser.me/api/portraits/men/76.jpg"
+                src="/user_02.png"
                 width="36"
                 height="36"
                 objectFit="cover"
@@ -122,7 +151,7 @@ export default function Home() {
             </li>
             <li>
               <Image
-                src="https://randomuser.me/api/portraits/men/78.jpg"
+                src="/user_03.png"
                 width="36"
                 height="36"
                 objectFit="cover"
@@ -155,7 +184,8 @@ export default function Home() {
                         >
                           <div
                             className={`bg-gray-100 rounded-md shadow-md
-                            flex flex-col relative overflow-hidden
+                            flex flex-col relative overflow-hidden 
+                            ${board.name !== "未着手" && "pb-5"}
                             ${snapshot.isDraggingOver && "bg-green-100"}`}
                           >
                             <span
@@ -179,7 +209,13 @@ export default function Home() {
                                       data={item}
                                       index={iIndex}
                                       className="m-3"
-                                      onClick={onClickCardItem}
+                                      onClick={
+                                        board.name === "未着手" ? 
+                                        onClickAssignedToDoTaskCardItem :
+                                        board.name === "作業中" ?  
+                                        onClickInProgressTaskCardItem :
+                                        onClickCardItem
+                                      }
                                     />
                                   );
                                 })}
@@ -187,19 +223,15 @@ export default function Home() {
                             </div>
 
                             {
-                              showForm && selectedBoard === bIndex ? (
-                                <div className="p-3">
-                                  <textarea className="border-gray-300 rounded focus:ring-purple-400 w-full"
-                                    rows={3} placeholder="Task info"
-                                    data-id={bIndex}
-                                    onKeyDown={(e) => onTextAreaKeyPress(e)} />
-                                </div>
-                              ) : (
+                              board.name === "未着手" && (
                                 <button
                                   className="flex justify-center items-center my-3 space-x-2 text-lg"
-                                  onClick={() => { setSelectedBoard(bIndex); setShowForm(true); }}
+                                  onClick={() => {
+                                    setSelectedBoard(bIndex);
+                                    onClickCreateTaskCardItem()
+                                  }}
                                 >
-                                  <span>Add task</span>
+                                  <span>タスクを追加</span>
                                   <PlusCircleIcon className="w-5 h-5 text-gray-500" />
                                 </button>
                               )
@@ -215,15 +247,43 @@ export default function Home() {
           </DragDropContext>
         )}
       </div>
-      <CustomModal 
-        data={{ 
-          title: "ホームページ制作", 
-          description: "新規事業を印象付けるためのホームページを制作する。", 
-          status: "ToDo", 
-          assignee: "トヨタ タロウ"
-        }} 
-        modalIsOpen={modalIsOpen} 
-        handleModalClose={handleModalClose} 
+      <CreateTaskModal
+        data={{
+          title: "ホームページ制作",
+          description: "新規事業を印象付けるためのホームページを制作する。",
+          status: "ToDo",
+          assignees: ["トヨタ タロウ"],
+          reviewers: ["トヨタ ハジメ"]
+        }}
+        visible={createTaskVisible}
+        onOk={handleSave} // 一旦OKかな？
+        onCancel={onCancelCreate}
+      />
+      <AssignedToDoTaskModal
+        data={{
+          title: "ホームページ制作",
+          description: "新規事業を印象付けるためのホームページを制作する。",
+          status: "ToDo",
+          assignees: ["user1"],
+          reviewers: ["user2"], 
+          skills: ["マーケティング#ff80ed", "技術#ff0000"]
+        }}
+        visible={assignedToDoTaskVisible}
+        onOk={onCancelAssigned} // ToDo: タスク開始機能
+        onCancel={onCancelAssigned}
+      />
+      <InProgressTaskModal
+        data={{
+          title: "戦略リサーチ",
+          description: "新規事業を成功させるための戦略を調査する。",
+          status: "In Progress",
+          assignees: ["user3"],
+          reviewers: ["user2"], 
+          skills: ["プランニング#065535", "問題解決#ffd700"]
+        }}
+        visible={inProgressTaskVisible}
+        onOk={onCancelInProgress} // ToDo: レビュー依頼機能
+        onCancel={onCancelInProgress}
       />
     </Layout>
   );
