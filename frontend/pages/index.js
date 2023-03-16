@@ -12,6 +12,7 @@ import BoardData from "../data/board-data.json";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 import CreateTaskModal from "../components/CreateTaskModal";
+import AssignedToDoTaskModal from "../components/AssignedToDoTaskModal"
 
 function createGuidId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -26,6 +27,7 @@ export default function Home() {
   const [selectedBoard, setSelectedBoard] = useState(0);
   const [createTaskVisible, setCreateTaskVisible] = useState(false);
   // AssignedToDoTaskModal用のstate
+  const [assignedToDoTaskVisible, setAssignedToDoTaskVisible] = useState(false);
   // InProgressTaskModal用のstate
   // TaskReviewerModal用のstate
 
@@ -56,12 +58,36 @@ export default function Home() {
     // e.target.value = '';
   }
 
+  // ToDo: タスク開始機能の実装
+
+  const onClickCardItem = () => {
+    console.log("clicked");
+  }
+
+  const onClickCreateTaskCardItem = () => {
+    setCreateTaskVisible(true)
+  }
+
+  const onClickAssignedToDoTaskCardItem = () => {
+    setAssignedToDoTaskVisible(true)
+  }
+
+  const onCancelCreate = () => {
+    setCreateTaskVisible(false);
+  }
+
+  const onCancelAssigned = () => {
+    setAssignedToDoTaskVisible(false);
+  }
+
+  // よくわからんデフォルトのコード
   useEffect(() => {
     if (process.browser) {
       setReady(true);
     }
   }, []);
 
+  // Drag & Dropあんま関係なし
   const onDragEnd = (re) => {
     if (!re.destination) return;
     let newBoardData = boardData;
@@ -78,38 +104,6 @@ export default function Home() {
     );
     setBoardData(newBoardData);
   };
-
-  // const onTextAreaKeyPress = (e) => {
-  //   if (e.keyCode === 13) //Enter
-  //   {
-  //     const val = e.target.value;
-  //     const boardId = e.target.attributes['data-id'].value;
-  //     const item = {
-  //       id: createGuidId(),
-  //       title: val,
-  //       priority: 0,
-  //       chat: 0,
-  //       attachment: 0,
-  //       assignees: []
-  //     }
-  //     let newBoardData = boardData;
-  //     newBoardData[boardId].items.push(item);
-  //     setBoardData(newBoardData);
-  //     e.target.value = '';
-  //   }
-  // }
-
-  const handleModalOpen = () => {
-    setCreateTaskVisible(true);
-  };
-
-  const handleModalClose = () => {
-    setCreateTaskVisible(false);
-  };
-
-  const onClickCardItem = () => {
-    handleModalOpen()
-  }
 
   return (
     <Layout>
@@ -203,7 +197,11 @@ export default function Home() {
                                       data={item}
                                       index={iIndex}
                                       className="m-3"
-                                      onClick={onClickCardItem}
+                                      onClick={
+                                        board.name === "未着手" ? 
+                                        onClickAssignedToDoTaskCardItem : 
+                                        onClickCardItem
+                                      }
                                     />
                                   );
                                 })}
@@ -211,21 +209,12 @@ export default function Home() {
                             </div>
 
                             {
-                              // showForm && selectedBoard === bIndex (
-                              // <div className="p-3">
-                              // <textarea className="border-gray-300 rounded focus:ring-purple-400 w-full"
-                              // rows={3} placeholder="Task info"
-                              // data-id={bIndex}
-                              // onKeyDown={(e) => onTextAreaKeyPress(e)} />
-                              // </div>
-                              // ) :
                               board.name === "未着手" && (
                                 <button
                                   className="flex justify-center items-center my-3 space-x-2 text-lg"
                                   onClick={() => {
                                     setSelectedBoard(bIndex);
-                                    // setShowForm(true); 
-                                    handleModalOpen();
+                                    onClickCreateTaskCardItem()
                                   }}
                                 >
                                   <span>タスクを追加</span>
@@ -253,8 +242,21 @@ export default function Home() {
           reviewers: ["トヨタ ハジメ"]
         }}
         visible={createTaskVisible}
-        onOk={handleSave}
-        onCancel={handleModalClose}
+        onOk={handleSave} // 一旦OKかな？
+        onCancel={onCancelCreate}
+      />
+      <AssignedToDoTaskModal
+        data={{
+          title: "ホームページ制作",
+          description: "新規事業を印象付けるためのホームページを制作する。",
+          status: "ToDo",
+          assignees: ["user1"],
+          reviewers: ["user2"], 
+          skills: ["マーケティング#ff80ed", "技術#ff0000"]
+        }}
+        visible={assignedToDoTaskVisible}
+        onOk={onCancelAssigned} // ToDo: タスク開始機能
+        onCancel={onCancelAssigned}
       />
     </Layout>
   );
