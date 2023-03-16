@@ -112,7 +112,7 @@ export default function Home() {
           <ul className="flex space-x-3">
             <li>
               <Image
-                src="https://randomuser.me/api/portraits/men/75.jpg"
+                src="/user_01.png"
                 width="36"
                 height="36"
                 objectFit="cover"
@@ -121,7 +121,7 @@ export default function Home() {
             </li>
             <li>
               <Image
-                src="https://randomuser.me/api/portraits/men/76.jpg"
+                src="/user_02.png"
                 width="36"
                 height="36"
                 objectFit="cover"
@@ -130,7 +130,7 @@ export default function Home() {
             </li>
             <li>
               <Image
-                src="https://randomuser.me/api/portraits/men/78.jpg"
+                src="/user_03.png"
                 width="36"
                 height="36"
                 objectFit="cover"
