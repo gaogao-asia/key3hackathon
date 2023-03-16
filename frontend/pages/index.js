@@ -25,6 +25,9 @@ export default function Home() {
   const [boardData, setBoardData] = useState(BoardData);
   const [selectedBoard, setSelectedBoard] = useState(0);
   const [createTaskVisible, setCreateTaskVisible] = useState(false);
+  // AssignedToDoTaskModal用のstate
+  // InProgressTaskModal用のstate
+  // TaskReviewerModal用のstate
 
   const handleSave = (task) => {
     // 中身はチェーンにsaveするとかになる？
