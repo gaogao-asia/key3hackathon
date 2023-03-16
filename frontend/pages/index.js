@@ -25,7 +25,15 @@ export default function Home() {
   const [boardData, setBoardData] = useState(BoardData);
   const [showForm, setShowForm] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(0);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => {
+    setVisible(true);
+  };
+  
+  const handleCancel = () => {
+    setVisible(false);
+  };
 
   useEffect(() => {
     if (process.browser) {
@@ -77,15 +85,15 @@ export default function Home() {
   }
 
   const handleModalOpen = () => {
-    setModalIsOpen(true);
+    setVisible(true);
   };
 
   const handleModalClose = () => {
-    setModalIsOpen(false);
+    setVisible(false);
   };
 
   const onClickCardItem = () => {
-    handleModalOpen(true)
+    handleModalOpen()
   }
 
   return (
@@ -133,6 +141,7 @@ export default function Home() {
               <button
                 className="border border-dashed flex items-center w-9 h-9 border-gray-500 justify-center
                 rounded-full"
+                onClick={showModal}
               >
                 <PlusIcon className="w-5 h-5 text-gray-500" />
               </button>
@@ -220,10 +229,11 @@ export default function Home() {
           title: "ホームページ制作", 
           description: "新規事業を印象付けるためのホームページを制作する。", 
           status: "ToDo", 
-          assignee: "トヨタ タロウ"
+          assignees: ["トヨタ タロウ"], 
+          reviewers: ["トヨタ ハジメ"]
         }} 
-        modalIsOpen={modalIsOpen} 
-        handleModalClose={handleModalClose} 
+        visible={visible} 
+        onCancel={handleModalClose} 
       />
     </Layout>
   );
