@@ -23,7 +23,7 @@ const tagRender = (props) => {
     )
 }
 
-function CustomModal({ data, visible, onOk, onCancel }) {
+const CreateTaskModal = ({ data, visible, onOk, onCancel }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
@@ -172,4 +172,4 @@ function CustomModal({ data, visible, onOk, onCancel }) {
     );
 }
 
-export default CustomModal;
+export default CreateTaskModal;

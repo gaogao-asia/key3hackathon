@@ -11,7 +11,7 @@ import CardItem from "../components/CardItem";
 import BoardData from "../data/board-data.json";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
-import CustomModal from "../components/CustomModal";
+import CreateTaskModal from "../components/CreateTaskModal";
 
 function createGuidId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -24,7 +24,7 @@ export default function Home() {
   const [ready, setReady] = useState(false);
   const [boardData, setBoardData] = useState(BoardData);
   const [selectedBoard, setSelectedBoard] = useState(0);
-  const [visible, setVisible] = useState(false);
+  const [createTaskVisible, setCreateTaskVisible] = useState(false);
 
   const handleSave = (task) => {
     // 中身はチェーンにsaveするとかになる？
@@ -53,14 +53,6 @@ export default function Home() {
     // e.target.value = '';
   }
 
-  const showModal = () => {
-    setVisible(true);
-  };
-
-  const handleCancel = () => {
-    setVisible(false);
-  };
-
   useEffect(() => {
     if (process.browser) {
       setReady(true);
@@ -84,32 +76,32 @@ export default function Home() {
     setBoardData(newBoardData);
   };
 
-  const onTextAreaKeyPress = (e) => {
-    if (e.keyCode === 13) //Enter
-    {
-      const val = e.target.value;
-      const boardId = e.target.attributes['data-id'].value;
-      const item = {
-        id: createGuidId(),
-        title: val,
-        priority: 0,
-        chat: 0,
-        attachment: 0,
-        assignees: []
-      }
-      let newBoardData = boardData;
-      newBoardData[boardId].items.push(item);
-      setBoardData(newBoardData);
-      e.target.value = '';
-    }
-  }
+  // const onTextAreaKeyPress = (e) => {
+  //   if (e.keyCode === 13) //Enter
+  //   {
+  //     const val = e.target.value;
+  //     const boardId = e.target.attributes['data-id'].value;
+  //     const item = {
+  //       id: createGuidId(),
+  //       title: val,
+  //       priority: 0,
+  //       chat: 0,
+  //       attachment: 0,
+  //       assignees: []
+  //     }
+  //     let newBoardData = boardData;
+  //     newBoardData[boardId].items.push(item);
+  //     setBoardData(newBoardData);
+  //     e.target.value = '';
+  //   }
+  // }
 
   const handleModalOpen = () => {
-    setVisible(true);
+    setCreateTaskVisible(true);
   };
 
   const handleModalClose = () => {
-    setVisible(false);
+    setCreateTaskVisible(false);
   };
 
   const onClickCardItem = () => {
@@ -249,7 +241,7 @@ export default function Home() {
           </DragDropContext>
         )}
       </div>
-      <CustomModal
+      <CreateTaskModal
         data={{
           title: "ホームページ制作",
           description: "新規事業を印象付けるためのホームページを制作する。",
@@ -257,7 +249,7 @@ export default function Home() {
           assignees: ["トヨタ タロウ"],
           reviewers: ["トヨタ ハジメ"]
         }}
-        visible={visible}
+        visible={createTaskVisible}
         onOk={handleSave}
         onCancel={handleModalClose}
       />
