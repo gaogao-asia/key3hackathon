@@ -30,6 +30,7 @@ contract TrustX is Initializable, PausableUpgradeable {
     string constant ERR_TASK_NOT_IN_PROGRESS = "ERR_TASK_NOT_IN_PROGRESS";
     string constant ERR_TASK_NOT_IN_REVIEW = "ERR_TASK_NOT_IN_REVIEW";
     string constant ERR_TASK_ALREADY_APPROVED = "ERR_TASK_ALREADY_APPROVED";
+    string constant ERR_TASK_NOT_ENOUGH_SCORES = "ERR_TASK_NOT_ENOUGH_SCORES";
 
     // enums
     enum TaskStatus {
@@ -114,7 +115,8 @@ contract TrustX is Initializable, PausableUpgradeable {
         string name,
         string metadataURI,
         bool isPrivate,
-        string[] skills
+        string[] skills,
+        address createdBy
     );
 
     event AssignerAssigned(
@@ -135,6 +137,7 @@ contract TrustX is Initializable, PausableUpgradeable {
         uint256 indexed daoID,
         uint256 indexed taskID,
         uint256 threadID,
+        address createdBy,
         string messageURI,
         bool isPrivate
     );
@@ -143,6 +146,7 @@ contract TrustX is Initializable, PausableUpgradeable {
         uint256 indexed daoID,
         uint256 indexed taskID,
         uint256 threadID,
+        address requestedBy,
         string messageURI,
         bool isPrivate
     );
@@ -159,7 +163,7 @@ contract TrustX is Initializable, PausableUpgradeable {
     event TaskApproved(
         uint256 indexed daoID,
         uint256 indexed taskID,
-        uint256 threaID,
+        uint256 threadID,
         address approvedBy,
         string messageURI,
         bool isPrivate,
@@ -455,7 +459,8 @@ contract TrustX is Initializable, PausableUpgradeable {
             name,
             metadataURI,
             isPrivate,
-            skills
+            skills,
+            msg.sender
         );
 
         if (assigner != address(0x0)) {
@@ -533,7 +538,7 @@ contract TrustX is Initializable, PausableUpgradeable {
             isPrivate
         );
 
-        emit TaskCommented(daoID, taskID, threadID, messageURI, isPrivate);
+        emit TaskCommented(daoID, taskID, threadID, msg.sender, messageURI, isPrivate);
     }
 
     function _requestTaskReview(
@@ -561,7 +566,7 @@ contract TrustX is Initializable, PausableUpgradeable {
             isPrivate
         );
 
-        emit ReviewRequested(daoID, taskID, threadID, messageURI, isPrivate);
+        emit ReviewRequested(daoID, taskID, threadID, msg.sender, messageURI, isPrivate);
     }
 
     function _requestChanges(
@@ -619,6 +624,10 @@ contract TrustX is Initializable, PausableUpgradeable {
         require(
             _tasks[daoID][taskID].status == TaskStatus.InReview,
             ERR_TASK_NOT_IN_REVIEW
+        );
+        require(
+            _tasks[daoID][taskID].skills.length == scores.length,
+            ERR_TASK_NOT_ENOUGH_SCORES
         );
 
         // add approvals

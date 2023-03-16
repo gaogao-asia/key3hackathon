@@ -43,4 +43,72 @@ dataSources:
           kind: substrate/FrontierEvmEvent
           filter:
             topics:
-              - "DAOCreated(uint256 daoID, string name, string metadataURI, bool isPrivate)"
+              - "DAOCreated(uint256 daoID, string name, string metadataURI, bool isPrivate, address createdBy)"
+        - handler: handleDAOMembersAdded
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "DAOMembersAdded(uint256 indexed daoID, address[] members)"
+              - null
+        - handler: handleTaskCreated
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskCreated(uint256 indexed daoID, uint256 taskID, uint8 status, string name, string metadataURI, bool isPrivate, string[] skills, address createdBy)"
+              - null
+        - handler: handleAssignerAssigned
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "AssignerAssigned(uint256 indexed daoID, uint256 indexed taskID, address assigner)"
+              - null
+              - null
+        - handler: handleReviewersAssigned
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "ReviewersAssigned(uint256 indexed daoID, uint256 indexed taskID, address[] reviewers)"
+              - null
+              - null
+        - handler: handleTaskStarted
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskStarted(uint256 indexed daoID, uint256 indexed taskID)"
+              - null
+              - null
+        - handler: handleTaskCommented
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskCommented(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address createdBy, string messageURI, bool isPrivate)"
+              - null
+              - null
+        - handler: handleReviewRequested
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "ReviewRequested(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address requestedBy, string messageURI, bool isPrivate)"
+              - null
+              - null
+        - handler: handleRequestedChanges
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "RequestedChanges(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address requestedBy, string messageURI, bool isPrivate)"
+              - null
+              - null
+        - handler: handleTaskApproved
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskApproved(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address approvedBy, string messageURI, bool isPrivate, uint256[] scores)"
+              - null
+              - null        
+        - handler: handleTaskCompleted
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskCompleted(uint256 indexed daoID, uint256 indexed taskID)"
+              - null
+              - null

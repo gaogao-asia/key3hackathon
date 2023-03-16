@@ -410,7 +410,7 @@
             }
         },
         "ReviewRequested": {
-            "code": "event ReviewRequested(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, string messageURI, bool isPrivate)",
+            "code": "event ReviewRequested(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address requestedBy, string messageURI, bool isPrivate)",
             "inputs": {
                 "daoID": {
                     "type": "uint256",
@@ -422,6 +422,10 @@
                 },
                 "threadID": {
                     "type": "uint256",
+                    "indexed": false
+                },
+                "requestedBy": {
+                    "type": "address",
                     "indexed": false
                 },
                 "messageURI": {
@@ -452,7 +456,7 @@
             }
         },
         "TaskApproved": {
-            "code": "event TaskApproved(uint256 indexed daoID, uint256 indexed taskID, uint256 threaID, address approvedBy, string messageURI, bool isPrivate, uint256[] scores)",
+            "code": "event TaskApproved(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address approvedBy, string messageURI, bool isPrivate, uint256[] scores)",
             "inputs": {
                 "daoID": {
                     "type": "uint256",
@@ -462,7 +466,7 @@
                     "type": "uint256",
                     "indexed": true
                 },
-                "threaID": {
+                "threadID": {
                     "type": "uint256",
                     "indexed": false
                 },
@@ -485,7 +489,7 @@
             }
         },
         "TaskCommented": {
-            "code": "event TaskCommented(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, string messageURI, bool isPrivate)",
+            "code": "event TaskCommented(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address createdBy, string messageURI, bool isPrivate)",
             "inputs": {
                 "daoID": {
                     "type": "uint256",
@@ -497,6 +501,10 @@
                 },
                 "threadID": {
                     "type": "uint256",
+                    "indexed": false
+                },
+                "createdBy": {
+                    "type": "address",
                     "indexed": false
                 },
                 "messageURI": {
@@ -523,7 +531,7 @@
             }
         },
         "TaskCreated": {
-            "code": "event TaskCreated(uint256 indexed daoID, uint256 taskID, enum TrustX.TaskStatus status, string name, string metadataURI, bool isPrivate, string[] skills)",
+            "code": "event TaskCreated(uint256 indexed daoID, uint256 taskID, enum TrustX.TaskStatus status, string name, string metadataURI, bool isPrivate, string[] skills, address createdBy)",
             "inputs": {
                 "daoID": {
                     "type": "uint256",
@@ -551,6 +559,10 @@
                 },
                 "skills": {
                     "type": "string[]",
+                    "indexed": false
+                },
+                "createdBy": {
+                    "type": "address",
                     "indexed": false
                 }
             }

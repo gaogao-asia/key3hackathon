@@ -480,7 +480,7 @@ event RequestedChanges(uint256 indexed daoID, uint256 indexed taskID, uint256 th
 ### ReviewRequested
 
 ```solidity
-event ReviewRequested(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, string messageURI, bool isPrivate)
+event ReviewRequested(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address requestedBy, string messageURI, bool isPrivate)
 ```
 
 
@@ -494,6 +494,7 @@ event ReviewRequested(uint256 indexed daoID, uint256 indexed taskID, uint256 thr
 | daoID `indexed` | uint256 | undefined |
 | taskID `indexed` | uint256 | undefined |
 | threadID  | uint256 | undefined |
+| requestedBy  | address | undefined |
 | messageURI  | string | undefined |
 | isPrivate  | bool | undefined |
 
@@ -518,29 +519,7 @@ event ReviewersAssigned(uint256 indexed daoID, uint256 indexed taskID, address[]
 ### TaskApproved
 
 ```solidity
-event TaskApproved(uint256 indexed daoID, uint256 indexed taskID, uint256 threaID, address approvedBy, string messageURI, bool isPrivate, uint256[] scores)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| daoID `indexed` | uint256 | undefined |
-| taskID `indexed` | uint256 | undefined |
-| threaID  | uint256 | undefined |
-| approvedBy  | address | undefined |
-| messageURI  | string | undefined |
-| isPrivate  | bool | undefined |
-| scores  | uint256[] | undefined |
-
-### TaskCommented
-
-```solidity
-event TaskCommented(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, string messageURI, bool isPrivate)
+event TaskApproved(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address approvedBy, string messageURI, bool isPrivate, uint256[] scores)
 ```
 
 
@@ -554,6 +533,29 @@ event TaskCommented(uint256 indexed daoID, uint256 indexed taskID, uint256 threa
 | daoID `indexed` | uint256 | undefined |
 | taskID `indexed` | uint256 | undefined |
 | threadID  | uint256 | undefined |
+| approvedBy  | address | undefined |
+| messageURI  | string | undefined |
+| isPrivate  | bool | undefined |
+| scores  | uint256[] | undefined |
+
+### TaskCommented
+
+```solidity
+event TaskCommented(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address createdBy, string messageURI, bool isPrivate)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| daoID `indexed` | uint256 | undefined |
+| taskID `indexed` | uint256 | undefined |
+| threadID  | uint256 | undefined |
+| createdBy  | address | undefined |
 | messageURI  | string | undefined |
 | isPrivate  | bool | undefined |
 
@@ -577,7 +579,7 @@ event TaskCompleted(uint256 indexed daoID, uint256 indexed taskID)
 ### TaskCreated
 
 ```solidity
-event TaskCreated(uint256 indexed daoID, uint256 taskID, enum TrustX.TaskStatus status, string name, string metadataURI, bool isPrivate, string[] skills)
+event TaskCreated(uint256 indexed daoID, uint256 taskID, enum TrustX.TaskStatus status, string name, string metadataURI, bool isPrivate, string[] skills, address createdBy)
 ```
 
 
@@ -595,6 +597,7 @@ event TaskCreated(uint256 indexed daoID, uint256 taskID, enum TrustX.TaskStatus 
 | metadataURI  | string | undefined |
 | isPrivate  | bool | undefined |
 | skills  | string[] | undefined |
+| createdBy  | address | undefined |
 
 ### TaskStarted
 
