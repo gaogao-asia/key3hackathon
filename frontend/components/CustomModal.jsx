@@ -1,6 +1,27 @@
 import React from "react";
 import { useState } from "react";
-import { Modal, Form, Input, Select, Option, Button } from 'antd';
+import { Modal, Form, Input, Select, Tag, Button } from 'antd';
+// import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
+
+const tagRender = (props) => {
+    const { label, value, closable, onClose } = props;
+    const onPreventMouseDown = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    return (
+        <Tag
+            color={value}
+            onMouseDown={onPreventMouseDown}
+            closable={closable}
+            onClose={onClose}
+            style={{ marginRight: 3 }}
+        >
+            {label}
+        </Tag>
+    )
+}
 
 function CustomModal({ data, visible, onCancel }) {
     const [form] = Form.useForm();
@@ -11,6 +32,59 @@ function CustomModal({ data, visible, onCancel }) {
         { label: 'トヨタ ハジメ', value: 'user2' },
         { label: 'トヨタ ジロウ', value: 'user3' },
     ];
+
+    const skills = [
+        'マーケティング',
+        'プランニング',
+        'プロジェクトマネジメント',
+        '財務分析',
+        'リーダーシップ',
+        'チームビルディング',
+        'プレゼンテーション',
+        'ネットワーキング',
+        '技術',
+        'データ分析',
+        '問題解決',
+        '営業',
+        'パートナーシップ開発',
+        'リスクマネジメント',
+        '交渉',
+        'コミュニケーション',
+        'クリエイティブ思考',
+        'プロトタイピング',
+        'ユーザビリティテスト',
+        'プロダクトマネジメント',
+    ];
+
+    const colors = [
+        "#ff80ed", 
+        "#065535", 
+        "#000000", 
+        "#133337", 
+        "#ffc0cb", 
+        "#c0d6e4", 
+        "#ffe4e1", 
+        "#008080", 
+        "#ff0000", 
+        "#e6e6fa", 
+        "#ffd700", 
+        "#00ffff", 
+        "#ffa500", 
+        "#ff7373", 
+        "#0000ff", 
+        "#c6e2ff", 
+        "#40e0d0", 
+        "#d3ffce", 
+        "#f0f8ff", 
+        "#b0e0e6"
+    ];
+
+
+    const skillTagOptions = skills.map((skill, index) => ({
+        label: skill,
+        value: colors[index], 
+        // color: colors[index]
+    }));
 
     const handleCancel = () => {
         form.resetFields();
@@ -45,9 +119,9 @@ function CustomModal({ data, visible, onCancel }) {
                     name="assignees"
                     rules={[{ required: true, message: 'Please select at least one assignee' }]}
                 >
-                    <Select 
-                        mode="multiple" 
-                        placeholder="担当者を選択" 
+                    <Select
+                        mode="multiple"
+                        placeholder="担当者を選択"
                         options={users}
                     />
                 </Form.Item>
@@ -56,10 +130,23 @@ function CustomModal({ data, visible, onCancel }) {
                     name="reviewers"
                     rules={[{ required: true, message: 'Please select at least one reviewer' }]}
                 >
-                    <Select 
-                        mode="multiple" 
+                    <Select
+                        mode="multiple"
                         placeholder="承認担当者を選択"
                         options={users}
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    label="スキル"
+                    name="skills"
+                    rules={[{ required: true, message: 'Please select at least one skill' }]}
+                >
+                    <Select
+                        mode="multiple"
+                        placeholder="スキルを選択"
+                        options={skillTagOptions}
+                        tagRender={tagRender}
                     />
                 </Form.Item>
             </Form>
