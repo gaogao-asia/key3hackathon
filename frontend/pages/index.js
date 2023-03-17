@@ -12,12 +12,15 @@ import BoardData from "../data/board-data.json";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 import CreateTaskModal from "../components/CreateTaskModal";
-import AssignedToDoTaskModal from "../components/AssignedToDoTaskModal"
-import InProgressTaskModal from "../components/InProgressTaskModal"
+import AssignedToDoTaskModal from "../components/AssignedToDoTaskModal";
+import InProgressTaskModal from "../components/InProgressTaskModal";
+import { useDAO } from "../hooks/dao";
+import { DAO_ID } from "../consts/daos";
 
 function createGuidId() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -33,11 +36,15 @@ export default function Home() {
   const [inProgressTaskVisible, setInProgressTaskVisible] = useState(false);
   // TaskReviewerModal用のstate
 
+  const queryDAO = useDAO(DAO_ID);
+
+  console.log("debug::", queryDAO);
+
   const handleSave = (task) => {
     // 中身はチェーンにsaveするとかになる？
 
     // const boardId = e.target.attributes['data-id'].value;
-    const boardId = 0
+    const boardId = 0;
     const item = {
       id: createGuidId(),
       title: task.title,
@@ -45,20 +52,22 @@ export default function Home() {
       priority: 0,
       chat: 0,
       attachment: 0,
-      assignees: task.assignees ? task.assignees.map((assignee) => {
-        return {
-          name: assignee.name,
-          avt: "/user_01.png"
-        }
-      }) : [], 
-      reviewers: task.reviewers ?? []
-    }
+      assignees: task.assignees
+        ? task.assignees.map((assignee) => {
+            return {
+              name: assignee.name,
+              avt: "/user_01.png",
+            };
+          })
+        : [],
+      reviewers: task.reviewers ?? [],
+    };
 
     let newBoardData = boardData;
     newBoardData[boardId].items.push(item);
     setBoardData(newBoardData);
     // e.target.value = '';
-  }
+  };
 
   // ToDo: タスク開始機能の実装
 
@@ -66,31 +75,31 @@ export default function Home() {
 
   const onClickCardItem = () => {
     console.log("clicked");
-  }
+  };
 
   const onClickCreateTaskCardItem = () => {
-    setCreateTaskVisible(true)
-  }
+    setCreateTaskVisible(true);
+  };
 
   const onClickAssignedToDoTaskCardItem = () => {
-    setAssignedToDoTaskVisible(true)
-  }
+    setAssignedToDoTaskVisible(true);
+  };
 
   const onClickInProgressTaskCardItem = () => {
-    setInProgressTaskVisible(true)
-  }
+    setInProgressTaskVisible(true);
+  };
 
   const onCancelCreate = () => {
     setCreateTaskVisible(false);
-  }
+  };
 
   const onCancelAssigned = () => {
     setAssignedToDoTaskVisible(false);
-  }
+  };
 
   const onCancelInProgress = () => {
     setInProgressTaskVisible(false);
-  }
+  };
 
   // よくわからんデフォルトのコード
   useEffect(() => {
@@ -123,11 +132,9 @@ export default function Home() {
         {/* Board header */}
         <div className="flex flex-initial justify-between">
           <div className="flex items-center">
-            <h4 className="text-4xl font-bold text-gray-600">タスク・カンバン管理</h4>
-            <ChevronDownIcon
-              className="w-9 h-9 text-gray-500 rounded-full
-            p-1 bg-white ml-5 shadow-xl"
-            />
+            <h4 className="text-4xl font-bold text-gray-600">
+              {queryDAO?.data?.dao?.name}
+            </h4>
           </div>
 
           <ul className="flex space-x-3">
@@ -199,8 +206,10 @@ export default function Home() {
                               <DotsVerticalIcon className="w-5 h-5 text-gray-500" />
                             </h4>
 
-                            <div className="overflow-y-auto overflow-x-hidden h-auto"
-                              style={{ maxHeight: 'calc(100vh - 290px)' }}>
+                            <div
+                              className="overflow-y-auto overflow-x-hidden h-auto"
+                              style={{ maxHeight: "calc(100vh - 290px)" }}
+                            >
                               {board.items.length > 0 &&
                                 board.items.map((item, iIndex) => {
                                   return (
@@ -210,11 +219,11 @@ export default function Home() {
                                       index={iIndex}
                                       className="m-3"
                                       onClick={
-                                        board.name === "未着手" ? 
-                                        onClickAssignedToDoTaskCardItem :
-                                        board.name === "作業中" ?  
-                                        onClickInProgressTaskCardItem :
-                                        onClickCardItem
+                                        board.name === "未着手"
+                                          ? onClickAssignedToDoTaskCardItem
+                                          : board.name === "作業中"
+                                          ? onClickInProgressTaskCardItem
+                                          : onClickCardItem
                                       }
                                     />
                                   );
@@ -222,20 +231,18 @@ export default function Home() {
                               {provided.placeholder}
                             </div>
 
-                            {
-                              board.name === "未着手" && (
-                                <button
-                                  className="flex justify-center items-center my-3 space-x-2 text-lg"
-                                  onClick={() => {
-                                    setSelectedBoard(bIndex);
-                                    onClickCreateTaskCardItem()
-                                  }}
-                                >
-                                  <span>タスクを追加</span>
-                                  <PlusCircleIcon className="w-5 h-5 text-gray-500" />
-                                </button>
-                              )
-                            }
+                            {board.name === "未着手" && (
+                              <button
+                                className="flex justify-center items-center my-3 space-x-2 text-lg"
+                                onClick={() => {
+                                  setSelectedBoard(bIndex);
+                                  onClickCreateTaskCardItem();
+                                }}
+                              >
+                                <span>タスクを追加</span>
+                                <PlusCircleIcon className="w-5 h-5 text-gray-500" />
+                              </button>
+                            )}
                           </div>
                         </div>
                       )}
@@ -253,7 +260,7 @@ export default function Home() {
           description: "新規事業を印象付けるためのホームページを制作する。",
           status: "ToDo",
           assignees: ["トヨタ タロウ"],
-          reviewers: ["トヨタ ハジメ"]
+          reviewers: ["トヨタ ハジメ"],
         }}
         visible={createTaskVisible}
         onOk={handleSave} // 一旦OKかな？
@@ -265,8 +272,8 @@ export default function Home() {
           description: "新規事業を印象付けるためのホームページを制作する。",
           status: "ToDo",
           assignees: ["user1"],
-          reviewers: ["user2"], 
-          skills: ["マーケティング#ff80ed", "技術#ff0000"]
+          reviewers: ["user2"],
+          skills: ["マーケティング#ff80ed", "技術#ff0000"],
         }}
         visible={assignedToDoTaskVisible}
         onOk={onCancelAssigned} // ToDo: タスク開始機能
@@ -278,8 +285,8 @@ export default function Home() {
           description: "新規事業を成功させるための戦略を調査する。",
           status: "In Progress",
           assignees: ["user3"],
-          reviewers: ["user2"], 
-          skills: ["プランニング#065535", "問題解決#ffd700"]
+          reviewers: ["user2"],
+          skills: ["プランニング#065535", "問題解決#ffd700"],
         }}
         visible={inProgressTaskVisible}
         onOk={onCancelInProgress} // ToDo: レビュー依頼機能

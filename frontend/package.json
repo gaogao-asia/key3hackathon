@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.10",
     "@headlessui/react": "^1.4.0",
     "@heroicons/react": "^1.0.4",
     "@rainbow-me/rainbowkit": "^0.12.1",
@@ -15,6 +16,7 @@
     "@web3uikit/web3": "^0.2.2",
     "antd": "^5.3.1",
     "ethers": "^5.7.2",
+    "graphql": "^16.6.0",
     "next": "latest",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.0",
