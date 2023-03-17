@@ -65,14 +65,14 @@ function CardItem({ data, index, onClick }) {
                   </li>
                 );
               })}
-              <li>
+              {/* <li>
                 <button
                   className="border border-dashed flex items-center w-9 h-9 border-gray-500 justify-center
                     rounded-full"
                 >
                   <PlusIcon className="w-5 h-5 text-gray-500" />
                 </button>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

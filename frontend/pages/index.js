@@ -8,7 +8,6 @@ import {
   PlusCircleIcon,
 } from "@heroicons/react/outline";
 import CardItem from "../components/CardItem";
-import BoardData from "../data/board-data.json";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 import CreateTaskModal from "../components/CreateTaskModal";
@@ -19,9 +18,10 @@ import { DAO_ID } from "../consts/daos";
 import TaskReviewerModal from "../components/TaskReviewerModal";
 import DoneTaskModal from "../components/DoneTaskModal";
 import { Skills } from "../consts/skills";
-import { Accounts } from "../consts/accounts";
+import { Accounts, AccountsMap } from "../consts/accounts";
 import { Descriptions, Popover } from "antd";
 import { DAOContextProvider } from "../contexts/dao_context";
+import { useTasks } from "../hooks/tasks";
 
 function createGuidId() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -33,7 +33,7 @@ function createGuidId() {
 
 export default function Home() {
   const [ready, setReady] = useState(false);
-  const [boardData, setBoardData] = useState(BoardData);
+  const [boardData, setBoardData] = useState([]);
   const [selectedBoard, setSelectedBoard] = useState(0);
   const [createTaskVisible, setCreateTaskVisible] = useState(false);
   // AssignedToDoTaskModal用のstate
@@ -46,34 +46,96 @@ export default function Home() {
   const [DoneTaskVisible, setDoneTaskVisible] = useState(false);
 
   const queryDAO = useDAO(DAO_ID);
+  const queryTasks = useTasks(DAO_ID);
+
+  useEffect(() => {
+    const todoItems = [];
+    const inProgressItems = [];
+    const inReviewItems = [];
+    const doneItems = [];
+
+    (queryTasks?.data?.tasks ?? []).forEach((task) => {
+      const iTaskID = Number.parseInt(task.taskID);
+      const assigner = AccountsMap[task.assigner];
+
+      const item = {
+        id: iTaskID,
+        priority: iTaskID,
+        title: task.name,
+        chat: 1, // TODO: fix
+        attachment: 2, // TODO: fix
+        assignees: assigner
+          ? [
+              {
+                avt: assigner.icon,
+              },
+            ]
+          : [],
+        status: task.status,
+      };
+
+      switch (task.status) {
+        case "todo":
+          todoItems.push(item);
+          break;
+        case "in_progress":
+          inProgressItems.push(item);
+          break;
+        case "in_review":
+          inReviewItems.push(item);
+          break;
+        case "done":
+          doneItems.push(item);
+          break;
+      }
+    });
+
+    setBoardData([
+      {
+        name: "未着手",
+        items: todoItems,
+      },
+      {
+        name: "作業中",
+        items: inProgressItems,
+      },
+      {
+        name: "レビュー中",
+        items: inProgressItems,
+      },
+      {
+        name: "完了",
+        items: doneItems,
+      },
+    ]);
+  }, [queryTasks.data]);
+
+  console.log("queryTasks", queryTasks);
 
   const handleSave = (task) => {
-    // 中身はチェーンにsaveするとかになる？
-
-    // const boardId = e.target.attributes['data-id'].value;
-    const boardId = 0;
-    const item = {
-      id: createGuidId(),
-      title: task.title,
-      description: task.description,
-      priority: 0,
-      chat: 0,
-      attachment: 0,
-      assignees: task.assignees
-        ? task.assignees.map((assignee) => {
-            return {
-              name: assignee.name,
-              avt: "/user_01.png",
-            };
-          })
-        : [],
-      reviewers: task.reviewers ?? [],
-    };
-
-    let newBoardData = boardData;
-    newBoardData[boardId].items.push(item);
-    setBoardData(newBoardData);
-    // e.target.value = '';
+    // // const boardId = e.target.attributes['data-id'].value;
+    // const boardId = 0;
+    // const item = {
+    //   id: createGuidId(),
+    //   title: task.title,
+    //   description: task.description,
+    //   priority: 0,
+    //   chat: 0,
+    //   attachment: 0,
+    //   assignees: task.assignees
+    //     ? task.assignees.map((assignee) => {
+    //         return {
+    //           name: assignee.name,
+    //           avt: "/user_01.png",
+    //         };
+    //       })
+    //     : [],
+    //   reviewers: task.reviewers ?? [],
+    // };
+    // let newBoardData = boardData;
+    // newBoardData[boardId].items.push(item);
+    // setBoardData(newBoardData);
+    // // e.target.value = '';
   };
 
   // ToDo: タスク開始機能の実装
