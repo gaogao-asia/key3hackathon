@@ -221,7 +221,6 @@ export default function Home() {
                               <span className="text-2xl text-gray-600">
                                 {board.name}
                               </span>
-                              <DotsVerticalIcon className="w-5 h-5 text-gray-500" />
                             </h4>
 
                             <div
