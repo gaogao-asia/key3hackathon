@@ -45,6 +45,11 @@ const ViewTask = (props) => {
   const { address } = useAccount();
   const assigner = Form.useWatch("assigner", form);
 
+  const skillTagOptions = Skills.map((skill, index) => ({
+    label: skill.name,
+    value: skill.name + skill.color,
+  }));
+
   return (
     <Form form={form} layout="vertical">
       <Form.Item label="タスク名" name="title">
