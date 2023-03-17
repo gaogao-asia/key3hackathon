@@ -17,6 +17,7 @@ import InProgressTaskModal from "../components/InProgressTaskModal";
 import { useDAO } from "../hooks/dao";
 import { DAO_ID } from "../consts/daos";
 import TaskReviewerModal from "../components/TaskReviewerModal";
+import DoneTaskModal from "../components/DoneTaskModal";
 import { Skills } from "../consts/skills";
 import { Accounts } from "../consts/accounts";
 import { Descriptions, Popover } from "antd";
@@ -41,6 +42,7 @@ export default function Home() {
   // TaskReviewerModal用のstate
   const [TaskReviewerVisible, setTaskReviewerVisible] = useState(false);
   // DoneTaskModal用のstate
+  const [DoneTaskVisible, setDoneTaskVisible] = useState(false);
 
   const queryDAO = useDAO(DAO_ID);
 
@@ -104,7 +106,7 @@ export default function Home() {
   };
 
   const onClickDoneTaskCardItem = () => {
-    // ToDo
+    setDoneTaskVisible(true)
   };
 
   const onCancelCreate = () => {
@@ -124,7 +126,7 @@ export default function Home() {
   };
 
   const onCancelDoneTask = () => {
-    // ToDo 
+    setDoneTaskVisible(false);
   };
 
   // よくわからんデフォルトのコード
@@ -254,6 +256,8 @@ export default function Home() {
                                           ? onClickInProgressTaskCardItem
                                           : board.name === "レビュー中"
                                           ? onClickTaskReviewerCardItem
+                                          : board.name === "完了"
+                                          ? onClickDoneTaskCardItem
                                           : onClickCardItem
                                       }
                                     />
@@ -338,6 +342,22 @@ export default function Home() {
         visible={TaskReviewerVisible}
         onOk={onCancelTaskReviewer} // ToDo: 承認機能, 修正依頼機能
         onCancel={onCancelTaskReviewer}
+      />
+      <DoneTaskModal
+        data={{
+          title: "予定表作成",
+          description: "新規事業の計画をチームメンバーにわかりやすく伝える。",
+          status: "Done",
+          assignees: ["user1"],
+          reviewers: ["user2"],
+          skills: [
+            Skills[1].name + Skills[1].color,
+            Skills[15].name + Skills[15].color,
+          ],
+        }}
+        visible={DoneTaskVisible}
+        onOk={onCancelDoneTask} // ToDo: タスク評価機能 
+        onCancel={onCancelDoneTask}
       />
     </Layout>
   );
