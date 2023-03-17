@@ -16,6 +16,8 @@ import AssignedToDoTaskModal from "../components/AssignedToDoTaskModal";
 import InProgressTaskModal from "../components/InProgressTaskModal";
 import { useDAO } from "../hooks/dao";
 import { DAO_ID } from "../consts/daos";
+import TaskReviewerModal from "../components/TaskReviewerModal";
+import { Skills } from "../consts/skills";
 
 function createGuidId() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -35,6 +37,7 @@ export default function Home() {
   // InProgressTaskModal用のstate
   const [inProgressTaskVisible, setInProgressTaskVisible] = useState(false);
   // TaskReviewerModal用のstate
+  const [TaskReviewerVisible, setTaskReviewerVisible] = useState(false);
 
   const queryDAO = useDAO(DAO_ID);
 
@@ -73,6 +76,9 @@ export default function Home() {
 
   // ToDo: レビュー依頼機能の実装
 
+  // ToDo: タスク承認機能の実装
+  // ToDo: 修正依頼機能の実装
+
   const onClickCardItem = () => {
     console.log("clicked");
   };
@@ -89,6 +95,10 @@ export default function Home() {
     setInProgressTaskVisible(true);
   };
 
+  const onClickTaskReviewerCardItem = () => {
+    setTaskReviewerVisible(true);
+  };
+
   const onCancelCreate = () => {
     setCreateTaskVisible(false);
   };
@@ -99,6 +109,10 @@ export default function Home() {
 
   const onCancelInProgress = () => {
     setInProgressTaskVisible(false);
+  };
+
+  const onCancelTaskReviewer = () => {
+    setTaskReviewerVisible(false);
   };
 
   // よくわからんデフォルトのコード
@@ -223,6 +237,8 @@ export default function Home() {
                                           ? onClickAssignedToDoTaskCardItem
                                           : board.name === "作業中"
                                           ? onClickInProgressTaskCardItem
+                                          : board.name === "レビュー中"
+                                          ? onClickTaskReviewerCardItem
                                           : onClickCardItem
                                       }
                                     />
@@ -291,6 +307,22 @@ export default function Home() {
         visible={inProgressTaskVisible}
         onOk={onCancelInProgress} // ToDo: レビュー依頼機能
         onCancel={onCancelInProgress}
+      />
+      <TaskReviewerModal
+        data={{
+          title: "ダッシュボード作成",
+          description: "データを活用した新規事業の検証、改善に役立てる。",
+          status: "In Review",
+          assignees: ["user1"],
+          reviewers: ["user2"],
+          skills: [
+            Skills[9].name + Skills[9].color,
+            Skills[4].name + Skills[4].color,
+          ],
+        }}
+        visible={TaskReviewerVisible}
+        onOk={onCancelTaskReviewer} // ToDo: 承認機能, 修正依頼機能
+        onCancel={onCancelTaskReviewer}
       />
     </Layout>
   );
