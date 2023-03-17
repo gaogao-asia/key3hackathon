@@ -1,30 +1,21 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { useState } from "react";
-import {
-  Typography,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Tag,
-  Button,
-  Steps,
-  Descriptions,
-} from "antd";
-import {
-  LoadingOutlined,
-  CheckCircleFilled,
-  ExclamationCircleFilled,
-} from "@ant-design/icons";
-import * as antColors from "@ant-design/colors";
+import { Typography, Modal, Form, Input, Select, Tag, Button } from "antd";
 import { Skills } from "../consts/skills";
 import { AccountsMap } from "../consts/accounts";
 import { useDAOContext } from "../contexts/dao_context";
 import { TRUST_X_CONTRACT_SHIBUYA } from "../consts/contracts";
 import { TRUST_X_ABI } from "../consts/abis";
-import { useContractWrite, useSigner } from "wagmi";
+import { useSigner } from "wagmi";
 import { ethers } from "ethers";
 import { uploadToIPFS } from "../clients/ipfs";
+import {
+  UploadingAndSendingTx,
+  WAITING_STEP_UPLOADING,
+  WAITING_STEP_SIGNING,
+  WAITING_STEP_CONFIRMING,
+} from "./UploadingAndSendingTx";
+import { TxResult } from "./TxResult";
 
 const { Text, Link } = Typography;
 
@@ -136,156 +127,6 @@ const InputTask = (props) => {
     </Form>
   );
 };
-
-const WaitingView = (props) => {
-  const { current, cid, txHash } = props;
-
-  const stepItems = useMemo(() => {
-    return [
-      {
-        key: "uploading",
-        title: "コンテンツのアップロード",
-        description: (() => {
-          if (current === 0) {
-            return (
-              <div className="flex flex-col">
-                <span>コンテンツをIPFSにアップロードしています</span>
-                <span>{`　`}</span>
-              </div>
-            );
-          }
-
-          return (
-            <div className="flex flex-col">
-              <span>コンテンツをIPFSにアップロードしました</span>
-              <span>{`URI: ipfs://${cid}`}</span>
-            </div>
-          );
-        })(),
-      },
-      {
-        key: "signing",
-        title: "トランザクションへ署名",
-        description: (() => {
-          if (current < 1) {
-            return (
-              <div className="flex flex-col">
-                <span>トランザクションに署名します</span>
-                <span>{`　`}</span>
-              </div>
-            );
-          }
-
-          if (current == 1) {
-            return (
-              <div className="flex flex-col">
-                <span>ウォレットでトランザクションに署名をしてください</span>
-                <span>{`　`}</span>
-              </div>
-            );
-          }
-
-          return (
-            <div className="flex flex-col">
-              <span>トランザクションに署名しました</span>
-              <span>{`　`}</span>
-            </div>
-          );
-        })(),
-      },
-      {
-        key: "confirming",
-        title: "スマートコントラクト呼び出し",
-        description: (() => {
-          if (current < 2) {
-            return (
-              <div className="flex flex-col">
-                <span>スマートコントラクトにタスクを追加します</span>
-                <span>{`　`}</span>
-              </div>
-            );
-          }
-
-          if (current === 2) {
-            return (
-              <div className="flex flex-col">
-                <span>
-                  スマートコントラクトを呼び出し、タスクを追加中です...
-                </span>
-                <span>{`トランザクション: `}</span>
-                <Link href={`https://blockscout.com/shibuya/tx/${txHash}`}>
-                  {txHash}
-                </Link>
-              </div>
-            );
-          }
-        })(),
-      },
-    ].map((step, index) => ({
-      ...step,
-      icon: index === current ? <LoadingOutlined /> : null,
-    }));
-  }, [current]);
-
-  return (
-    <div style={{ marginTop: "24px" }}>
-      <Steps direction="vertical" current={current ?? 0} items={stepItems} />
-    </div>
-  );
-};
-
-const ResultView = (props) => {
-  const { isSuccess, txHash, blockHeight, txCost } = props;
-
-  if (!isSuccess) {
-    return (
-      <div className="flex flex-col justify-center mt-10">
-        <ExclamationCircleFilled
-          style={{ fontSize: "120px", color: antColors.red[4] }}
-        />
-        <div className="mt-8 flex flex-col justify-center">
-          <Text strong style={{ fontSize: "24px", textAlign: "center" }}>
-            タスクの作成に失敗しました
-          </Text>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col justify-center mt-10">
-      <CheckCircleFilled
-        style={{ fontSize: "120px", color: antColors.green[5] }}
-      />
-      <div className="mt-8 flex flex-col justify-center">
-        <Text strong style={{ fontSize: "24px", textAlign: "center" }}>
-          タスクの作成に成功しました
-        </Text>
-        <div className="flex flex-col justify-center mt-10 mx-12">
-          <Descriptions title="トランザクション情報" column={1}>
-            <Descriptions.Item label="ブロック">
-              <Link
-                href={`https://blockscout.com/shibuya/block/${blockHeight}/transactions`}
-              >{`#${blockHeight}`}</Link>
-            </Descriptions.Item>
-            <Descriptions.Item label="トランザクション">
-              <Link href={`https://blockscout.com/shibuya/tx/${txHash}`}>
-                {txHash}
-              </Link>
-            </Descriptions.Item>
-            <Descriptions.Item label="トランザクションコスト">
-              <Text>{txCost} SBY</Text>
-            </Descriptions.Item>
-          </Descriptions>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const WAITING_STEP_UPLOADING = 0;
-const WAITING_STEP_SIGNING = 1;
-const WAITING_STEP_CONFIRMING = 2;
 
 const VIEW_FORM = 0;
 const VIEW_WAITING = 1;
@@ -405,12 +246,14 @@ const CreateTaskModal = ({ visible, onCreated, onCancel }) => {
 
   const Views = [
     <InputTask form={form} onFinish={onFinish} />,
-    <WaitingView current={waitingStep} cid={cid} txHash={txHash} />,
-    <ResultView
+    <UploadingAndSendingTx current={waitingStep} cid={cid} txHash={txHash} />,
+    <TxResult
       isSuccess={isSuccess}
       txHash={txHash}
       blockHeight={blockHeight}
       txCost={txCost}
+      successMessage={"タスクの作成に成功しました"}
+      errorMessage={"タスクの作成に失敗しました"}
     />,
   ];
 

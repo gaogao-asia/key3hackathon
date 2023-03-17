@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { Modal, Form, Input, Select, Tag, Button } from "antd";
-import { Skills } from "../consts/skills";
+import { Skills, SkillTagOptions } from "../consts/skills";
 import { useTask } from "../hooks/task";
 import { AccountsMap } from "../consts/accounts";
 import { useDAOContext } from "../contexts/dao_context";
@@ -94,11 +94,6 @@ const ViewTask = (props) => {
   );
 };
 
-const skillTagOptions = Skills.map((skill) => ({
-  label: skill.name,
-  value: skill.name + skill.color,
-}));
-
 const VIEW_TASK = 0;
 const VIEW_WAITING = 1;
 const VIEW_RESULT = 2;
@@ -142,7 +137,7 @@ const AssignedToDoTaskModal = ({
         reviewers: taskQuery.data.task.reviewers,
         skills: taskQuery.data.task.skills
           .map((s) => {
-            const skillItem = skillTagOptions.find((x) => x.label === s.name);
+            const skillItem = SkillTagOptions.find((x) => x.label === s.name);
 
             return skillItem?.value ?? null;
           })

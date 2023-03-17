@@ -48,3 +48,8 @@ export const Skills = skills.map((name, index) => ({
   name: name,
   color: colors[index],
 }));
+
+export const SkillTagOptions = Skills.map((skill) => ({
+  label: skill.name,
+  value: skill.name + skill.color,
+}));

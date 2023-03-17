@@ -158,7 +158,8 @@ export default function Home() {
     setAssignedToDoTaskVisible(true);
   };
 
-  const onClickInProgressTaskCardItem = () => {
+  const onClickInProgressTaskCardItem = (item) => {
+    setSelectedTaskPrimaryID(item.primaryID);
     setInProgressTaskVisible(true);
   };
 
@@ -209,6 +210,44 @@ export default function Home() {
             : prevBoredData[1].items,
         },
         ...prevBoredData.slice(2),
+      ];
+    });
+
+    (async () => {
+      // SubQueryの反映に時間がかかるので、ちょい待機
+      await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+
+      queryTasks.refetch();
+    })();
+  };
+
+  const onReviewRequested = (taskPrimaryID) => {
+    setBoardData((prevBoredData) => {
+      const target = prevBoredData[1].items.find(
+        (item) => item.primaryID === taskPrimaryID
+      );
+
+      return [
+        prevBoredData[0],
+        {
+          name: prevBoredData[1].name,
+          items: prevBoredData[1].items.filter(
+            (item) => item.primaryID !== taskPrimaryID
+          ),
+        },
+        {
+          name: prevBoredData[2].name,
+          items: target
+            ? [
+                ...prevBoredData[2].items,
+                {
+                  ...target,
+                  status: "in_review",
+                },
+              ]
+            : prevBoredData[2].items,
+        },
+        prevBoredData[3],
       ];
     });
 
@@ -413,30 +452,15 @@ export default function Home() {
           onCancel={onCancelCreate}
         />
         <AssignedToDoTaskModal
-          data={{
-            title: "ホームページ制作",
-            description: "新規事業を印象付けるためのホームページを制作する。",
-            status: "ToDo",
-            assignees: ["user1"],
-            reviewers: ["user2"],
-            skills: ["マーケティング#ff80ed", "技術#ff0000"],
-          }}
           taskPrimaryID={selectedTaskPrimaryID}
           visible={assignedToDoTaskVisible}
           onTaskStarted={onTaskStarted}
           onCancel={onCancelAssigned}
         />
         <InProgressTaskModal
-          data={{
-            title: "戦略リサーチ",
-            description: "新規事業を成功させるための戦略を調査する。",
-            status: "In Progress",
-            assignees: ["user3"],
-            reviewers: ["user2"],
-            skills: ["プランニング#065535", "問題解決#ffd700"],
-          }}
+          taskPrimaryID={selectedTaskPrimaryID}
           visible={inProgressTaskVisible}
-          onOk={onCancelInProgress} // ToDo: レビュー依頼機能
+          onReviewRequested={onReviewRequested} // ToDo: レビュー依頼機能
           onCancel={onCancelInProgress}
         />
         <TaskReviewerModal
