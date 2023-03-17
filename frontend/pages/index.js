@@ -40,6 +40,7 @@ export default function Home() {
   const [inProgressTaskVisible, setInProgressTaskVisible] = useState(false);
   // TaskReviewerModal用のstate
   const [TaskReviewerVisible, setTaskReviewerVisible] = useState(false);
+  // DoneTaskModal用のstate
 
   const queryDAO = useDAO(DAO_ID);
 
@@ -79,6 +80,9 @@ export default function Home() {
   // ToDo: タスク承認機能の実装
   // ToDo: 修正依頼機能の実装
 
+  // ToDo: タスク評価送信機能の実装 (If possible)
+
+  // 無視してください
   const onClickCardItem = () => {
     console.log("clicked");
   };
@@ -99,6 +103,10 @@ export default function Home() {
     setTaskReviewerVisible(true);
   };
 
+  const onClickDoneTaskCardItem = () => {
+    // ToDo
+  };
+
   const onCancelCreate = () => {
     setCreateTaskVisible(false);
   };
@@ -113,6 +121,10 @@ export default function Home() {
 
   const onCancelTaskReviewer = () => {
     setTaskReviewerVisible(false);
+  };
+
+  const onCancelDoneTask = () => {
+    // ToDo 
   };
 
   // よくわからんデフォルトのコード
