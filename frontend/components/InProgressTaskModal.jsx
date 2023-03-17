@@ -77,50 +77,51 @@ const InProgressTaskModal = ({ data, visible, onOk, onCancel }) => {
                 <Form.Item
                     label="タスク名"
                     name="title"
-                    rules={[{ required: true, message: 'Please enter the title' }]}
                 >
-                    <Input />
+                    <Input readOnly />
                 </Form.Item>
                 <Form.Item
                     label="概要"
                     name="description"
-                    rules={[{ required: true, message: 'Please enter the description' }]}
                 >
-                    <Input.TextArea rows={4} />
+                    <Input.TextArea rows={2} readOnly />
                 </Form.Item>
                 <Form.Item
                     label="担当者"
                     name="assignees"
-                    rules={[{ required: true, message: 'Please select at least one assignee' }]}
                 >
                     <Select
                         mode="multiple"
                         placeholder="担当者を選択"
                         options={users}
+                        open={false}
+                        style={{ pointerEvents: "none" }}
                     />
                 </Form.Item>
                 <Form.Item
                     label="承認担当者"
                     name="reviewers"
-                    rules={[{ required: true, message: 'Please select at least one reviewer' }]}
                 >
                     <Select
                         mode="multiple"
                         placeholder="承認担当者を選択"
                         options={users}
+                        open={false}
+                        style={{ pointerEvents: "none" }}
                     />
                 </Form.Item>
 
                 <Form.Item
                     label="スキル"
                     name="skills"
-                    rules={[{ required: true, message: 'Please select at least one skill' }]}
                 >
                     <Select
                         mode="multiple"
                         placeholder="スキルを選択"
                         options={skillTagOptions}
                         tagRender={tagRender}
+                        open={false}
+                        style={{ pointerEvents: "none" }}
                     />
                 </Form.Item>
                 <div class="flex justify-end items-center">
