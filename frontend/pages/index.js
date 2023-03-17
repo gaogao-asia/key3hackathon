@@ -17,6 +17,7 @@ import InProgressTaskModal from "../components/InProgressTaskModal";
 import { useDAO } from "../hooks/dao";
 import { DAO_ID } from "../consts/daos";
 import TaskReviewerModal from "../components/TaskReviewerModal";
+import DoneTaskModal from "../components/DoneTaskModal";
 import { Skills } from "../consts/skills";
 import { Accounts } from "../consts/accounts";
 import { Descriptions, Popover } from "antd";
@@ -41,6 +42,8 @@ export default function Home() {
   const [inProgressTaskVisible, setInProgressTaskVisible] = useState(false);
   // TaskReviewerModal用のstate
   const [TaskReviewerVisible, setTaskReviewerVisible] = useState(false);
+  // DoneTaskModal用のstate
+  const [DoneTaskVisible, setDoneTaskVisible] = useState(false);
 
   const queryDAO = useDAO(DAO_ID);
 
@@ -70,6 +73,7 @@ export default function Home() {
     let newBoardData = boardData;
     newBoardData[boardId].items.push(item);
     setBoardData(newBoardData);
+    // e.target.value = '';
   };
 
   // ToDo: タスク開始機能の実装
@@ -79,6 +83,9 @@ export default function Home() {
   // ToDo: タスク承認機能の実装
   // ToDo: 修正依頼機能の実装
 
+  // ToDo: タスク評価送信機能の実装 (If possible)
+
+  // 無視してください
   const onClickCardItem = () => {
     console.log("clicked");
   };
@@ -99,6 +106,10 @@ export default function Home() {
     setTaskReviewerVisible(true);
   };
 
+  const onClickDoneTaskCardItem = () => {
+    setDoneTaskVisible(true);
+  };
+
   const onCancelCreate = () => {
     setCreateTaskVisible(false);
   };
@@ -113,6 +124,10 @@ export default function Home() {
 
   const onCancelTaskReviewer = () => {
     setTaskReviewerVisible(false);
+  };
+
+  const onCancelDoneTask = () => {
+    setDoneTaskVisible(false);
   };
 
   // よくわからんデフォルトのコード
@@ -142,18 +157,18 @@ export default function Home() {
 
   return (
     <Layout>
-      <DAOContextProvider value={queryDAO?.data}>
+      <DAOContextProvider value={queryDAO.data}>
         <div className="p-10 flex flex-col h-screen">
           {/* Board header */}
           <div className="flex flex-initial justify-between">
             <div className="flex items-center">
               <h4 className="text-4xl font-bold text-gray-600">
-                {queryDAO?.data?.dao?.name}
+                {queryDAO?.dao?.name}
               </h4>
             </div>
 
             <ul className="flex space-x-3">
-              {(queryDAO?.data?.members ?? []).map((member) => {
+              {(queryDAO?.members ?? []).map((member) => {
                 const profile = Accounts.find((a) => a.address === member);
                 if (!profile) {
                   return null;
@@ -243,6 +258,8 @@ export default function Home() {
                                             ? onClickInProgressTaskCardItem
                                             : board.name === "レビュー中"
                                             ? onClickTaskReviewerCardItem
+                                            : board.name === "完了"
+                                            ? onClickDoneTaskCardItem
                                             : onClickCardItem
                                         }
                                       />
@@ -275,7 +292,15 @@ export default function Home() {
           )}
         </div>
         <CreateTaskModal
+          data={{
+            title: "ホームページ制作",
+            description: "新規事業を印象付けるためのホームページを制作する。",
+            status: "ToDo",
+            assignees: ["トヨタ タロウ"],
+            reviewers: ["トヨタ ハジメ"],
+          }}
           visible={createTaskVisible}
+          onOk={handleSave} // 一旦OKかな？
           onCancel={onCancelCreate}
         />
         <AssignedToDoTaskModal
@@ -319,6 +344,22 @@ export default function Home() {
           visible={TaskReviewerVisible}
           onOk={onCancelTaskReviewer} // ToDo: 承認機能, 修正依頼機能
           onCancel={onCancelTaskReviewer}
+        />
+        <DoneTaskModal
+          data={{
+            title: "予定表作成",
+            description: "新規事業の計画をチームメンバーにわかりやすく伝える。",
+            status: "Done",
+            assignees: ["user1"],
+            reviewers: ["user2"],
+            skills: [
+              Skills[1].name + Skills[1].color,
+              Skills[15].name + Skills[15].color,
+            ],
+          }}
+          visible={DoneTaskVisible}
+          onOk={onCancelDoneTask} // ToDo: タスク評価機能
+          onCancel={onCancelDoneTask}
         />
       </DAOContextProvider>
     </Layout>

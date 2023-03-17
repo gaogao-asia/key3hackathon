@@ -274,7 +274,7 @@ const ResultView = (props) => {
               </Link>
             </Descriptions.Item>
             <Descriptions.Item label="トランザクションコスト">
-              <Text>{txCost} GWei</Text>
+              <Text>{txCost} SBY</Text>
             </Descriptions.Item>
           </Descriptions>
         </div>
@@ -366,9 +366,8 @@ const CreateTaskModal = ({ visible, onOk, onCancel }) => {
         console.log("debug::receipt", receipt);
 
         setTxCost(
-          ethers.utils.formatUnits(
-            receipt.gasUsed.mul(receipt.effectiveGasPrice),
-            "gwei"
+          ethers.utils.formatEther(
+            receipt.gasUsed.mul(receipt.effectiveGasPrice)
           )
         );
         setBlockHeight(receipt.blockNumber);
