@@ -18,6 +18,8 @@ import { useDAO } from "../hooks/dao";
 import { DAO_ID } from "../consts/daos";
 import TaskReviewerModal from "../components/TaskReviewerModal";
 import { Skills } from "../consts/skills";
+import { Accounts } from "../consts/accounts";
+import { Descriptions, Popover } from "antd";
 
 function createGuidId() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -40,8 +42,6 @@ export default function Home() {
   const [TaskReviewerVisible, setTaskReviewerVisible] = useState(false);
 
   const queryDAO = useDAO(DAO_ID);
-
-  console.log("debug::", queryDAO);
 
   const handleSave = (task) => {
     // 中身はチェーンにsaveするとかになる？
@@ -147,38 +147,42 @@ export default function Home() {
         <div className="flex flex-initial justify-between">
           <div className="flex items-center">
             <h4 className="text-4xl font-bold text-gray-600">
-              {queryDAO?.data?.dao?.name}
+              {queryDAO?.dao?.name}
             </h4>
           </div>
 
           <ul className="flex space-x-3">
-            <li>
-              <Image
-                src="/user_01.png"
-                width="36"
-                height="36"
-                objectFit="cover"
-                className=" rounded-full "
-              />
-            </li>
-            <li>
-              <Image
-                src="/user_02.png"
-                width="36"
-                height="36"
-                objectFit="cover"
-                className=" rounded-full "
-              />
-            </li>
-            <li>
-              <Image
-                src="/user_03.png"
-                width="36"
-                height="36"
-                objectFit="cover"
-                className=" rounded-full "
-              />
-            </li>
+            {(queryDAO?.members ?? []).map((member) => {
+              const profile = Accounts.find((a) => a.address === member);
+              if (!profile) {
+                return null;
+              }
+
+              return (
+                <li>
+                  <Popover
+                    trigger="hover"
+                    content={
+                      <div style={{ width: "400px" }}>
+                        <Descriptions title={profile.fullname} column={1}>
+                          <Descriptions.Item label="Address">
+                            {profile.address}
+                          </Descriptions.Item>
+                        </Descriptions>
+                      </div>
+                    }
+                  >
+                    <Image
+                      src={profile.icon}
+                      width="36"
+                      height="36"
+                      objectFit="cover"
+                      className=" rounded-full "
+                    />
+                  </Popover>
+                </li>
+              );
+            })}
             <li>
               <button
                 className="border border-dashed flex items-center w-9 h-9 border-gray-500 justify-center
