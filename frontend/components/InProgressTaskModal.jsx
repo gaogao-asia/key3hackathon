@@ -129,8 +129,6 @@ const InProgressTaskModal = ({
   });
   const taskQuery = useTask(taskPrimaryID);
 
-  console.log("taskPrimaryID", taskPrimaryID);
-
   useEffect(() => {
     if (!taskQuery.data) {
       form.resetFields();
@@ -144,20 +142,6 @@ const InProgressTaskModal = ({
         ""
       );
       const metadata = JSON.parse(await downloadFromIPFS(metadataCID));
-
-      console.log("loaded", {
-        title: taskQuery.data.task.name,
-        description: metadata.description,
-        assigner: taskQuery.data.task.assigner,
-        reviewers: taskQuery.data.task.reviewers,
-        skills: taskQuery.data.task.skills
-          .map((s) => {
-            const skillItem = SkillTagOptions.find((x) => x.label === s.name);
-
-            return skillItem?.value ?? null;
-          })
-          .filter(Boolean),
-      });
 
       form.setFieldsValue({
         title: taskQuery.data.task.name,

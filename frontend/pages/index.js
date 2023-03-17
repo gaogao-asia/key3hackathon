@@ -102,7 +102,6 @@ export default function Home() {
     ]);
   }, [queryTasks.data?.tasks]);
 
-  console.log("queryTasks", queryTasks);
   console.log("boardData", boardData);
 
   const onCreatedTask = (task) => {
@@ -163,7 +162,8 @@ export default function Home() {
     setInProgressTaskVisible(true);
   };
 
-  const onClickTaskReviewerCardItem = () => {
+  const onClickTaskReviewerCardItem = (item) => {
+    setSelectedTaskPrimaryID(item.primaryID);
     setTaskReviewerVisible(true);
   };
 
@@ -248,6 +248,81 @@ export default function Home() {
             : prevBoredData[2].items,
         },
         prevBoredData[3],
+      ];
+    });
+
+    (async () => {
+      // SubQueryの反映に時間がかかるので、ちょい待機
+      await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+
+      queryTasks.refetch();
+    })();
+  };
+
+  const onChangeRequested = (taskPrimaryID) => {
+    setBoardData((prevBoredData) => {
+      const target = prevBoredData[2].items.find(
+        (item) => item.primaryID === taskPrimaryID
+      );
+
+      return [
+        prevBoredData[0],
+        {
+          name: prevBoredData[1].name,
+          items: target
+            ? [
+                ...prevBoredData[1].items,
+                {
+                  ...target,
+                  status: "in_progress",
+                },
+              ]
+            : prevBoredData[1].items,
+        },
+        {
+          name: prevBoredData[2].name,
+          items: prevBoredData[2].items.filter(
+            (item) => item.primaryID !== taskPrimaryID
+          ),
+        },
+        prevBoredData[3],
+      ];
+    });
+
+    (async () => {
+      // SubQueryの反映に時間がかかるので、ちょい待機
+      await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+
+      queryTasks.refetch();
+    })();
+  };
+
+  const onCompleted = (taskPrimaryID) => {
+    setBoardData((prevBoredData) => {
+      const target = prevBoredData[2].items.find(
+        (item) => item.primaryID === taskPrimaryID
+      );
+
+      return [
+        ...prevBoredData.slice(0, 2),
+        {
+          name: prevBoredData[2].name,
+          items: prevBoredData[2].items.filter(
+            (item) => item.primaryID !== taskPrimaryID
+          ),
+        },
+        {
+          name: prevBoredData[3].name,
+          items: target
+            ? [
+                ...prevBoredData[3].items,
+                {
+                  ...target,
+                  status: "done",
+                },
+              ]
+            : prevBoredData[3].items,
+        },
       ];
     });
 
@@ -464,20 +539,12 @@ export default function Home() {
           onCancel={onCancelInProgress}
         />
         <TaskReviewerModal
-          data={{
-            title: "ダッシュボード作成",
-            description: "データを活用した新規事業の検証、改善に役立てる。",
-            status: "In Review",
-            assignees: ["user1"],
-            reviewers: ["user2"],
-            skills: [
-              Skills[9].name + Skills[9].color,
-              Skills[4].name + Skills[4].color,
-            ],
-          }}
+          taskPrimaryID={selectedTaskPrimaryID}
           visible={TaskReviewerVisible}
           onOk={onCancelTaskReviewer} // ToDo: 承認機能, 修正依頼機能
           onCancel={onCancelTaskReviewer}
+          onChangeRequested={onChangeRequested}
+          onCompleted={onCompleted}
         />
         <DoneTaskModal
           data={{
