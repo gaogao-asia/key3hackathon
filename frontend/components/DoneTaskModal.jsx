@@ -3,7 +3,7 @@
 
 import React from "react";
 import { useState, useEffect } from "react";
-import { Modal, Form, Input, Select, Tag, Button } from 'antd';
+import { Modal, Form, Input, Select, Tag, Button, Slider, Col, Row } from 'antd';
 import { Skills } from "../consts/skills";
 // import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 
@@ -77,52 +77,75 @@ const DoneTaskModal = ({ data, visible, onOk, onCancel }) => {
                 <Form.Item
                     label="タスク名"
                     name="title"
-                    rules={[{ required: true, message: 'Please enter the title' }]}
                 >
-                    <Input />
+                    <Input readOnly />
                 </Form.Item>
                 <Form.Item
                     label="概要"
                     name="description"
-                    rules={[{ required: true, message: 'Please enter the description' }]}
                 >
-                    <Input.TextArea rows={4} />
+                    <Input.TextArea rows={2} readOnly />
                 </Form.Item>
                 <Form.Item
                     label="担当者"
                     name="assignees"
-                    rules={[{ required: true, message: 'Please select at least one assignee' }]}
                 >
                     <Select
                         mode="multiple"
                         placeholder="担当者を選択"
                         options={users}
+                        open={false} 
+                        style={{ pointerEvents: "none" }}
                     />
                 </Form.Item>
                 <Form.Item
                     label="承認担当者"
                     name="reviewers"
-                    rules={[{ required: true, message: 'Please select at least one reviewer' }]}
                 >
                     <Select
                         mode="multiple"
                         placeholder="承認担当者を選択"
                         options={users}
+                        open={false} 
+                        style={{ pointerEvents: "none" }}
                     />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                     label="スキル"
                     name="skills"
-                    rules={[{ required: true, message: 'Please select at least one skill' }]}
                 >
                     <Select
                         mode="multiple"
                         placeholder="スキルを選択"
                         options={skillTagOptions}
                         tagRender={tagRender}
+                        disabled
                     />
-                </Form.Item>
+                </Form.Item> */}
+
+                {data.skills.map((skill) => {
+                    return (
+                        <Form.Item
+                            label={skill.slice(0, -7)}
+                            name={'skill_points[' + skill.slice(0, -7) + ']'}
+                        >
+                            <Row>
+                                <Col span={12}>
+                                    <Slider
+                                        min={1}
+                                        max={5}
+                                        onChange={(value) => {
+                                            form.setFieldsValue({ 
+                                                ['skill_points[' + skill.slice(0, -7) + ']']: value
+                                            })
+                                        }}
+                                    />
+                                </Col>
+                            </Row>
+                        </Form.Item>
+                    )
+                })}
 
                 {/* ToDo: UIをカイゼンする */}
                 <Form.Item
