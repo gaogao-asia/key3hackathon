@@ -124,10 +124,22 @@ const TaskReviewerModal = ({ data, visible, onOk, onCancel }) => {
                         tagRender={tagRender}
                     />
                 </Form.Item>
+
+                {/* ToDo: UIをカイゼンする */}
+                <Form.Item
+                    label="修正依頼コメント"
+                    name="review_comment"
+                    rules={[{ required: false, message: 'Please enter your comment' }]}
+                >
+                    <Input.TextArea autoSize={{ minRows: 3, maxRows: 6 }} />
+                </Form.Item>
+
                 <div class="flex justify-end items-center">
+                    {/* ToDo: レビュー依頼のfunctionに繋ぐ */}
                     <Button type="primary" danger htmlType="submit" className="mr-3">
                         レビュー依頼
                     </Button>
+                    {/* ToDo: タスク承認のfunctionに繋ぐ */}
                     <Button type="primary" htmlType="submit">
                         タスク承認
                     </Button>
