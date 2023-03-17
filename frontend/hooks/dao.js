@@ -40,8 +40,12 @@ export const useDAO = (id) => {
     ...result,
     ...(result?.data
       ? {
-          dao: result.data.dao,
-          members: result.data.dao.members.nodes.map((n) => n.account.address),
+          data: {
+            dao: result.data.dao,
+            members: result.data.dao.members.nodes.map(
+              (n) => n.account.address
+            ),
+          },
         }
       : {}),
   };

@@ -54,3 +54,8 @@ export const Accounts = [
   ACCOUNT_TARO,
   ACCOUNT_JIRO,
 ];
+
+export const AccountsMap = {};
+Accounts.forEach((a) => {
+  AccountsMap[a.address] = a;
+});
