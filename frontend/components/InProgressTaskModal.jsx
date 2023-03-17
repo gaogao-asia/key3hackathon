@@ -60,8 +60,6 @@ const InProgressTaskModal = ({ data, visible, onOk, onCancel }) => {
         onCancel();
     };
 
-    form.ti
-
     useEffect(() => {
         form.setFieldsValue(data)
     }, [form, data])
