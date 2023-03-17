@@ -1,11 +1,19 @@
-import React from "react";
-import { SearchIcon, AtSymbolIcon, BellIcon } from "@heroicons/react/outline";
+import React, { useEffect, useState } from "react";
+import { SearchIcon, BellIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useMyProfile } from "../hooks/account_profile";
 
 function TopBar(props) {
   const myProfile = useMyProfile();
+
+  // profile画像はサーバサイドで描画できないため、初期描画でhydrationエラーになってしまう
+  // そのため、初期描画後にprofile画像を描画するようにする
+  const [firstRender, setFirstRender] = useState(true);
+
+  useEffect(() => {
+    setFirstRender(false);
+  }, []);
 
   return (
     <div
@@ -24,7 +32,7 @@ function TopBar(props) {
       <div className="flex space-x-6 items-center">
         {/* <AtSymbolIcon className="w-7 h-7 text-white"/> */}
         <BellIcon className="w-7 h-7 text-white" />
-        {myProfile !== undefined && (
+        {!firstRender && myProfile !== undefined && (
           <div className="flex items-center text-white">
             <h3 className="font-bold mr-3">{`${myProfile.firstname} ${myProfile.lastname}`}</h3>
             <Image

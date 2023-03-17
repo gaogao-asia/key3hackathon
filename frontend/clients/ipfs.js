@@ -11,3 +11,19 @@ export const uploadToIPFS = async (contents) => {
 
   return data.cid;
 };
+
+export const downloadFromIPFS = async (cid) => {
+  const res = await fetch("/api/download", {
+    method: "POST",
+    body: JSON.stringify({
+      cid: cid,
+    }),
+  });
+  const data = await res.json();
+
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  return data.result;
+};

@@ -18,19 +18,14 @@ import { Descriptions, Popover } from "antd";
 import { DAOContextProvider } from "../contexts/dao_context";
 import { useTasks } from "../hooks/tasks";
 
-function createGuidId() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    var r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
 export default function Home() {
   const [ready, setReady] = useState(false);
   const [boardData, setBoardData] = useState([]);
   const [selectedBoard, setSelectedBoard] = useState(0);
   const [createTaskVisible, setCreateTaskVisible] = useState(false);
+
+  // 選択されたタスクのIDが入るイメージ
+  const [selectedTaskPrimaryID, setSelectedTaskPrimaryID] = useState(null);
   // AssignedToDoTaskModal用のstate
   const [assignedToDoTaskVisible, setAssignedToDoTaskVisible] = useState(false);
   // InProgressTaskModal用のstate
@@ -54,6 +49,8 @@ export default function Home() {
       const assigner = AccountsMap[task.assigner];
 
       const item = {
+        // SubQueryのPrimary Key
+        primaryID: task.id,
         id: iTaskID,
         priority: iTaskID,
         title: task.name,
@@ -96,7 +93,7 @@ export default function Home() {
       },
       {
         name: "レビュー中",
-        items: inProgressItems,
+        items: inReviewItems,
       },
       {
         name: "完了",
@@ -106,6 +103,7 @@ export default function Home() {
   }, [queryTasks.data?.tasks]);
 
   console.log("queryTasks", queryTasks);
+  console.log("boardData", boardData);
 
   const onCreatedTask = (task) => {
     const assigner = AccountsMap[task.assigner];
@@ -155,7 +153,8 @@ export default function Home() {
     setCreateTaskVisible(true);
   };
 
-  const onClickAssignedToDoTaskCardItem = () => {
+  const onClickAssignedToDoTaskCardItem = (item) => {
+    setSelectedTaskPrimaryID(item.primaryID);
     setAssignedToDoTaskVisible(true);
   };
 
@@ -182,6 +181,43 @@ export default function Home() {
         queryTasks.refetch();
       })();
     }
+  };
+
+  const onTaskStarted = (taskPrimaryID) => {
+    setBoardData((prevBoredData) => {
+      const target = prevBoredData[0].items.find(
+        (item) => item.primaryID === taskPrimaryID
+      );
+
+      return [
+        {
+          name: prevBoredData[0].name,
+          items: prevBoredData[0].items.filter(
+            (item) => item.primaryID !== taskPrimaryID
+          ),
+        },
+        {
+          name: prevBoredData[1].name,
+          items: target
+            ? [
+                ...prevBoredData[1].items,
+                {
+                  ...target,
+                  status: "in_progress",
+                },
+              ]
+            : prevBoredData[1].items,
+        },
+        ...prevBoredData.slice(2),
+      ];
+    });
+
+    (async () => {
+      // SubQueryの反映に時間がかかるので、ちょい待機
+      await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+
+      queryTasks.refetch();
+    })();
   };
 
   const onCancelAssigned = () => {
@@ -323,14 +359,24 @@ export default function Home() {
                                         className="m-3"
                                         onClick={
                                           board.name === "未着手"
-                                            ? onClickAssignedToDoTaskCardItem
+                                            ? () =>
+                                                onClickAssignedToDoTaskCardItem(
+                                                  item
+                                                )
                                             : board.name === "作業中"
-                                            ? onClickInProgressTaskCardItem
+                                            ? () =>
+                                                onClickInProgressTaskCardItem(
+                                                  item
+                                                )
                                             : board.name === "レビュー中"
-                                            ? onClickTaskReviewerCardItem
+                                            ? () =>
+                                                onClickTaskReviewerCardItem(
+                                                  item
+                                                )
                                             : board.name === "完了"
-                                            ? onClickDoneTaskCardItem
-                                            : onClickCardItem
+                                            ? () =>
+                                                onClickDoneTaskCardItem(item)
+                                            : () => onClickCardItem(item)
                                         }
                                       />
                                     );
@@ -375,8 +421,9 @@ export default function Home() {
             reviewers: ["user2"],
             skills: ["マーケティング#ff80ed", "技術#ff0000"],
           }}
+          taskPrimaryID={selectedTaskPrimaryID}
           visible={assignedToDoTaskVisible}
-          onOk={onCancelAssigned} // ToDo: タスク開始機能
+          onTaskStarted={onTaskStarted}
           onCancel={onCancelAssigned}
         />
         <InProgressTaskModal
