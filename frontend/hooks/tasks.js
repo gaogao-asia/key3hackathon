@@ -27,7 +27,6 @@ export const useTasks = (daoID) => {
 
   const result = useQuery(GET_TASKS, {
     variables: { daoID: daoID },
-    pollInterval: 5000,
   });
 
   return {

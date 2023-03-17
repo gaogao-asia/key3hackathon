@@ -33,7 +33,6 @@ const GET_DAO = gql`
 export const useDAO = (id) => {
   const result = useQuery(GET_DAO, {
     variables: { id: id },
-    pollInterval: 5000,
   });
 
   return {

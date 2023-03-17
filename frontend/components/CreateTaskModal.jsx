@@ -291,12 +291,11 @@ const VIEW_FORM = 0;
 const VIEW_WAITING = 1;
 const VIEW_RESULT = 2;
 
-const CreateTaskModal = ({ visible, onOk, onCancel }) => {
+const CreateTaskModal = ({ visible, onCreated, onCancel }) => {
   const [form] = Form.useForm();
 
   const [view, setView] = useState(VIEW_FORM);
   const [waitingStep, setWaitingStep] = useState(WAITING_STEP_UPLOADING);
-  const [values, setValues] = useState(null);
   const daoData = useDAOContext();
 
   const { data: signer } = useSigner();
@@ -373,6 +372,15 @@ const CreateTaskModal = ({ visible, onOk, onCancel }) => {
         setBlockHeight(receipt.blockNumber);
 
         setIsSuccess(true);
+
+        const event = receipt.events.find((e) => e.event === "TaskCreated");
+        console.log("TaskCreated", event);
+
+        onCreated &&
+          onCreated({
+            ...values,
+            id: event.args.taskID.toNumber(),
+          });
       } catch (error) {
         console.error(error);
         setIsSuccess(false);
@@ -380,19 +388,13 @@ const CreateTaskModal = ({ visible, onOk, onCancel }) => {
         setView(VIEW_RESULT);
       }
     })();
-
-    // onOk(values);
-    // form.resetFields();
-    // onCancel();
-
-    // onOk && onOk();
   };
 
   const handleCancel = () => {
     form.resetFields();
     setView(VIEW_FORM);
     setWaitingStep(WAITING_STEP_UPLOADING);
-    onCancel();
+    onCancel(isSuccess);
 
     setIsSuccess(false);
     setCID(null);

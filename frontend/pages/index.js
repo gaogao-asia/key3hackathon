@@ -1,12 +1,7 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
 import Image from "next/dist/client/image";
-import {
-  ChevronDownIcon,
-  PlusIcon,
-  DotsVerticalIcon,
-  PlusCircleIcon,
-} from "@heroicons/react/outline";
+import { PlusIcon, PlusCircleIcon } from "@heroicons/react/outline";
 import CardItem from "../components/CardItem";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
@@ -108,34 +103,38 @@ export default function Home() {
         items: doneItems,
       },
     ]);
-  }, [queryTasks.data]);
+  }, [queryTasks.data?.tasks]);
 
   console.log("queryTasks", queryTasks);
 
-  const handleSave = (task) => {
-    // // const boardId = e.target.attributes['data-id'].value;
-    // const boardId = 0;
-    // const item = {
-    //   id: createGuidId(),
-    //   title: task.title,
-    //   description: task.description,
-    //   priority: 0,
-    //   chat: 0,
-    //   attachment: 0,
-    //   assignees: task.assignees
-    //     ? task.assignees.map((assignee) => {
-    //         return {
-    //           name: assignee.name,
-    //           avt: "/user_01.png",
-    //         };
-    //       })
-    //     : [],
-    //   reviewers: task.reviewers ?? [],
-    // };
-    // let newBoardData = boardData;
-    // newBoardData[boardId].items.push(item);
-    // setBoardData(newBoardData);
-    // // e.target.value = '';
+  const onCreatedTask = (task) => {
+    const assigner = AccountsMap[task.assigner];
+
+    const item = {
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      priority: task.id,
+      chat: 0,
+      attachment: 0,
+      assignees: assigner
+        ? [
+            {
+              avt: assigner.icon,
+            },
+          ]
+        : [],
+    };
+
+    setBoardData((prevBoardData) => {
+      return [
+        {
+          name: prevBoardData[0].name,
+          items: [...prevBoardData[0].items, item],
+        },
+        ...prevBoardData.slice(1),
+      ];
+    });
   };
 
   // ToDo: タスク開始機能の実装
@@ -172,8 +171,17 @@ export default function Home() {
     setDoneTaskVisible(true);
   };
 
-  const onCancelCreate = () => {
+  const onCancelCreate = (isCreatedTask) => {
     setCreateTaskVisible(false);
+
+    if (isCreatedTask) {
+      (async () => {
+        // SubQueryの反映に時間がかかるので、ちょい待機
+        await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+
+        queryTasks.refetch();
+      })();
+    }
   };
 
   const onCancelAssigned = () => {
@@ -354,15 +362,8 @@ export default function Home() {
           )}
         </div>
         <CreateTaskModal
-          data={{
-            title: "ホームページ制作",
-            description: "新規事業を印象付けるためのホームページを制作する。",
-            status: "ToDo",
-            assignees: ["トヨタ タロウ"],
-            reviewers: ["トヨタ ハジメ"],
-          }}
           visible={createTaskVisible}
-          onOk={handleSave} // 一旦OKかな？
+          onCreated={onCreatedTask}
           onCancel={onCancelCreate}
         />
         <AssignedToDoTaskModal
