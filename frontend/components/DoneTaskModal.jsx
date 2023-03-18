@@ -119,7 +119,7 @@ const DoneTaskModal = ({ data, visible, onOk, onCancel }) => {
 
   return (
     <Modal
-      title="評価対象タスク"
+      title="完了タスク"
       open={visible}
       onOk={handleOk}
       onCancel={handleCancel}
