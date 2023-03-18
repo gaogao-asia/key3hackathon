@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { SearchIcon, BellIcon } from "@heroicons/react/outline";
 import Image from "next/image";
+import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useMyProfile } from "../hooks/account_profile";
 
@@ -34,14 +35,18 @@ function TopBar(props) {
         <BellIcon className="w-7 h-7 text-white" />
         {!firstRender && myProfile !== undefined && (
           <div className="flex items-center text-white">
-            <h3 className="font-bold mr-3">{`${myProfile.firstname} ${myProfile.lastname}`}</h3>
-            <Image
-              src={myProfile.icon}
-              width="36"
-              height="36"
-              objectFit="cover"
-              className=" rounded-full "
-            />
+            <Link href={'/profile'}>
+              <h3 className="font-bold mr-3">{`${myProfile.firstname} ${myProfile.lastname}`}</h3>
+            </Link>
+            <Link href={'/profile'}>
+              <Image
+                src={myProfile.icon}
+                width="36"
+                height="36"
+                objectFit="cover"
+                className=" rounded-full "
+              />
+            </Link>
           </div>
         )}
         <ConnectButton />
