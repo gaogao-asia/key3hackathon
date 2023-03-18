@@ -407,7 +407,7 @@ export default function Home() {
         {contextHolder}
         <div className="p-10 flex flex-col h-screen">
           {/* Board header */}
-          <div className="flex flex-initial justify-between">
+          <div className="flex flex-initial justify-between mb-5">
             <div className="flex items-center">
               <h4 className="text-4xl font-bold text-gray-600">
                 {queryDAO?.data?.dao?.name}

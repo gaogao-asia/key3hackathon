@@ -1,6 +1,6 @@
 // DoneTaskModal (評価、コメント用フォームがある)
 // 完了の一番上とかのタスクをクリックすると開く。
-import React from "react";
+import React, { useState } from "react";
 import { Modal, Form, Divider, Layout, Spin } from "antd";
 import { useDAOContext } from "../contexts/dao_context";
 import { useTask } from "../hooks/task";
@@ -39,8 +39,9 @@ const DoneTaskForm = (props) => {
   );
 };
 
-const DoneTaskModal = ({ taskPrimaryID, data, visible, onOk, onCancel }) => {
+const DoneTaskModal = ({ taskPrimaryID, visible, onOk, onCancel }) => {
   const [form] = Form.useForm();
+  const [skills, setSkills] = useState([]);
   const dao = useDAOContext();
 
   const taskQuery = useTask(taskPrimaryID);
