@@ -35,10 +35,10 @@ function TopBar(props) {
         <BellIcon className="w-7 h-7 text-white" />
         {!firstRender && myProfile !== undefined && (
           <div className="flex items-center text-white">
-            <Link href={'/profile'}>
+            <Link href={`/profiles/${myProfile.address}`}>
               <h3 className="font-bold mr-3">{`${myProfile.firstname} ${myProfile.lastname}`}</h3>
             </Link>
-            <Link href={'/profile'}>
+            <Link href={"/profile"}>
               <Image
                 src={myProfile.icon}
                 width="36"
