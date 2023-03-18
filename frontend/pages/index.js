@@ -12,13 +12,13 @@ import { useDAO } from "../hooks/dao";
 import { DAO_ID } from "../consts/daos";
 import TaskReviewerModal from "../components/TaskReviewerModal";
 import DoneTaskModal from "../components/DoneTaskModal";
-import { Skills } from "../consts/skills";
 import { Accounts, AccountsMap } from "../consts/accounts";
-import { Descriptions, Popover, notification } from "antd";
+import { notification } from "antd";
 import { DAOContextProvider } from "../contexts/dao_context";
 import { useTasks } from "../hooks/tasks";
 import { TASK_STATUSES } from "../consts/enums";
 import { useAccount } from "wagmi";
+import Link from "next/link";
 
 export default function Home() {
   const { address } = useAccount();
@@ -415,7 +415,7 @@ export default function Home() {
             </div>
 
             <ul className="flex space-x-3">
-              {(queryDAO?.members ?? []).map((member) => {
+              {(queryDAO?.data?.members ?? []).map((member) => {
                 const profile = Accounts.find((a) => a.address === member);
                 if (!profile) {
                   return null;
@@ -423,18 +423,7 @@ export default function Home() {
 
                 return (
                   <li>
-                    <Popover
-                      trigger="hover"
-                      content={
-                        <div style={{ width: "400px" }}>
-                          <Descriptions title={profile.fullname} column={1}>
-                            <Descriptions.Item label="Address">
-                              {profile.address}
-                            </Descriptions.Item>
-                          </Descriptions>
-                        </div>
-                      }
-                    >
+                    <Link href={`/profiles/${member}`}>
                       <Image
                         src={profile.icon}
                         width="36"
@@ -442,7 +431,7 @@ export default function Home() {
                         objectFit="cover"
                         className=" rounded-full "
                       />
-                    </Popover>
+                    </Link>
                   </li>
                 );
               })}
