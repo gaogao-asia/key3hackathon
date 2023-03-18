@@ -1,20 +1,75 @@
-import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/dist/client/image";
-import { Card, Avatar, Progress, List } from "antd";
+import {
+  Card,
+  Avatar,
+  Progress,
+  List,
+  Col,
+  Row,
+  Divider,
+  Typography,
+  Descriptions,
+  Skeleton,
+} from "antd";
 import Layout from "../../components/Layout";
 import { Skills } from "../../consts/skills";
 import { useAccountSkills } from "../../hooks/account_skills";
 import { useAccountProfile } from "../../hooks/account_profile";
+import { useTasksByAssigner } from "../../hooks/tasks_by_assigner";
+import { AccountColumn } from "../../components/AccountColumn";
 
+const { Text, Title } = Typography;
 const { Meta } = Card;
+
+const TaskCard = (props) => {
+  const { task } = props;
+  console.log("debug::task", task);
+
+  const reviewers = (task?.reviewers?.nodes ?? []).map(
+    (n) => n.account.address
+  );
+  const approves = (task?.reviewers?.nodes ?? []).map((n) => n.approved);
+
+  return (
+    <Card
+      title={
+        <Title strong level={5} style={{ textAlign: "center", margin: "0px" }}>
+          {task.name}
+        </Title>
+      }
+    >
+      <Descriptions column={1} layout="vertical">
+        <Descriptions.Item label="プロジェクト">
+          {task.dao.name}
+        </Descriptions.Item>
+        <Descriptions.Item label="レビュワー">
+          <div class="grid grid-cols-3 gap-4">
+            {reviewers?.map((r, index) => {
+              return (
+                <AccountColumn
+                  key={r}
+                  address={r}
+                  approved={approves[index] ?? false}
+                />
+              );
+            })}
+          </div>
+        </Descriptions.Item>
+      </Descriptions>
+    </Card>
+  );
+};
 
 export default function Home() {
   const router = useRouter();
   const { address } = router.query;
-  const skillsQuery = useAccountSkills(address);
   const profile = useAccountProfile(address);
+  console.log("debug::profile", profile);
+
+  const tasksQuery = useTasksByAssigner(address);
+  const skillsQuery = useAccountSkills(address);
 
   const skillPoints = useMemo(() => {
     const accountSkills = skillsQuery?.data?.skills ?? [];
@@ -29,7 +84,7 @@ export default function Home() {
     // TODO: これ直して、全社員の最大値から求める？
     const upper = maxScoreSkill.score * 2.0;
 
-    return Skills.map((skillData) => {
+    const skills = Skills.map((skillData) => {
       const skillPoint = accountSkills.find((s) => s.skill === skillData.name);
       const skillScore = skillPoint ? skillPoint.score : 0;
 
@@ -39,6 +94,11 @@ export default function Home() {
         percent: (100 * skillScore) / upper,
       };
     }).sort((a, b) => b.percent - a.percent);
+
+    const havingSkills = skills.filter((s) => s.score > 0);
+    const notHavingSkills = skills.filter((s) => s.score === 0);
+
+    return [...havingSkills, ...notHavingSkills.slice(0, 10)];
   }, [skillsQuery.data]);
 
   // hydration errorになる原因わからず、取り急ぎ
@@ -50,7 +110,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center">
         <Card
           className="flex flex-col items-center justify-center w-5/6 m-8"
           title={
@@ -68,7 +128,7 @@ export default function Home() {
                 )
               }
               title={profile?.fullname ?? ""}
-              description="新規事業部リーダー ソフトウェア開発者"
+              description={profile?.department ?? ""}
             />
           }
           bodyStyle={{ width: "100%", overflowY: "auto" }}
@@ -93,6 +153,33 @@ export default function Home() {
             )}
           </div>
         </Card>
+
+        <Divider style={{ margin: "0px" }}>
+          <Title level={5}>完了したタスク</Title>
+        </Divider>
+
+        <div className="flex flex-col items-center justify-center w-5/6 m-8">
+          <Row gutter={[16, 16]}>
+            {(tasksQuery?.data?.tasks ?? [])
+              .slice()
+              .filter((t) => {
+                console.log("debug::t", t);
+                return t.status === "done";
+              })
+              .sort(
+                (a, b) =>
+                  Number.parseInt(b.createdBlockHeight) -
+                  Number.parseInt(a.createdBlockHeight)
+              )
+              .map((task) => {
+                return (
+                  <Col span={12} key={task.id}>
+                    <TaskCard task={task} />
+                  </Col>
+                );
+              })}
+          </Row>
+        </div>
       </div>
     </Layout>
   );
