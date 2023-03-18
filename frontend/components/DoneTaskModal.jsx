@@ -117,7 +117,7 @@ const DoneTaskForm = (props) => {
           {skills.map((skill, index) => {
             return (
               <Form.Item
-                label={skill}
+                label={skill.slice(0, -7)}
                 name={`skill_points[${index}]`}
                 style={{ display: "inline-block" }}
               >
