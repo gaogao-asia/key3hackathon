@@ -50,10 +50,6 @@ const DoneTaskForm = (props) => {
   const reviewers = Form.useWatch("reviewers", form);
   const comment = Form.useWatch("review_comment", form);
 
-  const isReviewer = useMemo(
-    () => (reviewers ?? []).find((r) => r === address) !== undefined
-  );
-
   const skillTagOptions = Skills.map((skill, index) => ({
     label: skill.name,
     value: skill.name + skill.color,
@@ -72,7 +68,7 @@ const DoneTaskForm = (props) => {
       <Form.Item label="概要" name="description">
         <Input.TextArea rows={2} readOnly />
       </Form.Item>
-      <Form.Item label="担当者" name="assignees">
+      <Form.Item label="担当者" name="assigner">
         <Select
           placeholder="担当者を選択"
           options={memberList}
@@ -104,14 +100,14 @@ const DoneTaskForm = (props) => {
       </Form.Item>
       <Divider />
       <Typography style={{ fontWeight: "bold" }}>タスクの評価</Typography>
-      <Form.Item
+      {/* <Form.Item
         label="コメント"
         name="review_comment"
         rules={[{ required: false, message: "Please enter your comment" }]}
         style={{ marginTop: "8px" }}
       >
         <Input.TextArea autoSize={{ minRows: 3, maxRows: 6 }} />
-      </Form.Item>
+      </Form.Item> */}
       <div>
         <Typography>スキル評価 (5段階)</Typography>
         <div
@@ -135,8 +131,9 @@ const DoneTaskForm = (props) => {
   )
 }
 
-const DoneTaskModal = ({ taskPrimaryID, data, visible, onOk, onCancel }) => {
+const DoneTaskModal = ({ taskPrimaryID, visible, onOk, onCancel }) => {
   const [form] = Form.useForm();
+  const [skills, setSkills] = useState([])
   const dao = useDAOContext();
   const memberList = (dao?.members ?? []).map((m) => {
     return {
@@ -195,6 +192,8 @@ const DoneTaskModal = ({ taskPrimaryID, data, visible, onOk, onCancel }) => {
           .filter(Boolean),
         artifact: "",
       });
+
+      setSkills(form.getFieldValue('skills'))
     })();
   }, [taskQuery.data]);
 
@@ -240,7 +239,7 @@ const DoneTaskModal = ({ taskPrimaryID, data, visible, onOk, onCancel }) => {
       footer={false}
       destroyOnClose
     >
-      <DoneTaskForm form={form} />
+      <DoneTaskForm form={form} memberList={memberList} skills={skills} />
     </Modal>
   );
 };
