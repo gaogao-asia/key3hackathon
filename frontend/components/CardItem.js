@@ -9,9 +9,13 @@ import {
 } from "@heroicons/react/outline";
 import { Draggable } from "react-beautiful-dnd";
 
-function CardItem({ data, index, onClick }) {
+function CardItem({ data, index, onClick, isDragDisabled }) {
   return (
-    <Draggable index={index} draggableId={data.id.toString()}>
+    <Draggable
+      index={index}
+      draggableId={data.id.toString()}
+      isDragDisabled={isDragDisabled}
+    >
       {(provided) => (
         <div
           ref={provided.innerRef}
@@ -52,19 +56,18 @@ function CardItem({ data, index, onClick }) {
             </div>
 
             <ul className="flex space-x-3">
-              {data.assignees.map((ass, index) => {
-                return (
-                  <li key={index}>
-                    <Image
-                      src={ass.avt}
-                      width="36"
-                      height="36"
-                      objectFit="cover"
-                      className=" rounded-full "
-                    />
-                  </li>
-                );
-              })}
+              {data.assigner && (
+                <li>
+                  <Image
+                    src={data.assigner.avt}
+                    width="36"
+                    height="36"
+                    objectFit="cover"
+                    className=" rounded-full "
+                  />
+                </li>
+              )}
+
               {/* <li>
                 <button
                   className="border border-dashed flex items-center w-9 h-9 border-gray-500 justify-center

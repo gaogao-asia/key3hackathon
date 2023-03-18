@@ -14,11 +14,15 @@ import TaskReviewerModal from "../components/TaskReviewerModal";
 import DoneTaskModal from "../components/DoneTaskModal";
 import { Skills } from "../consts/skills";
 import { Accounts, AccountsMap } from "../consts/accounts";
-import { Descriptions, Popover } from "antd";
+import { Descriptions, Popover, notification } from "antd";
 import { DAOContextProvider } from "../contexts/dao_context";
 import { useTasks } from "../hooks/tasks";
+import { TASK_STATUSES } from "../consts/enums";
+import { useAccount } from "wagmi";
 
 export default function Home() {
+  const { address } = useAccount();
+
   const [ready, setReady] = useState(false);
   const [boardData, setBoardData] = useState([]);
   const [selectedBoard, setSelectedBoard] = useState(0);
@@ -38,6 +42,8 @@ export default function Home() {
   const queryDAO = useDAO(DAO_ID);
   const queryTasks = useTasks(DAO_ID);
 
+  console.log("queryTasks", queryTasks);
+
   useEffect(() => {
     const todoItems = [];
     const inProgressItems = [];
@@ -56,13 +62,13 @@ export default function Home() {
         title: task.name,
         chat: 1, // TODO: fix
         attachment: 2, // TODO: fix
-        assignees: assigner
-          ? [
-              {
-                avt: assigner.icon,
-              },
-            ]
-          : [],
+        assigner: assigner
+          ? {
+              avt: assigner.icon,
+              address: task.assigner,
+            }
+          : null,
+        reviewers: task.reviewers.nodes.map((n) => n.account.address),
         status: task.status,
       };
 
@@ -102,8 +108,6 @@ export default function Home() {
     ]);
   }, [queryTasks.data?.tasks]);
 
-  console.log("boardData", boardData);
-
   const onCreatedTask = (task) => {
     const assigner = AccountsMap[task.assigner];
 
@@ -114,13 +118,12 @@ export default function Home() {
       priority: task.id,
       chat: 0,
       attachment: 0,
-      assignees: assigner
-        ? [
-            {
-              avt: assigner.icon,
-            },
-          ]
-        : [],
+      assigner: assigner
+        ? {
+            avt: assigner.icon,
+            address: task.assigner,
+          }
+        : null,
     };
 
     setBoardData((prevBoardData) => {
@@ -132,6 +135,13 @@ export default function Home() {
         ...prevBoardData.slice(1),
       ];
     });
+
+    (async () => {
+      // SubQueryの反映に時間がかかるので、ちょい待機
+      await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+
+      queryTasks.refetch();
+    })();
   };
 
   // ToDo: タスク開始機能の実装
@@ -171,47 +181,56 @@ export default function Home() {
     setDoneTaskVisible(true);
   };
 
-  const onCancelCreate = (isCreatedTask) => {
-    setCreateTaskVisible(false);
-
-    if (isCreatedTask) {
-      (async () => {
-        // SubQueryの反映に時間がかかるので、ちょい待機
-        await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
-
-        queryTasks.refetch();
-      })();
-    }
-  };
-
-  const onTaskStarted = (taskPrimaryID) => {
+  // 現在表示されているタスクを移動させる
+  const moveTask = (taskPrimaryID, from, to) => {
     setBoardData((prevBoredData) => {
-      const target = prevBoredData[0].items.find(
+      const target = prevBoredData[from].items.find(
         (item) => item.primaryID === taskPrimaryID
       );
 
-      return [
-        {
-          name: prevBoredData[0].name,
-          items: prevBoredData[0].items.filter(
-            (item) => item.primaryID !== taskPrimaryID
-          ),
-        },
-        {
-          name: prevBoredData[1].name,
-          items: target
-            ? [
-                ...prevBoredData[1].items,
-                {
-                  ...target,
-                  status: "in_progress",
-                },
-              ]
-            : prevBoredData[1].items,
-        },
-        ...prevBoredData.slice(2),
-      ];
+      return prevBoredData.map((boardData, index) => {
+        if (index !== from && index !== to) {
+          // keep
+          return boardData;
+        }
+
+        if (index === from) {
+          // remove target card
+          return {
+            ...boardData,
+            items: boardData.items.filter(
+              (item) => item.primaryID !== taskPrimaryID
+            ),
+          };
+        }
+
+        // add target card
+        return {
+          ...boardData,
+          items: [
+            ...boardData.items,
+            ...(target
+              ? [
+                  {
+                    ...target,
+                    status: TASK_STATUSES[to],
+                  },
+                ]
+              : []),
+          ],
+        };
+      });
     });
+  };
+
+  // タスク作成モーダルが閉じられた
+  const onCloseCreateModal = () => {
+    setCreateTaskVisible(false);
+  };
+
+  //  タスクが開始された
+  const onTaskStarted = (taskPrimaryID) => {
+    moveTask(taskPrimaryID, 0, 1);
 
     (async () => {
       // SubQueryの反映に時間がかかるので、ちょい待機
@@ -222,34 +241,7 @@ export default function Home() {
   };
 
   const onReviewRequested = (taskPrimaryID) => {
-    setBoardData((prevBoredData) => {
-      const target = prevBoredData[1].items.find(
-        (item) => item.primaryID === taskPrimaryID
-      );
-
-      return [
-        prevBoredData[0],
-        {
-          name: prevBoredData[1].name,
-          items: prevBoredData[1].items.filter(
-            (item) => item.primaryID !== taskPrimaryID
-          ),
-        },
-        {
-          name: prevBoredData[2].name,
-          items: target
-            ? [
-                ...prevBoredData[2].items,
-                {
-                  ...target,
-                  status: "in_review",
-                },
-              ]
-            : prevBoredData[2].items,
-        },
-        prevBoredData[3],
-      ];
-    });
+    moveTask(taskPrimaryID, 1, 2);
 
     (async () => {
       // SubQueryの反映に時間がかかるので、ちょい待機
@@ -260,34 +252,7 @@ export default function Home() {
   };
 
   const onChangeRequested = (taskPrimaryID) => {
-    setBoardData((prevBoredData) => {
-      const target = prevBoredData[2].items.find(
-        (item) => item.primaryID === taskPrimaryID
-      );
-
-      return [
-        prevBoredData[0],
-        {
-          name: prevBoredData[1].name,
-          items: target
-            ? [
-                ...prevBoredData[1].items,
-                {
-                  ...target,
-                  status: "in_progress",
-                },
-              ]
-            : prevBoredData[1].items,
-        },
-        {
-          name: prevBoredData[2].name,
-          items: prevBoredData[2].items.filter(
-            (item) => item.primaryID !== taskPrimaryID
-          ),
-        },
-        prevBoredData[3],
-      ];
-    });
+    moveTask(taskPrimaryID, 2, 1);
 
     (async () => {
       // SubQueryの反映に時間がかかるので、ちょい待機
@@ -297,34 +262,9 @@ export default function Home() {
     })();
   };
 
-  const onCompleted = (taskPrimaryID) => {
-    setBoardData((prevBoredData) => {
-      const target = prevBoredData[2].items.find(
-        (item) => item.primaryID === taskPrimaryID
-      );
-
-      return [
-        ...prevBoredData.slice(0, 2),
-        {
-          name: prevBoredData[2].name,
-          items: prevBoredData[2].items.filter(
-            (item) => item.primaryID !== taskPrimaryID
-          ),
-        },
-        {
-          name: prevBoredData[3].name,
-          items: target
-            ? [
-                ...prevBoredData[3].items,
-                {
-                  ...target,
-                  status: "done",
-                },
-              ]
-            : prevBoredData[3].items,
-        },
-      ];
-    });
+  // タスクが完了した
+  const onTaskCompleted = (taskPrimaryID) => {
+    moveTask(taskPrimaryID, 2, 3);
 
     (async () => {
       // SubQueryの反映に時間がかかるので、ちょい待機
@@ -334,14 +274,17 @@ export default function Home() {
     })();
   };
 
+  // タスク開始モーダルが閉じられた
   const onCancelAssigned = () => {
     setAssignedToDoTaskVisible(false);
   };
 
+  // 作業中タスクモーダルが閉じられた
   const onCancelInProgress = () => {
     setInProgressTaskVisible(false);
   };
 
+  // タスクレビューモーダルが閉じられた
   const onCancelTaskReviewer = () => {
     setTaskReviewerVisible(false);
   };
@@ -357,27 +300,82 @@ export default function Home() {
     }
   }, []);
 
+  const [api, contextHolder] = notification.useNotification();
+
   // Drag & Dropあんま関係なし
   const onDragEnd = (re) => {
     if (!re.destination) return;
-    let newBoardData = boardData;
-    var dragItem =
-      newBoardData[parseInt(re.source.droppableId)].items[re.source.index];
-    newBoardData[parseInt(re.source.droppableId)].items.splice(
-      re.source.index,
-      1
-    );
-    newBoardData[parseInt(re.destination.droppableId)].items.splice(
-      re.destination.index,
-      0,
-      dragItem
-    );
-    setBoardData(newBoardData);
+
+    const fromBoard = Number.parseInt(re.source.droppableId);
+    const toBoard = Number.parseInt(re.destination.droppableId);
+
+    if (fromBoard === toBoard) {
+      // safe check
+      return;
+    }
+
+    const targetTask = (queryTasks?.data?.tasks ?? []).find((t) => {
+      return t.taskID === re.draggableId;
+    });
+
+    if (targetTask === undefined) {
+      return;
+    }
+
+    console.log("onDragEnd", fromBoard, toBoard, targetTask);
+
+    const showError = (message) => {
+      api.error({
+        message: "エラー",
+        description: message,
+        placement: "bottomRight",
+      });
+    };
+
+    const showWarning = (message) => {
+      api.warning({
+        message: "エラー",
+        description: message,
+        placement: "bottomRight",
+      });
+    };
+
+    // 誰がどのボードからカードを動かせるかはCardItemにわたすisDragDisabledで既に制御している
+    switch (fromBoard) {
+      case 0:
+        switch (toBoard) {
+          case 2:
+            showError("レビュー依頼をする前に、タスクを開始する必要があります");
+            return;
+          case 3:
+            showError("タスクを完了するにはレビュワーの承認が必要です");
+            return;
+        }
+      case 1:
+        switch (toBoard) {
+          case 0:
+            showWarning("すでにタスクを開始しています");
+            return;
+          case 3:
+            showError("タスクを完了するにはレビュワーの承認が必要です");
+            return;
+        }
+      case 2:
+        switch (toBoard) {
+          case 0:
+            showWarning("すでにタスクを開始しています");
+            return;
+          case 3:
+            showError("タスクを完了するにはすべてのレビュワーの承認が必要です");
+            return;
+        }
+    }
   };
 
   return (
     <Layout>
       <DAOContextProvider value={queryDAO.data}>
+        {contextHolder}
         <div className="p-10 flex flex-col h-screen">
           {/* Board header */}
           <div className="flex flex-initial justify-between">
@@ -468,6 +466,31 @@ export default function Home() {
                                     return (
                                       <CardItem
                                         key={item.id}
+                                        isDragDisabled={(() => {
+                                          switch (bIndex) {
+                                            case 0:
+                                              return (
+                                                address !==
+                                                item?.assigner?.address
+                                              );
+                                            case 1:
+                                              return (
+                                                address !==
+                                                item?.assigner?.address
+                                              );
+                                            case 2:
+                                              return (
+                                                item.reviewers.indexOf(
+                                                  address
+                                                ) === -1
+                                              );
+                                            case 3:
+                                              // 完了したタスクはドラッグできない
+                                              return true;
+                                          }
+
+                                          return true;
+                                        })()}
                                         data={item}
                                         index={iIndex}
                                         className="m-3"
@@ -524,7 +547,7 @@ export default function Home() {
         <CreateTaskModal
           visible={createTaskVisible}
           onCreated={onCreatedTask}
-          onCancel={onCancelCreate}
+          onClose={onCloseCreateModal}
         />
         <AssignedToDoTaskModal
           taskPrimaryID={selectedTaskPrimaryID}
@@ -541,10 +564,9 @@ export default function Home() {
         <TaskReviewerModal
           taskPrimaryID={selectedTaskPrimaryID}
           visible={TaskReviewerVisible}
-          onOk={onCancelTaskReviewer} // ToDo: 承認機能, 修正依頼機能
-          onCancel={onCancelTaskReviewer}
           onChangeRequested={onChangeRequested}
-          onCompleted={onCompleted}
+          onCompleted={onTaskCompleted}
+          onCancel={onCancelTaskReviewer}
         />
         <DoneTaskModal
           data={{

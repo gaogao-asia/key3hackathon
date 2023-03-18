@@ -15,6 +15,14 @@ const GET_TASKS = gql`
         assigner
         createdBy
         createdTxHash
+
+        reviewers {
+          nodes {
+            account {
+              address
+            }
+          }
+        }
       }
     }
   }

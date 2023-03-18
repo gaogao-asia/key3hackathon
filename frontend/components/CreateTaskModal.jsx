@@ -132,7 +132,7 @@ const VIEW_FORM = 0;
 const VIEW_WAITING = 1;
 const VIEW_RESULT = 2;
 
-const CreateTaskModal = ({ visible, onCreated, onCancel }) => {
+const CreateTaskModal = ({ visible, onCreated, onClose }) => {
   const [form] = Form.useForm();
 
   const [view, setView] = useState(VIEW_FORM);
@@ -235,7 +235,7 @@ const CreateTaskModal = ({ visible, onCreated, onCancel }) => {
     form.resetFields();
     setView(VIEW_FORM);
     setWaitingStep(WAITING_STEP_UPLOADING);
-    onCancel(isSuccess);
+    onClose();
 
     setIsSuccess(false);
     setCID(null);

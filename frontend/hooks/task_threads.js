@@ -41,7 +41,7 @@ export const useTaskThread = (daoID, taskID) => {
     ...result,
     data: result?.data
       ? {
-          threads: result?.data?.threads?.nodes.sort((a, b) => {
+          threads: result?.data?.threads?.nodes.slice().sort((a, b) => {
             return Number.parseInt(a.threadID) - Number.parseInt(b.threadID);
           }),
         }
