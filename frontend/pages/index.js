@@ -217,7 +217,7 @@ export default function Home() {
                   },
                 ]
               : []),
-          ],
+          ].sort((a, b) => a.id - b.id),
         };
       });
     });
@@ -275,18 +275,30 @@ export default function Home() {
   };
 
   // タスク開始モーダルが閉じられた
-  const onCancelAssigned = () => {
+  const onCancelAssigned = (taskPrimaryID, isSuccess) => {
     setAssignedToDoTaskVisible(false);
+
+    if (!isSuccess) {
+      moveTask(taskPrimaryID, 1, 0);
+    }
   };
 
   // 作業中タスクモーダルが閉じられた
-  const onCancelInProgress = () => {
+  const onCancelInProgress = (taskPrimaryID, isSuccess) => {
     setInProgressTaskVisible(false);
+
+    if (!isSuccess) {
+      moveTask(taskPrimaryID, 2, 1);
+    }
   };
 
   // タスクレビューモーダルが閉じられた
-  const onCancelTaskReviewer = () => {
+  const onCancelTaskReviewer = (taskPrimaryID, isSuccess) => {
     setTaskReviewerVisible(false);
+
+    if (!isSuccess) {
+      moveTask(taskPrimaryID, 1, 2);
+    }
   };
 
   const onCancelDoneTask = () => {
@@ -322,8 +334,6 @@ export default function Home() {
       return;
     }
 
-    console.log("onDragEnd", fromBoard, toBoard, targetTask);
-
     const showError = (message) => {
       api.error({
         message: "エラー",
@@ -344,6 +354,12 @@ export default function Home() {
     switch (fromBoard) {
       case 0:
         switch (toBoard) {
+          case 1:
+            setSelectedTaskPrimaryID(targetTask.id);
+            setAssignedToDoTaskVisible(true);
+
+            moveTask(targetTask.id, 0, 1);
+            return;
           case 2:
             showError("レビュー依頼をする前に、タスクを開始する必要があります");
             return;
@@ -356,6 +372,12 @@ export default function Home() {
           case 0:
             showWarning("すでにタスクを開始しています");
             return;
+          case 2:
+            setSelectedTaskPrimaryID(targetTask.primaryID);
+            setInProgressTaskVisible(true);
+
+            moveTask(targetTask.id, 1, 2);
+            return;
           case 3:
             showError("タスクを完了するにはレビュワーの承認が必要です");
             return;
@@ -364,6 +386,12 @@ export default function Home() {
         switch (toBoard) {
           case 0:
             showWarning("すでにタスクを開始しています");
+            return;
+          case 1:
+            setSelectedTaskPrimaryID(targetTask.primaryID);
+            setTaskReviewerVisible(true);
+
+            moveTask(targetTask.id, 2, 1);
             return;
           case 3:
             showError("タスクを完了するにはすべてのレビュワーの承認が必要です");

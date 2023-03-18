@@ -209,7 +209,7 @@ const AssignedToDoTaskModal = ({
     setBlockHeight(null);
     setTxCost(null);
 
-    onCancel();
+    onCancel(taskPrimaryID, isSuccess);
   };
 
   const Views = [

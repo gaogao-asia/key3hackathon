@@ -421,7 +421,7 @@ const TaskReviewerModal = ({
     form.resetFields();
     setView(VIEW_FORM);
     setWaitingStep(WAITING_STEP_UPLOADING);
-    onCancel();
+    onCancel(taskPrimaryID, isSuccess);
 
     setIsSuccess(false);
     setCID(null);
