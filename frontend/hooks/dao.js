@@ -41,9 +41,9 @@ export const useDAO = (id) => {
       ? {
           data: {
             dao: result.data.dao,
-            members: result.data.dao.members.nodes.map(
-              (n) => n.account.address
-            ),
+            members: (result.data?.dao?.members?.nodes ?? [])
+              .slice()
+              .map((n) => n.account.address),
           },
         }
       : {}),

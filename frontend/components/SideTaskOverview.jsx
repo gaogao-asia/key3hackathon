@@ -1,4 +1,5 @@
-import { Descriptions, Tag } from "antd";
+import { Descriptions, Tag, Badge } from "antd";
+
 import { SkillToColor } from "../consts/skills";
 import { AccountColumn } from "./AccountColumn";
 
@@ -41,9 +42,15 @@ export const SideTaskOverview = (props) => {
           contentStyle={{ display: "block" }}
         >
           <div class="grid grid-cols-1 gap-4">
-            {task?.reviewers?.map((r) => (
-              <AccountColumn key={r} address={r} />
-            ))}
+            {task?.reviewers?.map((r, index) => {
+              return (
+                <AccountColumn
+                  key={r}
+                  address={r}
+                  approved={task.approves[index] ?? false}
+                />
+              );
+            })}
           </div>
         </Descriptions.Item>
         <Descriptions.Item label="スキル">

@@ -23,15 +23,13 @@ const GET_TASK_THREADS = gql`
   }
 `;
 
-export const useTaskThread = (daoID, taskID) => {
+export const useTaskThreads = (daoID, taskID) => {
   if (daoID && daoID.indexOf("0x") === 0) {
     daoID = Number.parseInt(daoID, 16).toString();
   }
   if (taskID && taskID.indexOf("0x") === 0) {
     taskID = Number.parseInt(taskID, 16).toString();
   }
-
-  console.log("useTaskThread", daoID, taskID);
 
   const result = useQuery(GET_TASK_THREADS, {
     variables: { daoID, taskID },

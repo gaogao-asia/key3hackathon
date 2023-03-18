@@ -32,6 +32,7 @@ import { ethers } from "ethers";
 import { useIPFSData } from "../hooks/ipfs_file";
 import { SideTaskOverview } from "./SideTaskOverview";
 import { TaskDescription } from "./TaskDescription";
+import { TaskThreads } from "./TaskThread";
 
 const { Text } = Typography;
 const { Sider, Content } = Layout;
@@ -125,6 +126,8 @@ const TaskView = (props) => {
       <Content>
         <div style={{ paddingRight: "24px" }}>
           <TaskDescription text={taskMetadata?.description} />
+          <Divider />
+          <TaskThreads daoID={task?.daoID} taskID={task?.taskID} />
           <Divider />
           <Form form={form} layout="vertical">
             {showsReviewInput && (

@@ -7,6 +7,8 @@ import { useTask } from "../hooks/task";
 import { useIPFSData } from "../hooks/ipfs_file";
 import { TaskDescription } from "./TaskDescription";
 import { SideTaskOverview } from "./SideTaskOverview";
+import { Avatar, List } from "antd";
+import { TaskThreads } from "./TaskThread";
 
 const { Sider, Content } = Layout;
 
@@ -30,6 +32,7 @@ const DoneTaskForm = (props) => {
         <div style={{ paddingRight: "24px" }}>
           <TaskDescription text={taskMetadata?.description} />
           <Divider />
+          <TaskThreads daoID={task?.daoID} taskID={task?.taskID} />
         </div>
       </Content>
       <Sider theme="light">
@@ -41,9 +44,6 @@ const DoneTaskForm = (props) => {
 
 const DoneTaskModal = ({ taskPrimaryID, visible, onOk, onCancel }) => {
   const [form] = Form.useForm();
-  const [skills, setSkills] = useState([]);
-  const dao = useDAOContext();
-
   const taskQuery = useTask(taskPrimaryID);
   const { data: taskMetadata, loading: isMetadataLoading } = useIPFSData(
     taskQuery?.data?.task?.metadataURI ?? ""
@@ -72,6 +72,7 @@ const DoneTaskModal = ({ taskPrimaryID, visible, onOk, onCancel }) => {
       bodyStyle={{ margin: "24px 0px" }}
     >
       <DoneTaskForm
+        taskPrimaryID={taskPrimaryID}
         task={taskQuery?.data?.task}
         taskMetadata={taskMetadata}
         loading={taskQuery.loading || isMetadataLoading}

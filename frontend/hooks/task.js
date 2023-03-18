@@ -17,6 +17,8 @@ const GET_TASK = gql`
 
       reviewers {
         nodes {
+          approved
+
           account {
             address
           }
@@ -50,6 +52,7 @@ export const useTask = (daoPrimaryID) => {
             reviewers: result.data.task.reviewers.nodes.map(
               (n) => n.account.address
             ),
+            approves: result.data.task.reviewers.nodes.map((n) => n.approved),
             skills: result.data.task.skills.nodes
               .map((n) => ({
                 index: Number.parseInt(n.index),
