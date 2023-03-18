@@ -1,1 +1,1 @@
-export const DAO_ID = "0x00";
+export const DAO_ID = process.env.NEXT_PUBLIC_DAO_ID;
