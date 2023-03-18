@@ -422,7 +422,7 @@ export default function Home() {
                 }
 
                 return (
-                  <li>
+                  <li key={member}>
                     <Link href={`/profiles/${member}`}>
                       <Image
                         src={profile.icon}
@@ -576,7 +576,7 @@ export default function Home() {
         <InProgressTaskModal
           taskPrimaryID={selectedTaskPrimaryID}
           visible={inProgressTaskVisible}
-          onReviewRequested={onReviewRequested} // ToDo: レビュー依頼機能
+          onReviewRequested={onReviewRequested}
           onCancel={onCancelInProgress}
         />
         <TaskReviewerModal

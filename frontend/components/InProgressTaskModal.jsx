@@ -1,14 +1,10 @@
 // (レビュー依頼ボタンがある)
 // In Progressのタスクをクリックすると開く。
-
 import React from "react";
-import { useEffect } from "react";
-import { Modal, Form, Input, Select, Tag, Button, Divider } from "antd";
-import { SkillTagOptions } from "../consts/skills";
+import { Modal, Form, Input, Button, Divider, Layout, Spin } from "antd";
 import { useTask } from "../hooks/task";
 import { useDAOContext } from "../contexts/dao_context";
-import { AccountsMap } from "../consts/accounts";
-import { downloadFromIPFS, uploadToIPFS } from "../clients/ipfs";
+import { uploadToIPFS } from "../clients/ipfs";
 import {
   UploadingAndSendingTx,
   WAITING_STEP_CONFIRMING,
@@ -21,90 +17,61 @@ import { TRUST_X_CONTRACT_SHIBUYA } from "../consts/contracts";
 import { TRUST_X_ABI } from "../consts/abis";
 import { useAccount, useSigner } from "wagmi";
 import { useState } from "react";
+import { SideTaskOverview } from "./SideTaskOverview";
+import { TaskDescription } from "./TaskDescription";
+import { useIPFSData } from "../hooks/ipfs_file";
 
-const tagRender = (props) => {
-  const { label, value, closable, onClose } = props;
-  const onPreventMouseDown = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
+const { Sider, Content } = Layout;
 
+const InputArtifact = () => {
   return (
-    <Tag
-      color={value.slice(-7)}
-      onMouseDown={onPreventMouseDown}
-      closable={closable}
-      onClose={onClose}
-      style={{ marginRight: 3 }}
-    >
-      {label}
-    </Tag>
+    <>
+      <Form.Item
+        label="成果物"
+        name="artifact"
+        rules={[{ required: true, message: "Please enter the artifact" }]}
+      >
+        <Input.TextArea rows={6} />
+      </Form.Item>
+      <div class="flex justify-end items-center">
+        <Button type="primary" htmlType="submit">
+          成果物を提出して、レビューを依頼する
+        </Button>
+      </div>
+    </>
   );
 };
 
-const InputForm = (props) => {
-  const { form, memberList, onFinish } = props;
+const TaskView = (props) => {
+  const { form, onFinish, task, taskMetadata, loading, showsArtifactInput } =
+    props;
 
-  const { address } = useAccount();
-  const assigner = Form.useWatch("assigner", form);
+  if (loading) {
+    return (
+      <div
+        className="flex flex-col items-center content-center justify-center"
+        style={{ minHeight: "400px" }}
+      >
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
-    <Form form={form} onFinish={onFinish} layout="vertical">
-      <Form.Item label="タスク名" name="title">
-        <Input readOnly />
-      </Form.Item>
-      <Form.Item label="概要" name="description">
-        <Input.TextArea rows={2} readOnly />
-      </Form.Item>
-      <Form.Item label="担当者" name="assigner">
-        <Select
-          placeholder="担当者を選択"
-          options={memberList}
-          open={false}
-          style={{ pointerEvents: "none" }}
-        />
-      </Form.Item>
-      <Form.Item label="承認担当者" name="reviewers">
-        <Select
-          mode="multiple"
-          placeholder="承認担当者を選択"
-          options={memberList}
-          open={false}
-          style={{ pointerEvents: "none" }}
-        />
-      </Form.Item>
-      <Form.Item label="スキル" name="skills">
-        <Select
-          mode="multiple"
-          placeholder="スキルを選択"
-          options={SkillTagOptions}
-          tagRender={tagRender}
-          open={false}
-          style={{ pointerEvents: "none" }}
-        />
-      </Form.Item>
-      {address === assigner && [
-        <Divider />,
-        <Form.Item
-          label="成果物"
-          name="artifact"
-          rules={[{ required: true, message: "Please enter the artifact" }]}
-        >
-          <Input.TextArea rows={4} />
-        </Form.Item>,
-      ]}
-      <div class="flex justify-end items-center">
-        <Button
-          type="primary"
-          htmlType="submit"
-          disabled={address !== assigner}
-        >
-          {address === assigner
-            ? "レビューを依頼する"
-            : "担当者のみがレビュー依頼できます"}
-        </Button>
-      </div>
-    </Form>
+    <Layout>
+      <Content>
+        <div style={{ paddingRight: "24px" }}>
+          <TaskDescription text={taskMetadata?.description} />
+          <Divider />
+          <Form form={form} onFinish={onFinish} layout="vertical">
+            {showsArtifactInput && <InputArtifact />}
+          </Form>
+        </div>
+      </Content>
+      <Sider theme="light">
+        <SideTaskOverview task={task} />
+      </Sider>
+    </Layout>
   );
 };
 
@@ -120,45 +87,12 @@ const InProgressTaskModal = ({
 }) => {
   const [form] = Form.useForm();
 
-  const dao = useDAOContext();
-  const memberList = (dao?.members ?? []).map((m) => {
-    return {
-      label: AccountsMap[m].fullname,
-      value: m,
-    };
-  });
+  const daoData = useDAOContext();
   const taskQuery = useTask(taskPrimaryID);
-
-  useEffect(() => {
-    if (!taskQuery.data) {
-      form.resetFields();
-
-      return;
-    }
-
-    (async () => {
-      const metadataCID = taskQuery.data.task.metadataURI.replace(
-        "ipfs://",
-        ""
-      );
-      const metadata = JSON.parse(await downloadFromIPFS(metadataCID));
-
-      form.setFieldsValue({
-        title: taskQuery.data.task.name,
-        description: metadata.description,
-        assigner: taskQuery.data.task.assigner,
-        reviewers: taskQuery.data.task.reviewers,
-        skills: taskQuery.data.task.skills
-          .map((s) => {
-            const skillItem = SkillTagOptions.find((x) => x.label === s.name);
-
-            return skillItem?.value ?? null;
-          })
-          .filter(Boolean),
-        artifact: "",
-      });
-    })();
-  }, [taskQuery.data]);
+  const { data: metadata, loading: isMetadataLoading } = useIPFSData(
+    taskQuery?.data?.task?.metadataURI ?? ""
+  );
+  const { address } = useAccount();
 
   // 結果データ
   const [view, setView] = useState(VIEW_FORM);
@@ -170,7 +104,6 @@ const InProgressTaskModal = ({
   const [txCost, setTxCost] = useState(null);
 
   const { data: signer } = useSigner();
-  const daoData = useDAOContext();
 
   const onFinish = (values) => {
     setWaitingStep(WAITING_STEP_UPLOADING);
@@ -247,7 +180,14 @@ const InProgressTaskModal = ({
   };
 
   const Views = [
-    <InputForm form={form} onFinish={onFinish} memberList={memberList} />,
+    <TaskView
+      form={form}
+      onFinish={onFinish}
+      task={taskQuery?.data?.task}
+      taskMetadata={metadata}
+      loading={taskQuery.loading || isMetadataLoading}
+      showsArtifactInput={taskQuery?.data?.task.assigner === address}
+    />,
     <UploadingAndSendingTx
       current={waitingStep}
       cid={cid}
@@ -267,16 +207,15 @@ const InProgressTaskModal = ({
     />,
   ];
 
-  const Titles = ["作業中タスク", "", ""];
-
   return (
     <Modal
-      title={Titles[view]}
+      title={taskQuery?.data?.task?.name}
       open={visible}
       onCancel={handleCancel}
       footer={false}
       destroyOnClose
-      width="800px"
+      width="1000px"
+      bodyStyle={{ margin: "24px 0px" }}
     >
       {Views[view]}
     </Modal>

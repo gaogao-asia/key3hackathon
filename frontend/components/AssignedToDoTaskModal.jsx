@@ -21,26 +21,6 @@ import { TRUST_X_ABI } from "../consts/abis";
 import { TxResult } from "./TxResult";
 import { TaskOverview } from "./TaskOverview";
 
-const tagRender = (props) => {
-  const { label, value, closable, onClose } = props;
-  const onPreventMouseDown = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
-
-  return (
-    <Tag
-      color={value.slice(-7)}
-      onMouseDown={onPreventMouseDown}
-      closable={closable}
-      onClose={onClose}
-      style={{ marginRight: 3 }}
-    >
-      {label}
-    </Tag>
-  );
-};
-
 const ViewTask = (props) => {
   const { taskID, assigner, onSubmit } = props;
   const { address } = useAccount();
@@ -48,16 +28,18 @@ const ViewTask = (props) => {
   return (
     <div>
       <TaskOverview taskID={taskID} />
-      <div class="flex justify-end items-center">
-        <Button
-          type="primary"
-          htmlType="submit"
-          disabled={address !== assigner}
-          onClick={onSubmit}
-        >
-          {address === assigner ? "タスク開始" : "担当者のみが開始できます"}
-        </Button>
-      </div>
+      {assigner === address && (
+        <div class="flex justify-end items-center">
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={address !== assigner}
+            onClick={onSubmit}
+          >
+            タスク開始
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
@@ -162,12 +144,13 @@ const AssignedToDoTaskModal = ({
 
   return (
     <Modal
-      title="未着手タスク"
+      title={taskQuery?.data?.task?.name}
       open={visible}
       onCancel={handleCancel}
       footer={false}
       destroyOnClose
-      width="800px"
+      width="1000px"
+      bodyStyle={{ margin: "24px 0px" }}
     >
       {Views[view]}
     </Modal>

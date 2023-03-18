@@ -16,17 +16,15 @@ export const TaskOverview = (props) => {
   );
   const loading = taskQuery.loading || isMetadataLoading;
 
-  console.log("taskQuery.data", taskQuery.data);
-
   return (
     <div
       className={clsx(
         "flex flex-col items-center",
-        loading && "content-center"
+        loading && "content-center justify-center"
       )}
       style={{ width: "100%", minHeight: "500px" }}
     >
-      {loading && <Spin />}
+      {loading && <Spin size="large" />}
       {!loading && (
         <Descriptions
           layout="vertical"
@@ -36,9 +34,6 @@ export const TaskOverview = (props) => {
             color: "rgba(0, 0, 0, 0.8)",
           }}
         >
-          <Descriptions.Item label="タスク名" span={4}>
-            {taskQuery.data.task.name}
-          </Descriptions.Item>
           <Descriptions.Item label="概要" layout="vertical" span={4}>
             <div>
               {(metadata.description ?? "").split("\n").map((t, index) => (
