@@ -1,9 +1,12 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
-const SUBQUERY_URL =
-  "https://api.subquery.network/sq/Kourin1996/gaogao-key3-hackathon";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+const { subQueryURL } = publicRuntimeConfig;
+
+console.log("init::subQueryURL", subQueryURL);
 
 export const client = new ApolloClient({
-  uri: SUBQUERY_URL,
+  uri: subQueryURL,
   cache: new InMemoryCache(),
 });

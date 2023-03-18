@@ -1,2 +1,7 @@
-export const TRUST_X_CONTRACT_SHIBUYA =
-  "0x45354E227CEc59369a439BeC5134D08Be293d4E0";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+const { trustXContract } = publicRuntimeConfig;
+
+console.log("init::trustXContract", trustXContract);
+
+export const TRUST_X_CONTRACT_SHIBUYA = trustXContract;
