@@ -410,7 +410,7 @@ export default function Home() {
           <div className="flex flex-initial justify-between">
             <div className="flex items-center">
               <h4 className="text-4xl font-bold text-gray-600">
-                {queryDAO?.dao?.name}
+                {queryDAO?.data?.dao?.name}
               </h4>
             </div>
 
