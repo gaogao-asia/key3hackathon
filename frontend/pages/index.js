@@ -598,17 +598,6 @@ export default function Home() {
           onCancel={onCancelTaskReviewer}
         />
         <DoneTaskModal
-          data={{
-            title: "予定表作成",
-            description: "新規事業の計画をチームメンバーにわかりやすく伝える。",
-            status: "Done",
-            assignees: ["user1"],
-            reviewers: ["user2"],
-            skills: [
-              Skills[1].name + Skills[1].color,
-              Skills[15].name + Skills[15].color,
-            ],
-          }}
           taskPrimaryID={selectedTaskPrimaryID}
           visible={DoneTaskVisible}
           onOk={onCancelDoneTask}
