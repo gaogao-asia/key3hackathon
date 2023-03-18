@@ -1,0 +1,597 @@
+{
+    "methods": {
+        "addComment(uint256,uint256,string,bool)": {
+            "stateMutability": "nonpayable",
+            "code": "function addComment(uint256 daoID, uint256 taskID, string messageURI, bool isPrivate) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                },
+                "messageURI": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "bool"
+                }
+            },
+            "outputs": {}
+        },
+        "addMembers(uint256,address[])": {
+            "stateMutability": "nonpayable",
+            "code": "function addMembers(uint256 daoID, address[] newMembers) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "newMembers": {
+                    "type": "address[]"
+                }
+            },
+            "outputs": {}
+        },
+        "approveTask(uint256,uint256,string,bool,uint256[])": {
+            "stateMutability": "nonpayable",
+            "code": "function approveTask(uint256 daoID, uint256 taskID, string messageURI, bool isPrivate, uint256[] scores) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                },
+                "messageURI": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "bool"
+                },
+                "scores": {
+                    "type": "uint256[]"
+                }
+            },
+            "outputs": {}
+        },
+        "assignAssigner(uint256,uint256,address)": {
+            "stateMutability": "nonpayable",
+            "code": "function assignAssigner(uint256 daoID, uint256 taskID, address assigner) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                },
+                "assigner": {
+                    "type": "address"
+                }
+            },
+            "outputs": {}
+        },
+        "assignReviewers(uint256,uint256,address[])": {
+            "stateMutability": "nonpayable",
+            "code": "function assignReviewers(uint256 daoID, uint256 taskID, address[] reviewers) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                },
+                "reviewers": {
+                    "type": "address[]"
+                }
+            },
+            "outputs": {}
+        },
+        "canViewDAO(uint256,address)": {
+            "stateMutability": "view",
+            "code": "function canViewDAO(uint256 daoID, address account) external view returns (bool)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "account": {
+                    "type": "address"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "bool"
+                }
+            }
+        },
+        "canViewTask(uint256,uint256,address)": {
+            "stateMutability": "view",
+            "code": "function canViewTask(uint256 daoID, uint256 taskID, address account) external view returns (bool)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                },
+                "account": {
+                    "type": "address"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "bool"
+                }
+            }
+        },
+        "createDAO(string,string,bool,address[])": {
+            "stateMutability": "nonpayable",
+            "code": "function createDAO(string name, string metadataURI, bool isPrivate, address[] members) external nonpayable returns (uint256)",
+            "inputs": {
+                "name": {
+                    "type": "string"
+                },
+                "metadataURI": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "bool"
+                },
+                "members": {
+                    "type": "address[]"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            }
+        },
+        "createTask(uint256,string,string,bool,uint8,string[],address,address[])": {
+            "stateMutability": "nonpayable",
+            "code": "function createTask(uint256 daoID, string name, string metadataURI, bool isPrivate, enum TrustX.TaskStatus taskStatus, string[] skills, address assigner, address[] reviewers) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "metadataURI": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "bool"
+                },
+                "taskStatus": {
+                    "type": "enum TrustX.TaskStatus"
+                },
+                "skills": {
+                    "type": "string[]"
+                },
+                "assigner": {
+                    "type": "address"
+                },
+                "reviewers": {
+                    "type": "address[]"
+                }
+            },
+            "outputs": {}
+        },
+        "initialize()": {
+            "stateMutability": "nonpayable",
+            "code": "function initialize() external nonpayable",
+            "inputs": {},
+            "outputs": {}
+        },
+        "numberOfDAOs()": {
+            "stateMutability": "view",
+            "code": "function numberOfDAOs() external view returns (uint256)",
+            "inputs": {},
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            }
+        },
+        "numberOfTasks(uint256)": {
+            "stateMutability": "view",
+            "code": "function numberOfTasks(uint256 daoID) external view returns (uint256)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            }
+        },
+        "numberOfThreads(uint256,uint256)": {
+            "stateMutability": "view",
+            "code": "function numberOfThreads(uint256 daoID, uint256 taskID) external view returns (uint256)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            }
+        },
+        "paused()": {
+            "stateMutability": "view",
+            "code": "function paused() external view returns (bool)",
+            "inputs": {},
+            "outputs": {
+                "_0": {
+                    "type": "bool"
+                }
+            },
+            "details": "Returns true if the contract is paused, and false otherwise."
+        },
+        "requestChanges(uint256,uint256,string,bool)": {
+            "stateMutability": "nonpayable",
+            "code": "function requestChanges(uint256 daoID, uint256 taskID, string messageURI, bool isPrivate) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                },
+                "messageURI": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "bool"
+                }
+            },
+            "outputs": {}
+        },
+        "requestTaskReview(uint256,uint256,string,bool)": {
+            "stateMutability": "nonpayable",
+            "code": "function requestTaskReview(uint256 daoID, uint256 taskID, string messageURI, bool isPrivate) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                },
+                "messageURI": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "bool"
+                }
+            },
+            "outputs": {}
+        },
+        "startTask(uint256,uint256)": {
+            "stateMutability": "nonpayable",
+            "code": "function startTask(uint256 daoID, uint256 taskID) external nonpayable",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                }
+            },
+            "outputs": {}
+        },
+        "taskStatus(uint256,uint256)": {
+            "stateMutability": "view",
+            "code": "function taskStatus(uint256 daoID, uint256 taskID) external view returns (enum TrustX.TaskStatus)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256"
+                },
+                "taskID": {
+                    "type": "uint256"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "enum TrustX.TaskStatus"
+                }
+            }
+        }
+    },
+    "events": {
+        "AssignerAssigned": {
+            "code": "event AssignerAssigned(uint256 indexed daoID, uint256 indexed taskID, address assigner)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "taskID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "assigner": {
+                    "type": "address",
+                    "indexed": false
+                }
+            }
+        },
+        "DAOCreated": {
+            "code": "event DAOCreated(uint256 daoID, string name, string metadataURI, bool isPrivate, address createdBy)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": false
+                },
+                "name": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "metadataURI": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "isPrivate": {
+                    "type": "bool",
+                    "indexed": false
+                },
+                "createdBy": {
+                    "type": "address",
+                    "indexed": false
+                }
+            }
+        },
+        "DAOMembersAdded": {
+            "code": "event DAOMembersAdded(uint256 indexed daoID, address[] members)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "members": {
+                    "type": "address[]",
+                    "indexed": false
+                }
+            }
+        },
+        "Initialized": {
+            "code": "event Initialized(uint8 version)",
+            "inputs": {
+                "version": {
+                    "type": "uint8",
+                    "indexed": false
+                }
+            },
+            "details": "Triggered when the contract has been initialized or reinitialized."
+        },
+        "Paused": {
+            "code": "event Paused(address account)",
+            "inputs": {
+                "account": {
+                    "type": "address",
+                    "indexed": false
+                }
+            },
+            "details": "Emitted when the pause is triggered by `account`."
+        },
+        "RequestedChanges": {
+            "code": "event RequestedChanges(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address requestedBy, string messageURI, bool isPrivate)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "taskID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "threadID": {
+                    "type": "uint256",
+                    "indexed": false
+                },
+                "requestedBy": {
+                    "type": "address",
+                    "indexed": false
+                },
+                "messageURI": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "isPrivate": {
+                    "type": "bool",
+                    "indexed": false
+                }
+            }
+        },
+        "ReviewRequested": {
+            "code": "event ReviewRequested(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address requestedBy, string messageURI, bool isPrivate)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "taskID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "threadID": {
+                    "type": "uint256",
+                    "indexed": false
+                },
+                "requestedBy": {
+                    "type": "address",
+                    "indexed": false
+                },
+                "messageURI": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "isPrivate": {
+                    "type": "bool",
+                    "indexed": false
+                }
+            }
+        },
+        "ReviewersAssigned": {
+            "code": "event ReviewersAssigned(uint256 indexed daoID, uint256 indexed taskID, address[] reviewers)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "taskID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "reviewers": {
+                    "type": "address[]",
+                    "indexed": false
+                }
+            }
+        },
+        "TaskApproved": {
+            "code": "event TaskApproved(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address approvedBy, string messageURI, bool isPrivate, uint256[] scores)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "taskID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "threadID": {
+                    "type": "uint256",
+                    "indexed": false
+                },
+                "approvedBy": {
+                    "type": "address",
+                    "indexed": false
+                },
+                "messageURI": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "isPrivate": {
+                    "type": "bool",
+                    "indexed": false
+                },
+                "scores": {
+                    "type": "uint256[]",
+                    "indexed": false
+                }
+            }
+        },
+        "TaskCommented": {
+            "code": "event TaskCommented(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address createdBy, string messageURI, bool isPrivate)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "taskID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "threadID": {
+                    "type": "uint256",
+                    "indexed": false
+                },
+                "createdBy": {
+                    "type": "address",
+                    "indexed": false
+                },
+                "messageURI": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "isPrivate": {
+                    "type": "bool",
+                    "indexed": false
+                }
+            }
+        },
+        "TaskCompleted": {
+            "code": "event TaskCompleted(uint256 indexed daoID, uint256 indexed taskID)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "taskID": {
+                    "type": "uint256",
+                    "indexed": true
+                }
+            }
+        },
+        "TaskCreated": {
+            "code": "event TaskCreated(uint256 indexed daoID, uint256 taskID, enum TrustX.TaskStatus status, string name, string metadataURI, bool isPrivate, string[] skills, address createdBy)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "taskID": {
+                    "type": "uint256",
+                    "indexed": false
+                },
+                "status": {
+                    "type": "enum TrustX.TaskStatus",
+                    "indexed": false
+                },
+                "name": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "metadataURI": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "isPrivate": {
+                    "type": "bool",
+                    "indexed": false
+                },
+                "skills": {
+                    "type": "string[]",
+                    "indexed": false
+                },
+                "createdBy": {
+                    "type": "address",
+                    "indexed": false
+                }
+            }
+        },
+        "TaskStarted": {
+            "code": "event TaskStarted(uint256 indexed daoID, uint256 indexed taskID)",
+            "inputs": {
+                "daoID": {
+                    "type": "uint256",
+                    "indexed": true
+                },
+                "taskID": {
+                    "type": "uint256",
+                    "indexed": true
+                }
+            }
+        },
+        "Unpaused": {
+            "code": "event Unpaused(address account)",
+            "inputs": {
+                "account": {
+                    "type": "address",
+                    "indexed": false
+                }
+            },
+            "details": "Emitted when the pause is lifted by `account`."
+        }
+    },
+    "errors": {},
+    "path": "",
+    "name": "TrustX"
+}
