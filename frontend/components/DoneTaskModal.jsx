@@ -20,7 +20,6 @@ import { Skills } from "../consts/skills";
 import { useDAOContext } from "../contexts/dao_context";
 import { AccountsMap } from "../consts/accounts";
 import { useTask } from "../hooks/task";
-import { useTaskThread } from "../hooks/task_threads";
 import { useAccount } from "wagmi";
 import { downloadFromIPFS } from "../clients/ipfs";
 
@@ -47,8 +46,6 @@ const tagRender = (props) => {
 const DoneTaskForm = (props) => {
   const { form, memberList, skills = [] } = props;
   const { address } = useAccount();
-  const reviewers = Form.useWatch("reviewers", form);
-  const comment = Form.useWatch("review_comment", form);
 
   const skillTagOptions = Skills.map((skill, index) => ({
     label: skill.name,
@@ -100,14 +97,6 @@ const DoneTaskForm = (props) => {
       </Form.Item>
       <Divider />
       <Typography style={{ fontWeight: "bold" }}>タスクの評価</Typography>
-      {/* <Form.Item
-        label="コメント"
-        name="review_comment"
-        rules={[{ required: false, message: "Please enter your comment" }]}
-        style={{ marginTop: "8px" }}
-      >
-        <Input.TextArea autoSize={{ minRows: 3, maxRows: 6 }} />
-      </Form.Item> */}
       <div>
         <Typography>スキル評価 (5段階)</Typography>
         <div
@@ -148,10 +137,6 @@ const DoneTaskModal = ({ taskPrimaryID, visible, onOk, onCancel }) => {
   }));
 
   const taskQuery = useTask(taskPrimaryID);
-  const taskThreadQuery = useTaskThread(
-    dao?.dao?.daoID,
-    taskQuery?.data?.task?.taskID
-  );
 
   const handleOk = () => {
     console.log(form.getFieldsValue);
@@ -196,39 +181,6 @@ const DoneTaskModal = ({ taskPrimaryID, visible, onOk, onCancel }) => {
       setSkills(form.getFieldValue('skills'))
     })();
   }, [taskQuery.data]);
-
-  useEffect(() => {
-    if (!taskThreadQuery?.data) {
-      form.setFieldsValue({
-        artifact: "",
-      });
-
-      return;
-    }
-
-    const latestRequestReview = (taskThreadQuery?.data?.threads ?? []).findLast(
-      (t) => t.threadType === "review_request"
-    );
-
-    console.log(
-      "latestRequestReview",
-      taskThreadQuery?.data,
-      latestRequestReview
-    );
-
-    if (latestRequestReview === undefined) {
-      return;
-    }
-
-    (async () => {
-      const metadataCID = latestRequestReview.messageURI.replace("ipfs://", "");
-      const metadata = JSON.parse(await downloadFromIPFS(metadataCID));
-
-      form.setFieldsValue({
-        artifact: metadata.description,
-      });
-    })();
-  }, [taskThreadQuery?.data]);
 
   return (
     <Modal
