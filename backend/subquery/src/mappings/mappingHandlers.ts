@@ -1,22 +1,27 @@
-import { Account, Dao, DaoAccount, Skill, Task, TaskReviewer, TaskScore, TaskSkill, Thread } from "../types";
 import {
-  FrontierEvmEvent,
-  // FrontierEvmCall,
-} from "@subql/frontier-evm-processor";
+  Account,
+  AccountSkill,
+  Dao,
+  DaoAccount,
+  Notification,
+  NotificationNonce,
+  Skill,
+  Task,
+  TaskReviewer,
+  TaskScore,
+  TaskSkill,
+  Thread,
+} from "../types";
+import { FrontierEvmEvent } from "@subql/frontier-evm-processor";
 import { BigNumber, utils, constants } from "ethers";
 
-const TASK_STATUSES = [
-  "todo",
-  "in_progress",
-  "in_review",
-  "done"
-] as const;
+const TASK_STATUSES = ["todo", "in_progress", "in_review", "done"] as const;
 
 const THREAD_TYPES = [
   "comment",
   "review_request",
   "change_request",
-  "approve"
+  "approve",
 ] as const;
 
 type DAOCreatedEventArgs = [BigNumber, string, string, boolean] & {
@@ -27,7 +32,7 @@ type DAOCreatedEventArgs = [BigNumber, string, string, boolean] & {
   createdBy: string;
 };
 
-export async function handleDAOCreatedEvent(
+export async function handleDAOCreated(
   event: FrontierEvmEvent<DAOCreatedEventArgs>
 ): Promise<void> {
   const dao = Dao.create({
@@ -37,10 +42,6 @@ export async function handleDAOCreatedEvent(
     metadataURI: event.args.metadataURI,
     isPrivate: event.args.isPrivate,
     numTasks: BigInt(0),
-    numTodos: BigInt(0),
-    numInProgresses: BigInt(0),
-    numInReviews: BigInt(0),
-    numDones: BigInt(0),
     createdBy: event.args.createdBy,
     createdTxHash: event.transactionHash,
     createdAt: BigInt(event.blockTimestamp.getTime()),
@@ -58,12 +59,12 @@ type DAOMembersAddedEventArgs = [BigNumber, string[]] & {
 export async function handleDAOMembersAdded(
   event: FrontierEvmEvent<DAOMembersAddedEventArgs>
 ): Promise<void> {
-  for(const member of event.args.members) {
+  for (const member of event.args.members) {
     let account = await Account.get(member);
     if (account == undefined) {
       account = Account.create({
         id: member,
-        address: member
+        address: member,
       });
 
       await account.save();
@@ -76,7 +77,7 @@ export async function handleDAOMembersAdded(
       daoAccount = DaoAccount.create({
         id: daoAccountID,
         daoId: event.args.daoID.toHexString(),
-        accountId: member
+        accountId: member,
       });
 
       await daoAccount.save();
@@ -84,10 +85,19 @@ export async function handleDAOMembersAdded(
   }
 }
 
-type TaskCreatedEventArgs = [BigNumber, BigNumber, BigNumber, string, string, boolean, string[], string] & {
+type TaskCreatedEventArgs = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  string,
+  string,
+  boolean,
+  string[],
+  string
+] & {
   daoID: BigNumber;
   taskID: BigNumber;
-  taskStatus: BigNumber;
+  status: number;
   name: string;
   metadataURI: string;
   isPrivate: boolean;
@@ -98,11 +108,17 @@ type TaskCreatedEventArgs = [BigNumber, BigNumber, BigNumber, string, string, bo
 export async function handleTaskCreated(
   event: FrontierEvmEvent<TaskCreatedEventArgs>
 ): Promise<void> {
+  console.log(
+    "debug event.args.status",
+    event.args.status,
+    typeof event.args.status
+  );
+
   const task = await Task.create({
     id: `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`,
     daoID: event.args.daoID.toBigInt(),
     taskID: event.args.taskID.toBigInt(),
-    status: TASK_STATUSES[event.args.taskStatus.toNumber()],
+    status: TASK_STATUSES[event.args.status],
     name: event.args.name,
     metadataURI: event.args.metadataURI,
     isPrivate: event.args.isPrivate,
@@ -111,25 +127,27 @@ export async function handleTaskCreated(
     createdTxHash: event.transactionHash,
     createdAt: BigInt(event.blockTimestamp.getTime()),
     createdBlockHeight: BigInt(event.blockNumber),
-  })
+  });
 
   await task.save();
 
-  for(let i=0; i<event.args.skills.length; i++) {
+  for (let i = 0; i < event.args.skills.length; i++) {
     const skillName = event.args.skills[i];
 
-    const skillID = utils.keccak256(utils.toUtf8Bytes(skillName))
-    let skill = await Skill.get(skillID)
+    const skillID = utils.keccak256(utils.toUtf8Bytes(skillName));
+    let skill = await Skill.get(skillID);
     if (skill === undefined) {
       skill = await Skill.create({
         id: skillID,
-        name: skillName
-      })
+        name: skillName,
+      });
 
       await skill.save();
     }
 
-    const taskSkillID = `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_0x${i.toString(16)}`
+    const taskSkillID = `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_0x${i.toString(
+      16
+    )}`;
     let taskSkill = await TaskSkill.get(taskSkillID);
     if (taskSkill === undefined) {
       taskSkill = TaskSkill.create({
@@ -140,7 +158,7 @@ export async function handleTaskCreated(
         skillName: skillName,
         taskId: `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`,
         skillId: skill.id,
-      })
+      });
 
       await taskSkill.save();
     }
@@ -148,7 +166,9 @@ export async function handleTaskCreated(
 
   const dao = await Dao.get(event.args.daoID.toHexString());
   if (dao !== undefined) {
-    dao.numTasks = BigNumber.from(dao.numTasks).add(BigNumber.from(1)).toBigInt();
+    dao.numTasks = BigNumber.from(dao.numTasks)
+      .add(BigNumber.from(1))
+      .toBigInt();
   }
 }
 
@@ -161,10 +181,21 @@ type AssignerAssignedEventArgs = [BigNumber, BigNumber, string] & {
 export async function handleAssignerAssigned(
   event: FrontierEvmEvent<AssignerAssignedEventArgs>
 ): Promise<void> {
-  const task = await Task.get(`${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`);
+  const task = await Task.get(
+    `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`
+  );
   task.assigner = event.args.assigner;
 
   await task.save();
+
+  await createNotification(
+    event.args.daoID,
+    event.args.assigner,
+    "タスクがアサインされました",
+    `タスク「${task.name}」の担当者として割り当てられました`,
+    BigInt(event.blockTimestamp.getTime()),
+    BigInt(event.blockNumber)
+  );
 }
 
 type ReviewersAssignedEventArgs = [BigNumber, BigNumber, string[]] & {
@@ -176,7 +207,7 @@ type ReviewersAssignedEventArgs = [BigNumber, BigNumber, string[]] & {
 export async function handleReviewersAssigned(
   event: FrontierEvmEvent<ReviewersAssignedEventArgs>
 ): Promise<void> {
-  for(const reviewer of event.args.reviewers) {
+  for (const reviewer of event.args.reviewers) {
     const taskReviewerID = `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_${reviewer}`;
     let taskReviewer = await TaskReviewer.get(taskReviewerID);
     if (taskReviewer === undefined) {
@@ -184,8 +215,8 @@ export async function handleReviewersAssigned(
         id: taskReviewerID,
         taskId: `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`,
         accountId: reviewer,
-        approved: false
-      })
+        approved: false,
+      });
 
       await taskReviewer.save();
     }
@@ -200,7 +231,9 @@ type TaskStartedEventArgs = [BigNumber, BigNumber] & {
 export async function handleTaskStarted(
   event: FrontierEvmEvent<TaskStartedEventArgs>
 ): Promise<void> {
-  const task = await Task.get(`${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`);
+  const task = await Task.get(
+    `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`
+  );
   if (task !== undefined) {
     task.status = TASK_STATUSES[1];
 
@@ -208,7 +241,14 @@ export async function handleTaskStarted(
   }
 }
 
-type TaskCommentedEventArgs = [BigNumber, BigNumber, BigNumber, string, string, boolean] & {
+type TaskCommentedEventArgs = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  string,
+  string,
+  boolean
+] & {
   daoID: BigNumber;
   taskID: BigNumber;
   threadID: BigNumber;
@@ -220,21 +260,28 @@ type TaskCommentedEventArgs = [BigNumber, BigNumber, BigNumber, string, string, 
 export async function handleTaskCommented(
   event: FrontierEvmEvent<TaskCommentedEventArgs>
 ): Promise<void> {
-  return createThread(
+  await createThread(
     event.args.daoID,
     event.args.taskID,
     event.args.threadID,
-    event.args.messageURI,
     THREAD_TYPES[0],
+    event.args.messageURI,
     event.args.isPrivate,
     event.args.createdBy,
     event.transactionHash,
     BigInt(event.blockTimestamp.getTime()),
-    BigInt(event.blockNumber),
+    BigInt(event.blockNumber)
   );
 }
 
-type ReviewRequestedEventArgs = [BigNumber, BigNumber, BigNumber, string, string, boolean] & {
+type ReviewRequestedEventArgs = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  string,
+  string,
+  boolean
+] & {
   daoID: BigNumber;
   taskID: BigNumber;
   threadID: BigNumber;
@@ -246,27 +293,58 @@ type ReviewRequestedEventArgs = [BigNumber, BigNumber, BigNumber, string, string
 export async function handleReviewRequested(
   event: FrontierEvmEvent<ReviewRequestedEventArgs>
 ): Promise<void> {
-  const task = await Task.get(`${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`)
+  const task = await Task.get(
+    `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`
+  );
   if (task !== undefined) {
     task.status = TASK_STATUSES[2];
     await task.save();
   }
 
-  return createThread(
+  await createThread(
     event.args.daoID,
     event.args.taskID,
     event.args.threadID,
-    event.args.messageURI,
     THREAD_TYPES[1],
+    event.args.messageURI,
     event.args.isPrivate,
     event.args.requestedBy,
     event.transactionHash,
     BigInt(event.blockTimestamp.getTime()),
-    BigInt(event.blockNumber),
+    BigInt(event.blockNumber)
+  );
+
+  const reviewers = await TaskReviewer.getByTaskId(
+    `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`
+  );
+
+  await Promise.all(
+    reviewers.map(async (reviewer) => {
+      const account = await Account.get(reviewer.accountId);
+      if (!account) {
+        return null;
+      }
+
+      await createNotification(
+        event.args.daoID,
+        account.address,
+        "タスクのレビューがリクエストされました",
+        `タスク「${task.name}」のレビューを依頼されました`,
+        BigInt(event.blockTimestamp.getTime()),
+        BigInt(event.blockNumber)
+      );
+    })
   );
 }
 
-type RequestedChangesEventArgs = [BigNumber, BigNumber, BigNumber, string, string, boolean] & {
+type RequestedChangesEventArgs = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  string,
+  string,
+  boolean
+] & {
   daoID: BigNumber;
   taskID: BigNumber;
   threadID: BigNumber;
@@ -278,13 +356,17 @@ type RequestedChangesEventArgs = [BigNumber, BigNumber, BigNumber, string, strin
 export async function handleRequestedChanges(
   event: FrontierEvmEvent<RequestedChangesEventArgs>
 ): Promise<void> {
-  const task = await Task.get(`${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`)
+  const task = await Task.get(
+    `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`
+  );
   if (task !== undefined) {
     task.status = TASK_STATUSES[1];
     await task.save();
   }
 
-  const taskReviewerID = `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_${event.args.requestedBy}`;
+  const taskReviewerID = `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_${
+    event.args.requestedBy
+  }`;
   const taskReviewer = await TaskReviewer.get(taskReviewerID);
   if (taskReviewer !== undefined) {
     taskReviewer.approved = false;
@@ -292,21 +374,38 @@ export async function handleRequestedChanges(
     await taskReviewer.save();
   }
 
-  return createThread(
+  await createThread(
     event.args.daoID,
     event.args.taskID,
     event.args.threadID,
-    event.args.messageURI,
     THREAD_TYPES[2],
+    event.args.messageURI,
     event.args.isPrivate,
     event.args.requestedBy,
     event.transactionHash,
     BigInt(event.blockTimestamp.getTime()),
-    BigInt(event.blockNumber),
+    BigInt(event.blockNumber)
+  );
+
+  await createNotification(
+    event.args.daoID,
+    task.assigner,
+    "タスクの修正依頼がリクエストされました",
+    `タスク「${task.name}」の修正の依頼をされました`,
+    BigInt(event.blockTimestamp.getTime()),
+    BigInt(event.blockNumber)
   );
 }
 
-type TaskApprovedEventArgs = [BigNumber, BigNumber, BigNumber, string, string, boolean, BigNumber[]] & {
+type TaskApprovedEventArgs = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  string,
+  string,
+  boolean,
+  BigNumber[]
+] & {
   daoID: BigNumber;
   taskID: BigNumber;
   threadID: BigNumber;
@@ -319,7 +418,9 @@ type TaskApprovedEventArgs = [BigNumber, BigNumber, BigNumber, string, string, b
 export async function handleTaskApproved(
   event: FrontierEvmEvent<TaskApprovedEventArgs>
 ): Promise<void> {
-  const taskReviewerID = `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_${event.args.approvedBy}`;
+  const taskReviewerID = `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_${
+    event.args.approvedBy
+  }`;
   const taskReviewer = await TaskReviewer.get(taskReviewerID);
   if (taskReviewer !== undefined) {
     taskReviewer.approved = true;
@@ -327,34 +428,75 @@ export async function handleTaskApproved(
     await taskReviewer.save();
   }
 
-  for(let i = 0; i < event.args.scores.length; i++) {
+  for (let i = 0; i < event.args.scores.length; i++) {
     const score = event.args.scores[i];
 
-    const taskSkillID = `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_0x${i.toString(16)}`;
+    const taskSkillID = `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_0x${i.toString(
+      16
+    )}`;
     const taskSkill = await TaskSkill.get(taskSkillID);
-    if(taskSkill !== undefined) {
+    if (taskSkill !== undefined) {
       const taskScore = TaskScore.create({
-        id: `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_${event.args.approvedBy}_0x${i.toString(16)}`,
+        id: `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}_${
+          event.args.approvedBy
+        }_0x${i.toString(16)}`,
         score: score.toBigInt(),
         taskId: `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`,
         taskSkillId: taskSkillID,
-      })
+      });
 
       await taskScore.save();
     }
   }
 
-  return createThread(
+  const task = await Task.get(
+    `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`
+  );
+  if (task) {
+    let taskSkills = await TaskSkill.getByTaskId(
+      `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`
+    );
+    taskSkills = (taskSkills ?? [])
+      .slice()
+      .sort(
+        (a, b) =>
+          BigNumber.from(a.index).toNumber() -
+          BigNumber.from(b.index).toNumber()
+      );
+
+    await Promise.all(
+      taskSkills.map(async (taskSkill) => {
+        const accountSkillID = `${task.assigner}_${taskSkill.skillId}`;
+        let accountSkill = await AccountSkill.get(accountSkillID);
+        if (!accountSkill) {
+          accountSkill = AccountSkill.create({
+            id: accountSkillID,
+            address: task.assigner,
+            skillID: taskSkill.skillId,
+            skillId: taskSkill.skillId,
+            score: BigNumber.from(0).toBigInt(),
+          });
+        }
+
+        accountSkill.score = BigNumber.from(accountSkill.score)
+          .add(event.args.scores[BigNumber.from(taskSkill.index).toNumber()])
+          .toBigInt();
+        await accountSkill.save();
+      })
+    );
+  }
+
+  await createThread(
     event.args.daoID,
     event.args.taskID,
     event.args.threadID,
-    event.args.messageURI,
     THREAD_TYPES[3],
+    event.args.messageURI,
     event.args.isPrivate,
     event.args.approvedBy,
     event.transactionHash,
     BigInt(event.blockTimestamp.getTime()),
-    BigInt(event.blockNumber),
+    BigInt(event.blockNumber)
   );
 }
 
@@ -366,11 +508,22 @@ type TaskCompletedEventArgs = [BigNumber, BigNumber] & {
 export async function handleTaskCompleted(
   event: FrontierEvmEvent<TaskCompletedEventArgs>
 ): Promise<void> {
-  const task = await Task.get(`${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`)
+  const task = await Task.get(
+    `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`
+  );
   if (task !== undefined) {
     task.status = TASK_STATUSES[3];
     await task.save();
   }
+
+  await createNotification(
+    event.args.daoID,
+    task.assigner,
+    "タスクが完了しました",
+    `タスク「${task.name}」は全てのレビュワーの承認を得たため、完了しました`,
+    BigInt(event.blockTimestamp.getTime()),
+    BigInt(event.blockNumber)
+  );
 }
 
 async function createThread(
@@ -383,7 +536,7 @@ async function createThread(
   createdBy: string,
   createdTxHash: string,
   createdAt: bigint,
-  createdBlockHeight: bigint,
+  createdBlockHeight: bigint
 ) {
   const thread = Thread.create({
     id: `${daoID.toHexString()}_${taskID.toHexString()}_${threadID.toHexString()}`,
@@ -398,25 +551,46 @@ async function createThread(
     createdAt: createdAt,
     createdBlockHeight: createdBlockHeight,
     taskId: `${daoID.toHexString()}_${taskID.toHexString()}`,
-  })
+  });
 
   await thread.save();
 }
 
-// type ApproveCallArgs = [string, BigNumber] & {
-//   _spender: string;
-//   _value: BigNumber;
-// };
-// export async function handleEvmCall(
-//   event: FrontierEvmCall<ApproveCallArgs>
-// ): Promise<void> {
-//   const approval = Approval.create({
-//     id: event.hash,
-//     owner: event.from,
-//     value: event.args._value.toBigInt(),
-//     spender: event.args._spender,
-//     contractAddress: event.to,
-//   });
+async function createNotification(
+  daoID: BigNumber,
+  to: string,
+  title: string,
+  message: string,
+  createdAt: bigint,
+  createdBlockHeight: bigint
+) {
+  let notificationNonce = await NotificationNonce.get(
+    `${daoID.toHexString()}_${to}`
+  );
+  if (!notificationNonce) {
+    notificationNonce = NotificationNonce.create({
+      id: `${daoID.toHexString()}_${to}`,
+      nonce: BigInt(0),
+    });
+  }
 
-//   await approval.save();
-// }
+  const notification = Notification.create({
+    id: `${daoID.toHexString()}_${to}_${BigNumber.from(
+      notificationNonce.nonce
+    )}`,
+    daoID: daoID.toBigInt(),
+    to: to,
+    nonce: notificationNonce.nonce,
+    title: title,
+    message: message,
+    createdAt: createdAt,
+    createdBlockHeight: createdBlockHeight,
+  });
+
+  await notification.save();
+
+  notificationNonce.nonce = BigNumber.from(notificationNonce.nonce)
+    .add(BigNumber.from(1))
+    .toBigInt();
+  await notificationNonce.save();
+}

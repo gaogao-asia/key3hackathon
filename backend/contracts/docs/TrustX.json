@@ -123,9 +123,32 @@
                 }
             }
         },
-        "creataTask(uint256,string,string,bool,uint8,string[],address,address[])": {
+        "createDAO(string,string,bool,address[])": {
             "stateMutability": "nonpayable",
-            "code": "function creataTask(uint256 daoID, string name, string metadataURI, bool isPrivate, enum TrustX.TaskStatus taskStatus, string[] skills, address assigner, address[] reviewers) external nonpayable",
+            "code": "function createDAO(string name, string metadataURI, bool isPrivate, address[] members) external nonpayable returns (uint256)",
+            "inputs": {
+                "name": {
+                    "type": "string"
+                },
+                "metadataURI": {
+                    "type": "string"
+                },
+                "isPrivate": {
+                    "type": "bool"
+                },
+                "members": {
+                    "type": "address[]"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            }
+        },
+        "createTask(uint256,string,string,bool,uint8,string[],address,address[])": {
+            "stateMutability": "nonpayable",
+            "code": "function createTask(uint256 daoID, string name, string metadataURI, bool isPrivate, enum TrustX.TaskStatus taskStatus, string[] skills, address assigner, address[] reviewers) external nonpayable",
             "inputs": {
                 "daoID": {
                     "type": "uint256"
@@ -153,29 +176,6 @@
                 }
             },
             "outputs": {}
-        },
-        "createDAO(string,string,bool,address[])": {
-            "stateMutability": "nonpayable",
-            "code": "function createDAO(string name, string metadataURI, bool isPrivate, address[] members) external nonpayable returns (uint256)",
-            "inputs": {
-                "name": {
-                    "type": "string"
-                },
-                "metadataURI": {
-                    "type": "string"
-                },
-                "isPrivate": {
-                    "type": "bool"
-                },
-                "members": {
-                    "type": "address[]"
-                }
-            },
-            "outputs": {
-                "_0": {
-                    "type": "uint256"
-                }
-            }
         },
         "initialize()": {
             "stateMutability": "nonpayable",

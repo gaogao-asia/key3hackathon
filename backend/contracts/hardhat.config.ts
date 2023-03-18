@@ -46,11 +46,10 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      accounts:
-        PRIVATE_KEYS.map((pk) => ({
-          privateKey: pk,
-          balance: ethers.utils.parseEther('1000000').toString(),
-        }))
+      accounts: PRIVATE_KEYS.map((pk) => ({
+        privateKey: pk,
+        balance: ethers.utils.parseEther("1000000").toString(),
+      })),
     },
     shibuya: {
       accounts: PRIVATE_KEYS,

@@ -7,10 +7,6 @@ type Dao @entity {
   createdBy: String!
 
   numTasks: BigInt!
-  numTodos: BigInt!
-  numInProgresses: BigInt!
-  numInReviews: BigInt!
-  numDones: BigInt!
 
   createdTxHash: String!
   createdAt: BigInt!
@@ -76,6 +72,15 @@ type TaskSkill @entity {
   scores: [TaskScore]! @derivedFrom(field: "task")
 }
 
+type AccountSkill @entity {
+  id: ID! # (Address)_(Skill ID)
+  address: String!
+  skillID: String!
+  score: BigInt!
+
+  skill: Skill!
+}
+
 type Thread @entity {
   id: ID! # (DAO ID)_(Task ID)_(Thread ID)
   daoID: BigInt!
@@ -99,4 +104,20 @@ type TaskScore @entity {
 
   task: Task!
   taskSkill: TaskSkill!
+}
+
+type Notification @entity {
+  id: ID! # (DAO_ID)_(User Nonce)
+  daoID: BigInt!
+  nonce: BigInt!
+  to: String!
+  title: String!
+  message: String!
+  createdAt: BigInt!
+  createdBlockHeight: BigInt!
+}
+
+type NotificationNonce @entity {
+  id: ID! # User Address
+  nonce: BigInt!
 }

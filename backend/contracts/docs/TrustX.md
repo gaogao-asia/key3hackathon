@@ -149,29 +149,6 @@ function canViewTask(uint256 daoID, uint256 taskID, address account) external vi
 |---|---|---|
 | _0 | bool | undefined |
 
-### creataTask
-
-```solidity
-function creataTask(uint256 daoID, string name, string metadataURI, bool isPrivate, enum TrustX.TaskStatus taskStatus, string[] skills, address assigner, address[] reviewers) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| daoID | uint256 | undefined |
-| name | string | undefined |
-| metadataURI | string | undefined |
-| isPrivate | bool | undefined |
-| taskStatus | enum TrustX.TaskStatus | undefined |
-| skills | string[] | undefined |
-| assigner | address | undefined |
-| reviewers | address[] | undefined |
-
 ### createDAO
 
 ```solidity
@@ -196,6 +173,29 @@ function createDAO(string name, string metadataURI, bool isPrivate, address[] me
 | Name | Type | Description |
 |---|---|---|
 | _0 | uint256 | undefined |
+
+### createTask
+
+```solidity
+function createTask(uint256 daoID, string name, string metadataURI, bool isPrivate, enum TrustX.TaskStatus taskStatus, string[] skills, address assigner, address[] reviewers) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| daoID | uint256 | undefined |
+| name | string | undefined |
+| metadataURI | string | undefined |
+| isPrivate | bool | undefined |
+| taskStatus | enum TrustX.TaskStatus | undefined |
+| skills | string[] | undefined |
+| assigner | address | undefined |
+| reviewers | address[] | undefined |
 
 ### initialize
 

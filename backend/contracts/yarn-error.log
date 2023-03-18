@@ -1,0 +1,59 @@
+Arguments: 
+  /home/kourin/.nvm/versions/node/v16.16.0/bin/node /home/kourin/.nvm/versions/node/v16.16.0/bin/yarn add ipfg-http-client
+
+PATH: 
+  /home/kourin/.nvm/versions/node/v16.16.0/bin:/home/kourin/.gvm/pkgsets/go1.19/global/bin:/home/kourin/.gvm/gos/go1.19/bin:/home/kourin/.gvm/pkgsets/go1.19/global/overlay/bin:/home/kourin/.gvm/bin:/home/kourin/.gvm/bin:/usr/local/bin:/usr/local/sbin:/home/kourin/.vscode-server/bin/ee2b180d582a7f601fa6ecfdad8d9fd269ab1884/bin/remote-cli:/home/kourin/.nvm/versions/node/v16.16.0/bin:/home/kourin/.gvm/pkgsets/go1.19/global/bin:/home/kourin/.gvm/gos/go1.19/bin:/home/kourin/.gvm/pkgsets/go1.19/global/overlay/bin:/home/kourin/.gvm/bin:/home/kourin/.cargo/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/Common Files/Oracle/Java/javapath:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Program Files (x86)/IDEMIA/AWP/Dlls:/mnt/c/Program Files/IDEMIA/AWP/Dlls:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/Program Files/PuTTY/:/mnt/c/Program Files/Git/cmd:/mnt/c/Users/kouri/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/kouri/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/kouri/AppData/Local/Programs/Hyper/resources/bin:/mnt/c/Program Files/JetBrains/GoLand 2022.1.4/bin:/mnt/c/src/flutter/bin:/mnt/c/Program Files/JetBrains/IntelliJ IDEA 2022.3.1/bin:/mnt/c/Users/kouri/AppData/Local/GitHubDesktop/bin:/home/kourin/go/bin:/mnt/c/ProgramData/DockerDesktop/version-bin:/home/kourin/Go/bin:/home/kourin/.foundry/bin:/home/kourin/.pulumi/bin:/home/kourin/.pub-cache/bin:/home/kourin/.gvm/gos/go1.19/bin:/home/kourin/go/bin:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/ProgramData/DockerDesktop/version-bin:/home/kourin/Go/bin:/home/kourin/.foundry/bin:/home/kourin/.foundry/bin:/home/kourin/.pulumi/bin:/home/kourin/.pub-cache/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.16.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/ipfg-http-client: Not found
+      at Request.params.callback [as _callback] (/home/kourin/.nvm/versions/node/v16.16.0/lib/node_modules/yarn/lib/cli.js:66145:18)
+      at Request.self.callback (/home/kourin/.nvm/versions/node/v16.16.0/lib/node_modules/yarn/lib/cli.js:140890:22)
+      at Request.emit (node:events:527:28)
+      at Request.<anonymous> (/home/kourin/.nvm/versions/node/v16.16.0/lib/node_modules/yarn/lib/cli.js:141862:10)
+      at Request.emit (node:events:527:28)
+      at IncomingMessage.<anonymous> (/home/kourin/.nvm/versions/node/v16.16.0/lib/node_modules/yarn/lib/cli.js:141784:12)
+      at Object.onceWrapper (node:events:641:28)
+      at IncomingMessage.emit (node:events:539:35)
+      at endReadableNT (node:internal/streams/readable:1345:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+
+npm manifest: 
+  {
+    "name": "hardhat-project",
+    "scripts": {
+      "compile": "npx hardhat compile",
+      "compile:watch": "npx hardhat watch compilation"
+    },
+    "devDependencies": {
+      "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+      "@nomiclabs/hardhat-ethers": "^2.2.2",
+      "@nomiclabs/hardhat-solhint": "^3.0.0",
+      "@openzeppelin/hardhat-upgrades": "^1.22.1",
+      "@primitivefi/hardhat-dodoc": "^0.2.3",
+      "dotenv": "^16.0.3",
+      "ethers": "^5.7.2",
+      "hardhat": "^2.13.0",
+      "hardhat-gas-reporter": "^1.0.9",
+      "hardhat-watcher": "^2.5.0"
+    },
+    "dependencies": {
+      "@openzeppelin/contracts": "^4.8.2",
+      "@openzeppelin/contracts-upgradeable": "^4.8.2",
+      "ipfs-http-client": "^60.0.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

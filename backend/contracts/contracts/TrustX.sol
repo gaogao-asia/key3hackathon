@@ -237,7 +237,7 @@ contract TrustX is Initializable, PausableUpgradeable {
         return _addMembers(daoID, newMembers);
     }
 
-    function creataTask(
+    function createTask(
         uint256 daoID,
         string memory name,
         string memory metadataURI,
@@ -247,7 +247,7 @@ contract TrustX is Initializable, PausableUpgradeable {
         address assigner,
         address[] memory reviewers
     ) external whenNotPaused daoExists(daoID) isDAOMember(daoID, msg.sender) {
-        _creataTask(
+        _createTask(
             daoID,
             name,
             metadataURI,
@@ -421,7 +421,7 @@ contract TrustX is Initializable, PausableUpgradeable {
         emit DAOMembersAdded(daoID, members);
     }
 
-    function _creataTask(
+    function _createTask(
         uint256 daoID,
         string memory name,
         string memory metadataURI,
@@ -538,7 +538,14 @@ contract TrustX is Initializable, PausableUpgradeable {
             isPrivate
         );
 
-        emit TaskCommented(daoID, taskID, threadID, msg.sender, messageURI, isPrivate);
+        emit TaskCommented(
+            daoID,
+            taskID,
+            threadID,
+            msg.sender,
+            messageURI,
+            isPrivate
+        );
     }
 
     function _requestTaskReview(
@@ -566,7 +573,14 @@ contract TrustX is Initializable, PausableUpgradeable {
             isPrivate
         );
 
-        emit ReviewRequested(daoID, taskID, threadID, msg.sender, messageURI, isPrivate);
+        emit ReviewRequested(
+            daoID,
+            taskID,
+            threadID,
+            msg.sender,
+            messageURI,
+            isPrivate
+        );
     }
 
     function _requestChanges(
