@@ -177,7 +177,8 @@ export default function Home() {
     setTaskReviewerVisible(true);
   };
 
-  const onClickDoneTaskCardItem = () => {
+  const onClickDoneTaskCardItem = (item) => {
+    setSelectedTaskPrimaryID(item.primaryID);
     setDoneTaskVisible(true);
   };
 
@@ -301,6 +302,7 @@ export default function Home() {
     }
   };
 
+  // 完了タスクのモーダルが閉じられた
   const onCancelDoneTask = () => {
     setDoneTaskVisible(false);
   };
@@ -314,7 +316,6 @@ export default function Home() {
 
   const [api, contextHolder] = notification.useNotification();
 
-  // Drag & Dropあんま関係なし
   const onDragEnd = (re) => {
     if (!re.destination) return;
 
@@ -608,8 +609,9 @@ export default function Home() {
               Skills[15].name + Skills[15].color,
             ],
           }}
+          taskPrimaryID={selectedTaskPrimaryID}
           visible={DoneTaskVisible}
-          onOk={onCancelDoneTask} // ToDo: タスク評価機能
+          onOk={onCancelDoneTask}
           onCancel={onCancelDoneTask}
         />
       </DAOContextProvider>
