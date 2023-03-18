@@ -37,9 +37,8 @@ const tagRender = (props) => {
   );
 };
 
-const DoneTaskModal = ({ data, visible, onOk, onCancel }) => {
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+const DoneTaskForm = (props) => {
+  const { form } = props;
 
   const users = [
     { label: "トヨタ タロウ", value: "user1" },
@@ -52,17 +51,61 @@ const DoneTaskModal = ({ data, visible, onOk, onCancel }) => {
     value: skill.name + skill.color,
   }));
 
+  const onFinish = () => {
+    // Do nothing
+    console.log('完了')
+  }
+
+  return (
+    <Form form={form} onFinish={onFinish} layout="vertical">
+      <Form.Item label="タスク名" name="title">
+        <Input readOnly />
+      </Form.Item>
+      <Form.Item label="概要" name="description">
+        <Input.TextArea rows={2} readOnly />
+      </Form.Item>
+      <Form.Item label="担当者" name="assignees">
+        <Select
+          mode="multiple"
+          placeholder="担当者を選択"
+          options={users}
+          open={false}
+          style={{ pointerEvents: "none" }}
+        />
+      </Form.Item>
+      <Form.Item label="承認担当者" name="reviewers">
+        <Select
+          mode="multiple"
+          placeholder="承認担当者を選択"
+          options={users}
+          open={false}
+          style={{ pointerEvents: "none" }}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="スキル"
+        name="skills"
+      >
+        <Select
+          mode="multiple"
+          placeholder="スキルを選択"
+          options={skillTagOptions}
+          tagRender={tagRender}
+          disabled
+        />
+      </Form.Item>
+    </Form>
+  )
+}
+
+const DoneTaskModal = ({ data, visible, onOk, onCancel }) => {
+  const [form] = Form.useForm();
+
   const handleOk = () => {
     console.log(form.getFieldsValue);
     onOk(form.getFieldsValue);
     form.resetFields();
-  };
-
-  const onFinish = (values) => {
-    console.log(values);
-    onOk(values);
-    form.resetFields();
-    onCancel();
   };
 
   const handleCancel = () => {
@@ -83,84 +126,7 @@ const DoneTaskModal = ({ data, visible, onOk, onCancel }) => {
       footer={false}
       destroyOnClose
     >
-      <Form form={form} onFinish={onFinish} layout="vertical">
-        <Form.Item label="タスク名" name="title">
-          <Input readOnly />
-        </Form.Item>
-        <Form.Item label="概要" name="description">
-          <Input.TextArea rows={2} readOnly />
-        </Form.Item>
-        <Form.Item label="担当者" name="assignees">
-          <Select
-            mode="multiple"
-            placeholder="担当者を選択"
-            options={users}
-            open={false}
-            style={{ pointerEvents: "none" }}
-          />
-        </Form.Item>
-        <Form.Item label="承認担当者" name="reviewers">
-          <Select
-            mode="multiple"
-            placeholder="承認担当者を選択"
-            options={users}
-            open={false}
-            style={{ pointerEvents: "none" }}
-          />
-        </Form.Item>
-
-        {/* <Form.Item
-                    label="スキル"
-                    name="skills"
-                >
-                    <Select
-                        mode="multiple"
-                        placeholder="スキルを選択"
-                        options={skillTagOptions}
-                        tagRender={tagRender}
-                        disabled
-                    />
-                </Form.Item> */}
-
-        {data.skills.map((skill) => {
-          return (
-            <Form.Item
-              label={skill.slice(0, -7)}
-              name={"skill_points[" + skill.slice(0, -7) + "]"}
-            >
-              <Row>
-                <Col span={12}>
-                  <Slider
-                    min={1}
-                    max={5}
-                    onChange={(value) => {
-                      form.setFieldsValue({
-                        ["skill_points[" + skill.slice(0, -7) + "]"]: value,
-                      });
-                    }}
-                  />
-                </Col>
-              </Row>
-            </Form.Item>
-          );
-        })}
-
-        {/* ToDo: UIをカイゼンする */}
-        <Form.Item
-          label="評価コメント"
-          name="review_comment"
-          rules={[{ required: false, message: "Please enter your comment" }]}
-        >
-          <Input.TextArea autoSize={{ minRows: 3, maxRows: 6 }} />
-        </Form.Item>
-
-        <div class="flex justify-end items-center">
-          {/* ToDo: タスク評価のfunctionに繋ぐ */}
-          <Button type="primary" htmlType="submit">
-            評価送信
-          </Button>
-        </div>
-      </Form>
+      <DoneTaskForm form={form} />
     </Modal>
   );
 };
