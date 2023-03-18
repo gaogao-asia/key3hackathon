@@ -19,6 +19,7 @@ import { ethers } from "ethers";
 import { TRUST_X_CONTRACT_SHIBUYA } from "../consts/contracts";
 import { TRUST_X_ABI } from "../consts/abis";
 import { TxResult } from "./TxResult";
+import { TaskOverview } from "./TaskOverview";
 
 const tagRender = (props) => {
   const { label, value, closable, onClose } = props;
@@ -41,50 +42,12 @@ const tagRender = (props) => {
 };
 
 const ViewTask = (props) => {
-  const { form, memberList, onSubmit } = props;
+  const { taskID, assigner, onSubmit } = props;
   const { address } = useAccount();
-  const assigner = Form.useWatch("assigner", form);
-
-  const skillTagOptions = Skills.map((skill, index) => ({
-    label: skill.name,
-    value: skill.name + skill.color,
-  }));
 
   return (
-    <Form form={form} layout="vertical">
-      <Form.Item label="タスク名" name="title">
-        <Input readOnly />
-      </Form.Item>
-      <Form.Item label="概要" name="description">
-        <Input.TextArea rows={4} readOnly />
-      </Form.Item>
-      <Form.Item label="担当者" name="assigner">
-        <Select
-          open={false}
-          style={{ pointerEvents: "none" }}
-          placeholder="担当者を選択"
-          options={memberList}
-        />
-      </Form.Item>
-      <Form.Item label="承認担当者" name="reviewers">
-        <Select
-          open={false}
-          style={{ pointerEvents: "none" }}
-          mode="multiple"
-          placeholder="承認担当者を選択"
-          options={memberList}
-        />
-      </Form.Item>
-      <Form.Item label="スキル" name="skills">
-        <Select
-          open={false}
-          style={{ pointerEvents: "none" }}
-          mode="multiple"
-          placeholder="スキルを選択"
-          options={skillTagOptions}
-          tagRender={tagRender}
-        />
-      </Form.Item>
+    <div>
+      <TaskOverview taskID={taskID} />
       <div class="flex justify-end items-center">
         <Button
           type="primary"
@@ -95,7 +58,7 @@ const ViewTask = (props) => {
           {address === assigner ? "タスク開始" : "担当者のみが開始できます"}
         </Button>
       </div>
-    </Form>
+    </div>
   );
 };
 
@@ -109,47 +72,7 @@ const AssignedToDoTaskModal = ({
   onTaskStarted,
   onCancel,
 }) => {
-  const [form] = Form.useForm();
-
-  const dao = useDAOContext();
-  const memberList = (dao?.members ?? []).map((m) => {
-    return {
-      label: AccountsMap[m].fullname,
-      value: m,
-    };
-  });
-
   const taskQuery = useTask(taskPrimaryID);
-
-  useEffect(() => {
-    if (!taskQuery.data) {
-      form.resetFields();
-
-      return;
-    }
-
-    (async () => {
-      const metadataCID = taskQuery.data.task.metadataURI.replace(
-        "ipfs://",
-        ""
-      );
-      const metadata = JSON.parse(await downloadFromIPFS(metadataCID));
-
-      form.setFieldsValue({
-        title: taskQuery.data.task.name,
-        description: metadata.description,
-        assigner: taskQuery.data.task.assigner,
-        reviewers: taskQuery.data.task.reviewers,
-        skills: taskQuery.data.task.skills
-          .map((s) => {
-            const skillItem = SkillTagOptions.find((x) => x.label === s.name);
-
-            return skillItem?.value ?? null;
-          })
-          .filter(Boolean),
-      });
-    })();
-  }, [taskQuery.data]);
 
   const { data: signer } = useSigner();
   const [view, setView] = useState(VIEW_TASK);
@@ -200,8 +123,6 @@ const AssignedToDoTaskModal = ({
   };
 
   const handleCancel = () => {
-    form.resetFields();
-
     setView(VIEW_TASK);
     setSendingTxStep(WAITING_STEP_SIGNING);
     setIsSuccess(false);
@@ -214,11 +135,13 @@ const AssignedToDoTaskModal = ({
 
   const Views = [
     <ViewTask
-      form={form}
-      memberList={memberList}
+      key={0}
+      assigner={taskQuery.data?.task?.assigner ?? null}
+      taskID={taskPrimaryID}
       onSubmit={handleStartPressed}
     />,
     <SendingTxView
+      key={1}
       current={sendingTxStep}
       txHash={txHash}
       descriptionForFutureTx={"タスクのステータスを更新します"}
@@ -227,6 +150,7 @@ const AssignedToDoTaskModal = ({
       }
     />,
     <TxResult
+      key={2}
       isSuccess={isSuccess}
       txHash={txHash}
       blockHeight={blockHeight}

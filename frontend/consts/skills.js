@@ -44,6 +44,11 @@ const colors = [
   "#b0e0e6",
 ];
 
+export const SkillToColor = {};
+skills.forEach((skill, index) => {
+  SkillToColor[skill] = colors[index];
+});
+
 export const Skills = skills.map((name, index) => ({
   name: name,
   color: colors[index],
