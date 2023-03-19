@@ -1,0 +1,38 @@
+{
+  "name": "trustx-subquery",
+  "version": "1.0.0",
+  "description": "Indexed API for TrustX, a Task Management Tool for DAO developed by GAOGAO",
+  "main": "dist/index.js",
+  "scripts": {
+    "codegen": "npm run copy-abi && subql codegen",
+    "build": "subql build",
+    "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
+    "dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
+    "prepack": "rm -rf dist && npm run build",
+    "test": "jest",
+    "copy-abi": "cat ../contracts/artifacts/contracts/TrustX.sol/TrustX.json | jq \".abi\" >| ./abis/TrustX.json"
+  },
+  "repository": "github:gaogao-asia/key3hackathon",
+  "files": [
+    "dist",
+    "schema.graphql",
+    "project.yaml"
+  ],
+  "author": "GAOGAO",
+  "resolutions": {
+    "ipfs-unixfs": "6.0.6"
+  },
+  "devDependencies": {
+    "@polkadot/api": "^9",
+    "@subql/cli": "latest",
+    "@subql/frontier-evm-processor": "latest",
+    "@subql/types": "^1.1.0",
+    "typescript": "^4.6.2"
+  },
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
+  },
+  "dependencies": {
+    "abab": "^2.0.6"
+  }
+}

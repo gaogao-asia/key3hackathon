@@ -1,0 +1,96 @@
+specVersion: 1.0.0
+name: trustx
+version: 1.0.0
+runner:
+  node:
+    name: "@subql/node"
+    version: "*"
+  query:
+    name: "@subql/query"
+    version: "*"
+description: Indexed API for TrustX, a Task Management Tool for DAO developed by GAOGAO
+repository: "https://github.com/gaogao-asia/key3hackathon"
+schema:
+  file: ./schema.graphql
+network:
+  # The genesis hash of the network (hash of block 0)
+  chainId: "0xddb89973361a170839f80f152d2e9e38a376a5a7eccefcade763f46a8e567019"
+  # This endpoint must be a public non-pruned archive node
+  # Public nodes may be rate limited, which can affect indexing speed
+  # When developing your project we suggest getting a private API key
+  # You can get them from OnFinality for free https://app.onfinality.io
+  # https://documentation.onfinality.io/support/the-enhanced-api-service
+  endpoint: "wss://rpc.shibuya.astar.network"
+  # Optionally provide the HTTP endpoint of a full chain dictionary to speed up processing
+  dictionary: "https://api.subquery.network/sq/subquery/shibuya-dictionary"
+  chaintypes:
+    file: ./dist/chaintypes.js
+dataSources:
+  - kind: substrate/FrontierEvm
+    startBlock: 3409500
+    processor:
+      file: ./node_modules/@subql/frontier-evm-processor/dist/bundle.js
+      options:
+        abi: TrustX
+        address: "0x45354E227CEc59369a439BeC5134D08Be293d4E0"
+    assets:
+      TrustX:
+        file: ./abis/TrustX.json
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleDAOCreated
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "DAOCreated(uint256 daoID, string name, string metadataURI, bool isPrivate, address createdBy)"
+        - handler: handleDAOMembersAdded
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "DAOMembersAdded(uint256 indexed daoID, address[] members)"
+        - handler: handleTaskCreated
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskCreated(uint256 indexed daoID, uint256 taskID, uint8 status, string name, string metadataURI, bool isPrivate, string[] skills, address createdBy)"
+        - handler: handleAssignerAssigned
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "AssignerAssigned(uint256 indexed daoID, uint256 indexed taskID, address assigner)"
+        - handler: handleReviewersAssigned
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "ReviewersAssigned(uint256 indexed daoID, uint256 indexed taskID, address[] reviewers)"
+        - handler: handleTaskStarted
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskStarted(uint256 indexed daoID, uint256 indexed taskID)"
+        - handler: handleTaskCommented
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskCommented(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address createdBy, string messageURI, bool isPrivate)"
+        - handler: handleReviewRequested
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "ReviewRequested(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address requestedBy, string messageURI, bool isPrivate)"
+        - handler: handleRequestedChanges
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "RequestedChanges(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address requestedBy, string messageURI, bool isPrivate)"
+        - handler: handleTaskApproved
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskApproved(uint256 indexed daoID, uint256 indexed taskID, uint256 threadID, address approvedBy, string messageURI, bool isPrivate, uint256[] scores)"
+        - handler: handleTaskCompleted
+          kind: substrate/FrontierEvmEvent
+          filter:
+            topics:
+              - "TaskCompleted(uint256 indexed daoID, uint256 indexed taskID)"

@@ -1,0 +1,123 @@
+type Dao @entity {
+  id: ID! # Hex of daoID
+  daoID: BigInt! @index(unique: true)
+  name: String!
+  metadataURI: String!
+  isPrivate: Boolean!
+  createdBy: String!
+
+  numTasks: BigInt!
+
+  createdTxHash: String!
+  createdAt: BigInt!
+  createdBlockHeight: BigInt!
+
+  members: [DaoAccount]! @derivedFrom(field: "dao")
+}
+
+type Account @entity {
+  id: ID! # Address
+  address: String! @index(unique: true)
+
+  daos: [DaoAccount]! @derivedFrom(field: "account")
+}
+
+type DaoAccount @entity {
+  id: ID! # (DAO ID)_(Account address)
+  dao: Dao!
+  account: Account!
+}
+
+type Task @entity {
+  id: ID! # (DAO ID)_(Task ID)
+  daoID: BigInt!
+  taskID: BigInt!
+  status: String!
+  name: String!
+  metadataURI: String!
+  isPrivate: Boolean!
+  assigner: String
+
+  createdBy: String
+  createdTxHash: String!
+  createdAt: BigInt!
+  createdBlockHeight: BigInt!
+
+  reviewers: [TaskReviewer]! @derivedFrom(field: "task")
+  skills: [TaskSkill]! @derivedFrom(field: "task")
+  threads: [Thread]! @derivedFrom(field: "task")
+}
+
+type TaskReviewer @entity {
+  id: ID! # (DAO ID)_(Task ID)_(Address)
+  task: Task!
+  account: Account!
+  approved: Boolean!
+}
+
+type Skill @entity {
+  id: ID! # Hash of name
+  name: String! @index(unique: true)
+}
+
+type TaskSkill @entity {
+  id: ID! # (DAO ID)_(Task ID)_(Skill ID)
+  index: BigInt!
+  daoID: BigInt!
+  taskID: BigInt!
+  skillName: String!
+
+  task: Task!
+  skill: Skill!
+  scores: [TaskScore]! @derivedFrom(field: "task")
+}
+
+type AccountSkill @entity {
+  id: ID! # (Address)_(Skill ID)
+  address: String!
+  skillID: String!
+  score: BigInt!
+
+  skill: Skill!
+}
+
+type Thread @entity {
+  id: ID! # (DAO ID)_(Task ID)_(Thread ID)
+  daoID: BigInt!
+  taskID: BigInt!
+  threadID: BigInt!
+  threadType: String!
+  messageURI: String
+  isPrivate: Boolean
+  createdBy: String!
+
+  createdTxHash: String!
+  createdAt: BigInt!
+  createdBlockHeight: BigInt!
+
+  task: Task!
+}
+
+type TaskScore @entity {
+  id: ID! # (DAO ID)_(Task ID)_(account address)_(skill ID)
+  score: BigInt!
+
+  task: Task!
+  taskSkill: TaskSkill!
+}
+
+type Notification @entity {
+  id: ID! # (DAO_ID)_(User Nonce)
+  daoID: BigInt!
+  nonce: BigInt!
+  to: String!
+  title: String!
+  message: String!
+  createdAt: BigInt!
+  createdBlockHeight: BigInt!
+}
+
+type NotificationNonce @entity {
+  id: ID! # User Address
+  nonce: BigInt!
+}
