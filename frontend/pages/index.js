@@ -42,8 +42,6 @@ export default function Home() {
   const queryDAO = useDAO(DAO_ID);
   const queryTasks = useTasks(DAO_ID);
 
-  console.log("queryTasks", queryTasks);
-
   useEffect(() => {
     const todoItems = [];
     const inProgressItems = [];
