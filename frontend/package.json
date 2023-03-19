@@ -6,14 +6,26 @@
     "start": "next start"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.10",
     "@headlessui/react": "^1.4.0",
     "@heroicons/react": "^1.0.4",
+    "@rainbow-me/rainbowkit": "^0.12.1",
     "@tailwindcss/forms": "^0.3.3",
+    "@web3uikit/core": "^0.2.48",
+    "@web3uikit/icons": "^0.3.0",
+    "@web3uikit/web3": "^0.2.2",
+    "antd": "^5.3.1",
+    "clsx": "^1.2.1",
+    "ethers": "^5.7.2",
+    "graphql": "^16.6.0",
+    "ipfs-http-client": "^60.0.0",
     "next": "latest",
-    "react": "^17.0.2",
+    "node-fetch": "^3.3.1",
+    "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.0",
-    "react-dom": "^17.0.2",
-    "react-modal": "^3.16.1"
+    "react-dom": "^18.1.0",
+    "react-modal": "^3.16.1",
+    "wagmi": "^0.12.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",
