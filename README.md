@@ -4,7 +4,7 @@ TrustX は TOYOTA × HAKUHODO KEY3 web3 Hackathon において作成されたプ
 TrustX は、ブロックチェーンを使用した新規事業プロジェクト向けのタスク管理ツールです。  
 一番の特徴は、プロジェクトを通して得られた経験やスキルをブロックチェーンに蓄積することにあります。これにより、信頼性のある個人のスキルや評価をプロジェクト外の人も見ることができ、新しいプロジェクトを開始する際に、優秀な人材の発掘を後押しします。
 
-## スクリーンショット
+## スクリーンショット & デモ動画
 
 ![01](https://github.com/gaogao-asia/key3hackathon/blob/main/pictures/01.png?raw=true)
 
@@ -15,6 +15,8 @@ TrustX は、ブロックチェーンを使用した新規事業プロジェク�
 ![04](https://github.com/gaogao-asia/key3hackathon/blob/main/pictures/04.png?raw=true)
 
 ![05](https://github.com/gaogao-asia/key3hackathon/blob/main/pictures/05.png?raw=true)
+
+https://www.youtube.com/watch?v=VD1L4O21YhQ&feature=youtu.be
 
 ## 使い方
 
