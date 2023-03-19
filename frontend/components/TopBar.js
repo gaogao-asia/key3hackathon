@@ -38,7 +38,7 @@ function TopBar(props) {
             <Link href={`/profiles/${myProfile.address}`}>
               <h3 className="font-bold mr-3">{`${myProfile.firstname} ${myProfile.lastname}`}</h3>
             </Link>
-            <Link href={"/profile"}>
+            <Link href={`/profiles/${myProfile.address}`}>
               <Image
                 src={myProfile.icon}
                 width="36"
