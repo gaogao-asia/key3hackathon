@@ -110,7 +110,13 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="flex flex-col items-center">
+      <div 
+        className="flex flex-col items-center" 
+        style={{ 
+          overflowY: "scroll",
+          zIndex: 0
+        }}
+      >
         <Card
           className="flex flex-col items-center justify-center w-5/6 m-8"
           title={
