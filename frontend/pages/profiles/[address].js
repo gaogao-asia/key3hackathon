@@ -63,6 +63,7 @@ const TaskCard = (props) => {
 };
 
 export default function Home() {
+  const [doneTasks, setDoneTasks] = useState([])
   const router = useRouter();
   const { address } = router.query;
   const profile = useAccountProfile(address);
@@ -100,6 +101,20 @@ export default function Home() {
 
     return [...havingSkills, ...notHavingSkills.slice(0, 10)];
   }, [skillsQuery.data]);
+
+  useMemo(() => {
+    setDoneTasks((tasksQuery?.data?.tasks ?? [])
+      .slice()
+      .filter((t) => {
+        console.log("debug::t", t);
+        return t.status === "done";
+      })
+      .sort(
+        (a, b) =>
+          Number.parseInt(b.createdBlockHeight) -
+          Number.parseInt(a.createdBlockHeight)
+      ))
+  }, [tasksQuery?.data?.tasks])
 
   // hydration errorになる原因わからず、取り急ぎ
   const [firstRender, setFirstRender] = useState(true);
@@ -161,29 +176,16 @@ export default function Home() {
         </Card>
 
         <Divider style={{ margin: "0px" }}>
-          <Title level={5}>完了したタスク</Title>
+          <Title level={5}>完了したタスク数: {doneTasks.length}</Title>
         </Divider>
 
         <div className="flex flex-col items-center justify-center w-5/6 m-8">
           <Row gutter={[16, 16]}>
-            {(tasksQuery?.data?.tasks ?? [])
-              .slice()
-              .filter((t) => {
-                console.log("debug::t", t);
-                return t.status === "done";
-              })
-              .sort(
-                (a, b) =>
-                  Number.parseInt(b.createdBlockHeight) -
-                  Number.parseInt(a.createdBlockHeight)
-              )
-              .map((task) => {
-                return (
-                  <Col span={12} key={task.id}>
-                    <TaskCard task={task} />
-                  </Col>
-                );
-              })}
+            { doneTasks.map(task => (
+              <Col span={12} key={task.id}>
+                <TaskCard task={task} />
+              </Col>
+            )) }
           </Row>
         </div>
       </div>
