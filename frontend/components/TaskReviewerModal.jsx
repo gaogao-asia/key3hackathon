@@ -123,7 +123,7 @@ const TaskView = (props) => {
 
   return (
     <Layout>
-      <Content>
+      <Content style={{backgroundColor: "white"}}>
         <div style={{ paddingRight: "24px" }}>
           <TaskDescription text={taskMetadata?.description} />
           <Divider />
