@@ -52,6 +52,24 @@ export const ACCOUNT_JIRO = {
   icon: "/user_05.png",
 };
 
+export const ACCOUNT_BETTY = {
+  firstname: "Betty",
+  lastname: "Toyota",
+  fullname: "Betty Toyota",
+  department: "Digital Marketing Department Project Manager",
+  address: "0x4B9d99d09185b2766031973FdE1A079f77228342",
+  icon: "/user_07.png",
+};
+
+export const ACCOUNT_JACK = {
+  firstname: "Jack",
+  lastname: "Toyota",
+  fullname: "Jack Toyota",
+  department: "Advanced R&D Architect",
+  address: "0xf9805c214054e129FE9f52d2a8075cd4A630EC50",
+  icon: "/user_08.png",
+};
+
 export const Accounts = [
   ACCOUNT_HARUKO,
   ACCOUNT_NATSUKO,
@@ -59,6 +77,8 @@ export const Accounts = [
   ACCOUNT_FUYUKO,
   ACCOUNT_TARO,
   ACCOUNT_JIRO,
+  ACCOUNT_BETTY,
+  ACCOUNT_JACK,
 ];
 
 export const AccountsMap = {};
