@@ -410,23 +410,36 @@ export default function Home() {
     setAddUserVisible(false);
   }, []);
 
-  const onWalletOpen = useCallback((name) => {
-    api.info({
-      message: "ウォレットで署名をしてください",
-      description: `${name} さんをメンバーとして追加するためのトランザクションに署名をしてください`,
-      placement: "bottomRight",
-    });
+  const onWalletOpen = useCallback(
+    (name) => {
+      api.info({
+        message: "ウォレットで署名をしてください",
+        description: `${name} さんをメンバーとして追加するためにトランザクションへ署名をしてください`,
+        placement: "bottomRight",
+      });
+    },
+    [api]
+  );
 
-  }, [api]);
+  const onMemberAdded = useCallback(
+    (name) => {
+      api.success({
+        message: "メンバーが追加されました",
+        description: `${name} さんが追加されました`,
+        placement: "bottomRight",
+      });
 
-  const onMemberAdded = useCallback((name) => {
-    api.success({
-      message: "メンバーが追加されました",
-      description: `${name} さんが追加されました`,
-      placement: "bottomRight",
-    });
+      setAddUserVisible(false);
 
-  }, [api]);
+      (async () => {
+        // SubQueryの反映に時間がかかるので、ちょい待機
+        await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+
+        queryDAO.refetch();
+      })();
+    },
+    [api]
+  );
 
   return (
     <Layout>
@@ -467,7 +480,10 @@ export default function Home() {
                   className="border border-dashed flex items-center w-9 h-9 border-gray-500 justify-center
                 rounded-full"
                 >
-                  <PlusIcon className="w-5 h-5 text-gray-500" onClick={onClickAddUser} />
+                  <PlusIcon
+                    className="w-5 h-5 text-gray-500"
+                    onClick={onClickAddUser}
+                  />
                 </button>
               </li>
             </ul>
