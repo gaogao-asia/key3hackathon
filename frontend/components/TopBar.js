@@ -20,6 +20,7 @@ function TopBar(props) {
     <div
       className="h-16 pl-40 fixed bg-gradient-to-r from-purple-400
         to-blue-500 w-full flex items-center justify-between align-items pr-5"
+      style={{ zIndex: 100 }}
     >
       <div className="flex px-5 items-center">
         <SearchIcon className="w-5 h-5 text-white" />

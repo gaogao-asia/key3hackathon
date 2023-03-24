@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 function SideBar(props) {
     return (
-        <div className="fixed inset-y-0 left-0 bg-white w-40">
+        <div className="fixed inset-y-0 left-0 bg-white w-40" style={{ zIndex: 200 }}>
             <Link href={'/'}>
               <h1 className="flex items-center justify-center text-2xl h-16 bg-purple-600 text-white font-bold">TrustX</h1>
             </Link>

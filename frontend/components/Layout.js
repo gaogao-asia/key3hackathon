@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import TopBar from "./TopBar";
 import SideBar from "./SideBar";
@@ -76,11 +77,17 @@ const useDisplayNotifications = (api) => {
 };
 
 function Layout({ children }) {
+  const router = useRouter();
+  const uri = router.pathname
+  
   const [api, contextHolder] = notification.useNotification();
   useDisplayNotifications(api);
 
   return (
-    <div className="min-w-full min-h-screen  h-screen overflow-hidden bg-blue-100">
+    <div 
+      className={ // Note: overflow-y-hiddenを無くすとタスクカンバンページの見た目及び挙動が少し変わってしまうため
+        `min-w-full min-h-screen h-screen ${uri.includes('profile') ? 'overflow-y-scroll' : 'overflow-y-hidden'} bg-blue-100`
+      }>
       {contextHolder}
       <TopBar />
       <SideBar />
