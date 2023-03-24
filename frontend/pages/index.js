@@ -4,7 +4,7 @@ import Image from "next/dist/client/image";
 import { PlusIcon, PlusCircleIcon } from "@heroicons/react/outline";
 import CardItem from "../components/CardItem";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CreateTaskModal from "../components/CreateTaskModal";
 import AssignedToDoTaskModal from "../components/AssignedToDoTaskModal";
 import InProgressTaskModal from "../components/InProgressTaskModal";
@@ -19,6 +19,7 @@ import { useTasks } from "../hooks/tasks";
 import { TASK_STATUSES } from "../consts/enums";
 import { useAccount } from "wagmi";
 import Link from "next/link";
+import AddUserModal from "../components/AddUserModal";
 
 export default function Home() {
   const { address } = useAccount();
@@ -38,6 +39,8 @@ export default function Home() {
   const [TaskReviewerVisible, setTaskReviewerVisible] = useState(false);
   // DoneTaskModal用のstate
   const [DoneTaskVisible, setDoneTaskVisible] = useState(false);
+  // AddUserModal用のstate
+  const [addUserVisible, setAddUserVisible] = useState(false);
 
   const queryDAO = useDAO(DAO_ID);
   const queryTasks = useTasks(DAO_ID);
@@ -399,6 +402,45 @@ export default function Home() {
     }
   };
 
+  const onClickAddUser = useCallback(() => {
+    setAddUserVisible(true);
+  }, []);
+
+  const onCancelAddUserDialog = useCallback(() => {
+    setAddUserVisible(false);
+  }, []);
+
+  const onWalletOpen = useCallback(
+    (name) => {
+      api.info({
+        message: "ウォレットで署名をしてください",
+        description: `${name} さんをメンバーとして追加するためにトランザクションへ署名をしてください`,
+        placement: "bottomRight",
+      });
+    },
+    [api]
+  );
+
+  const onMemberAdded = useCallback(
+    (name) => {
+      api.success({
+        message: "メンバーが追加されました",
+        description: `${name} さんが追加されました`,
+        placement: "bottomRight",
+      });
+
+      setAddUserVisible(false);
+
+      (async () => {
+        // SubQueryの反映に時間がかかるので、ちょい待機
+        await new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+
+        queryDAO.refetch();
+      })();
+    },
+    [api]
+  );
+
   return (
     <Layout>
       <DAOContextProvider value={queryDAO.data}>
@@ -438,7 +480,10 @@ export default function Home() {
                   className="border border-dashed flex items-center w-9 h-9 border-gray-500 justify-center
                 rounded-full"
                 >
-                  <PlusIcon className="w-5 h-5 text-gray-500" />
+                  <PlusIcon
+                    className="w-5 h-5 text-gray-500"
+                    onClick={onClickAddUser}
+                  />
                 </button>
               </li>
             </ul>
@@ -589,6 +634,12 @@ export default function Home() {
           visible={DoneTaskVisible}
           onOk={onCancelDoneTask}
           onCancel={onCancelDoneTask}
+        />
+        <AddUserModal
+          visible={addUserVisible}
+          onWalletOpen={onWalletOpen}
+          onMemberAdded={onMemberAdded}
+          onCancel={onCancelAddUserDialog}
         />
       </DAOContextProvider>
     </Layout>

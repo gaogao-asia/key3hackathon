@@ -3,12 +3,8 @@
 
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { Modal, Form, Input, Select, Tag, Button } from "antd";
-import { Skills, SkillTagOptions } from "../consts/skills";
+import { Modal, Button } from "antd";
 import { useTask } from "../hooks/task";
-import { AccountsMap } from "../consts/accounts";
-import { useDAOContext } from "../contexts/dao_context";
-import { downloadFromIPFS } from "../clients/ipfs";
 import { useAccount, useSigner } from "wagmi";
 import {
   SendingTxView,
