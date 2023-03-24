@@ -73,9 +73,10 @@ const BadgesCard = (props) => {
           <Col span={6}>
             <Card
               style={{ boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.6)" }}
-              bodyStyle={{ padding: "8px" }}
+              bodyStyle={{ display: "flex", alignItems: "center", padding: "8px" }}
             >
-              {Badges[id].name}
+              <Image src={"/medal.png"} width="50" height="50" />
+              <div style={{ marginLeft: "8px" }}>{Badges[id].name}</div>
             </Card>
           </Col>
         ))}
