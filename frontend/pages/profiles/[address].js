@@ -25,6 +25,99 @@ import { AccountColumn } from "../../components/AccountColumn";
 const { Text, Title } = Typography;
 const { Meta } = Card;
 
+const threshold = 10;
+
+const badgeConditions = [
+  {
+    // skill name
+    name: "営業",
+    // badge to be issued
+    badgeID: 3,
+    // required skill points
+    threshold: threshold,
+  },
+  {
+    name: "技術",
+    badgeID: 4,
+    threshold: threshold,
+  },
+  {
+    name: "チームビルディング",
+    badgeID: 5,
+    threshold: threshold,
+  },
+  {
+    name: "プロジェクトマネジメント",
+    badgeID: 6,
+    threshold: threshold,
+  },
+  {
+    name: "プロトタイピング",
+    badgeID: 7,
+    threshold: threshold,
+  },
+  {
+    name: "プロジェクトマネジメント",
+    badgeID: 8,
+    threshold: 1,
+  },
+  {
+    name: "マーケティング",
+    badgeID: 9,
+    threshold: threshold,
+  },
+  {
+    name: "問題解決",
+    badgeID: 10,
+    threshold: threshold,
+  },
+  {
+    name: "プロジェクトマネジメント",
+    badgeID: 11,
+    threshold: threshold,
+  },
+  {
+    name: "データ分析",
+    badgeID: 12,
+    threshold: threshold,
+  },
+  {
+    name: "クリエイティブ思考",
+    badgeID: 13,
+    threshold: threshold,
+  },
+  {
+    name: "プランニング",
+    badgeID: 14,
+    threshold: threshold,
+  },
+  {
+    name: "リスクマネジメント",
+    badgeID: 15,
+    threshold: threshold,
+  },
+  {
+    name: "財務分析",
+    badgeID: 16,
+    threshold: threshold,
+  },
+  {
+    name: "ユーザビリティテスト",
+    badgeID: 17,
+    threshold: threshold,
+  },
+  {
+    name: "コミュニケーション",
+    badgeID: 18,
+    threshold: threshold,
+  },
+  {
+    name: "リーダーシップ",
+    badgeID: 19,
+    threshold: threshold,
+  },
+];
+
 const TaskCard = (props) => {
   const { task } = props;
   console.log("debug::task", task);
@@ -73,7 +166,11 @@ const BadgesCard = (props) => {
           <Col span={6}>
             <Card
               style={{ boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.6)" }}
-              bodyStyle={{ display: "flex", alignItems: "center", padding: "8px" }}
+              bodyStyle={{
+                display: "flex",
+                alignItems: "center",
+                padding: "8px",
+              }}
             >
               <Image src={Badges[id].icon} width="50" height="50" />
               <div style={{ marginLeft: "8px" }}>{Badges[id].name}</div>
@@ -90,12 +187,9 @@ export default function Home() {
   const router = useRouter();
   const { address } = router.query;
   const profile = useAccountProfile(address);
-  console.log("debug::profile", profile);
 
   const tasksQuery = useTasksByAssigner(address);
   const skillsQuery = useAccountSkills(address);
-
-  const badgesEarned = [5, 8, 0, 7]; // ToDo: 一旦、ハードコードしている
 
   const skillPoints = useMemo(() => {
     const accountSkills = skillsQuery?.data?.skills ?? [];
@@ -124,15 +218,45 @@ export default function Home() {
     const havingSkills = skills.filter((s) => s.score > 0);
     const notHavingSkills = skills.filter((s) => s.score === 0);
 
-    return [...havingSkills, ...notHavingSkills.slice(0, 10)];
+    return [...havingSkills, ...notHavingSkills.slice(0, 6)];
   }, [skillsQuery.data]);
+
+  const badgesEarned = useMemo(() => {
+    const badges = [];
+
+    badgeConditions.forEach((c) => {
+      if (
+        skillPoints.find((s) => {
+          return s.label === c.name && s.score >= c.threshold;
+        })
+      ) {
+        badges.push(c.badgeID);
+      }
+    });
+
+    const totalSkillPoints = skillPoints.reduce((a, b) => a + b.score, 0);
+
+    // 伸びしろのある新人
+    if (totalSkillPoints > 0) {
+      badges.push(0);
+    }
+    // 一人前のプロフェッショナル
+    if (totalSkillPoints > 10) {
+      badges.push(1);
+    }
+    // 一人前のプロフェッショナル
+    if (totalSkillPoints > 15) {
+      badges.push(2);
+    }
+
+    return badges;
+  }, [skillsQuery?.data, skillPoints]);
 
   useMemo(() => {
     setDoneTasks(
       (tasksQuery?.data?.tasks ?? [])
         .slice()
         .filter((t) => {
-          console.log("debug::t", t);
           return t.status === "done";
         })
         .sort(
