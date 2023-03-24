@@ -21,35 +21,35 @@ const badges = [
   "人材育成に長けたリーダー",
 ];
 
-const colors = [
-  "#FF6347",
-  "#CCCC00",
-  "#00FF00",
-  "#1E90FF",
-  "#8A2BE2",
-  "#9932CC",
-  "#FF0000",
-  "#FFFF00",
-  "#008000",
-  "#0000FF",
-  "#FF69B4",
-  "#DC143C",
-  "#FFA500",
-  "#9ACD32",
-  "#00BFFF",
-  "#BA55D3",
-  "#4169E1",
-  "#FFD700",
-  "#1E90FF",
-  "#FFC0CB",
+const medals = [
+  "/medal-beginner.png",
+  "/medal-pink-ribbon.png",
+  "/medal-purple-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-purple-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-purple-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-purple-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-purple-ribbon.png",
+  "/medal-pink-ribbon.png",
+  "/medal-pink-ribbon.png",
 ];
 
-export const BadgeToColor = {};
+export const BadgeToIcon = {};
 badges.forEach((badge, index) => {
-  BadgeToColor[badge] = colors[index];
+  BadgeToIcon[badge] = medals[index];
 });
 
 export const Badges = badges.map((name, index) => ({
   name: name,
-  color: colors[index],
+  icon: medals[index],
 }));

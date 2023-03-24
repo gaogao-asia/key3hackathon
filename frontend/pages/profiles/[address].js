@@ -75,7 +75,7 @@ const BadgesCard = (props) => {
               style={{ boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.6)" }}
               bodyStyle={{ display: "flex", alignItems: "center", padding: "8px" }}
             >
-              <Image src={"/medal.png"} width="50" height="50" />
+              <Image src={Badges[id].icon} width="50" height="50" />
               <div style={{ marginLeft: "8px" }}>{Badges[id].name}</div>
             </Card>
           </Col>
@@ -95,7 +95,7 @@ export default function Home() {
   const tasksQuery = useTasksByAssigner(address);
   const skillsQuery = useAccountSkills(address);
 
-  const badgesEarned = [3, 5, 8, 12]; // ToDo: 一旦、ハードコードしている
+  const badgesEarned = [5, 8, 0, 7]; // ToDo: 一旦、ハードコードしている
 
   const skillPoints = useMemo(() => {
     const accountSkills = skillsQuery?.data?.skills ?? [];
