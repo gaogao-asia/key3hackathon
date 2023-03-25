@@ -43,6 +43,7 @@ type Task @entity {
   createdAt: BigInt!
   createdBlockHeight: BigInt!
 
+  dao: Dao!
   reviewers: [TaskReviewer]! @derivedFrom(field: "task")
   skills: [TaskSkill]! @derivedFrom(field: "task")
   threads: [Thread]! @derivedFrom(field: "task")
@@ -69,7 +70,7 @@ type TaskSkill @entity {
 
   task: Task!
   skill: Skill!
-  scores: [TaskScore]! @derivedFrom(field: "task")
+  scores: [TaskScore]! @derivedFrom(field: "taskSkill")
 }
 
 type AccountSkill @entity {
@@ -100,6 +101,7 @@ type Thread @entity {
 
 type TaskScore @entity {
   id: ID! # (DAO ID)_(Task ID)_(account address)_(skill ID)
+  reviewer: String!
   score: BigInt!
 
   task: Task!

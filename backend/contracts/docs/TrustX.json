@@ -177,10 +177,20 @@
             },
             "outputs": {}
         },
-        "initialize()": {
+        "initialize(address,uint8,bytes32)": {
             "stateMutability": "nonpayable",
-            "code": "function initialize() external nonpayable",
-            "inputs": {},
+            "code": "function initialize(address bridgeAddress, uint8 bridgeDestinationDomainID, bytes32 birdgeResourceID) external nonpayable",
+            "inputs": {
+                "bridgeAddress": {
+                    "type": "address"
+                },
+                "bridgeDestinationDomainID": {
+                    "type": "uint8"
+                },
+                "birdgeResourceID": {
+                    "type": "bytes32"
+                }
+            },
             "outputs": {}
         },
         "numberOfDAOs()": {

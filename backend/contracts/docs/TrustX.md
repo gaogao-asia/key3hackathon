@@ -200,13 +200,20 @@ function createTask(uint256 daoID, string name, string metadataURI, bool isPriva
 ### initialize
 
 ```solidity
-function initialize() external nonpayable
+function initialize(address bridgeAddress, uint8 bridgeDestinationDomainID, bytes32 birdgeResourceID) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| bridgeAddress | address | undefined |
+| bridgeDestinationDomainID | uint8 | undefined |
+| birdgeResourceID | bytes32 | undefined |
 
 ### numberOfDAOs
 

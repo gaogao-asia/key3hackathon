@@ -27,12 +27,12 @@ network:
     file: ./dist/chaintypes.js
 dataSources:
   - kind: substrate/FrontierEvm
-    startBlock: 3458700
+    startBlock: 3458600
     processor:
       file: ./node_modules/@subql/frontier-evm-processor/dist/bundle.js
       options:
         abi: TrustX
-        address: "0xf360836cAbF93b18455E1f4Ee3B4e11BE6DdCc15"
+        address: "0xf2d5DD9e4e7875a530eda1049Fb697CF726627F4"
     assets:
       TrustX:
         file: ./abis/TrustX.json

@@ -1,0 +1,7 @@
+{
+  "solidity.compileUsingRemoteVersion": "v0.8.19+commit.7dd6d404",
+  "solidity.defaultCompiler": "localNodeModule",
+  "solidity.remappings": [
+    "@openzeppelin/=/home/kourin/hackathon/key3_2023/key3hackathon/backend/contracts/node_modules/@openzeppelin"
+  ]
+}

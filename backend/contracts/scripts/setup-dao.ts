@@ -5,7 +5,29 @@ import { uploadData } from "./ipfs";
 
 const TRUSTX_CONTRACT_ADDRESS = process.env.TRUSTX_CONTRACT_ADDRESS;
 
-const TASKS = [
+type Task =
+  | {
+      name: string;
+      status: "todo" | "in_progress";
+      accountIndex: number;
+      reviewerIndices: number[];
+      description: string;
+      skills: string[];
+    }
+  | {
+      name: string;
+      status: "in_review" | "done";
+      accountIndex: number;
+      reviewerIndices: number[];
+      description: string;
+      skills: string[];
+      artifact: string;
+      reviewed: boolean[];
+      scores: number[][];
+      comments: string[];
+    };
+
+const SMART_KEY_TASKS = [
   {
     name: "ホームページ作成",
     status: "todo",
@@ -268,11 +290,109 @@ const TASKS = [
       `デザインに対するあなたの熱意は素晴らしく、素晴らしい成果物を作成してくれました。ありがとうございます。`,
     ],
   },
+] as const;
+
+const PARK_TASKS = [
+  // todo
+  {
+    name: "プロトタイプ開発",
+    status: "todo",
+    accountIndex: 7,
+    reviewerIndices: [6],
+    description: `目的:
+アプリの機能とデザインを実際に体験できるような試作品を作成することです。これによって、開発チームやステークホルダーがアプリの概念やアイデアを実感することができ、問題点を早期に発見・修正することができます。
+
+タスク内容:
+1. アプリの基本的な機能を実装する
+2. デザインを反映させた画面を作成する
+3. エラー処理やバグの修正を行う
+4. 実際のユーザーにテストしてもらい、フィードバックを収集する`,
+    skills: ["プロトタイピング", "技術"],
+  },
+  // in_progress
+  {
+    name: "アーキテクチャ設計",
+    status: "in_progress",
+    accountIndex: 4,
+    reviewerIndices: [6],
+    description: `目的:
+    ユーザーが直感的かつ快適にアプリを使用できるようにすることです。具体的には、使いやすいインターフェースと優れたユーザーエクスペリエンスを提供するために、ユーザーの視覚的な感覚やニーズを考慮しながら、デザインの方向性を定める。
+
+タスク内容:
+1. ユーザーインターフェースの設計
+2. アプリのレイアウトの決定
+3. カラーパレット、フォントなどのデザイン要素の選択
+4. ユーザーエクスペリエンスの向上のためのフィードバックの収集
+5. デザインの統一性を確保するためのスタイルガイドの作成`,
+    skills: ["プロトタイピング", "プレゼンテーション"],
+  },
+  // in review
+  {
+    name: "アーキテクチャ設計",
+    status: "in_review",
+    accountIndex: 7,
+    reviewerIndices: [4, 6],
+    description: `目的:
+アプリのアーキテクチャ設計を行い、システム全体の構成や各要素の関係性を明確にし、開発フェーズにおける指針とする。
+    
+タスク内容:
+1. システム全体の構成を決定する
+2. 各要素の役割と関係性を定義する
+3. システムの性能や信頼性、保守性に関する要件を決定する
+4. アーキテクチャの概念図やドキュメントを作成する`,
+    skills: ["技術", "プランニング", "プロダクトマネジメント"],
+    reviewed: [true, false],
+    scores: [[5, 4, 5], []],
+    artifact: `アーキテクチャ設計の報告書を提出いたします。システム全体の構成を決定し、各要素の役割と関係性を詳細に定義しました。また、システムの性能や信頼性、保守性に関する要件についても明確にし、アーキテクチャの概念図とドキュメントを作成しました。今後の開発フェーズでの指針となるよう、ご確認いただければ幸いです。`,
+    comments: [
+      `アーキテクチャ設計報告書の提出ありがとうございます。システム全体の構成や各要素の役割、関係性について詳細に説明があり、明確になっています。また、システムの性能や信頼性、保守性に関する要件もしっかりと決定している点が良かったです。アーキテクチャの概念図とドキュメントもわかりやすく、開発フェーズでの指針として役立てられそうです。`,
+      ``,
+    ],
+  },
+  // done
+  {
+    name: "機能要件の決定",
+    status: "done",
+    accountIndex: 6,
+    reviewerIndices: [4, 7],
+    description: `目的:
+開発するアプリの機能要件を決定し、開発チームが開発すべき機能の範囲を明確にする。
+このタスクでは、アプリに必要な機能を決定し、それらの機能がどのように動作するかを決めることが含まれます。
+
+タスク内容:
+1. アプリの機能要件の洗い出し
+  ・ ユーザーがアプリを使用する際に必要となる機能を洗い出し、要件定義書にまとめます。
+  ・ 洗い出された機能は、ユーザーがアプリ内でどのような操作を行うことができるかを明確にします。
+2. 機能の優先度の決定
+  ・ 洗い出された機能について、それぞれの優先度を決定
+  ・ 優先度は、ユーザーが最も利用すると予想される機能から順に決める
+3. 機能の詳細な定義
+  ・ 機能の動作やユーザーインターフェースなど、開発チームが理解しやすいように明確な説明を入れる
+4. 開発チームとの合意形成
+  ・ 開発チームが機能要件を理解し、アプリの開発に着手するようにする`,
+    skills: ["プロダクトマネジメント", "プレゼンテーション"],
+    reviewed: [true, true],
+    scores: [
+      [5, 4],
+      [5, 5],
+    ],
+    artifact: `機能要件の決定が完了しました。ユーザーが必要とする機能を洗い出し、優先度を決定し、詳細な定義を行いました。
+開発チームとも合意形成を行い、開発に着手することができる状態です。`,
+    comments: [
+      `機能要件の決定に関する報告書、ありがとうございます。機能要件について十分に洗い出し、優先度の決定も妥当なものと思われます。また、機能の詳細な定義も分かりやすく、開発チームとの合意形成もうまくいったようですね。今後もこのような報告書を提出していただけると助かります。`,
+      `機能要件の決定報告書の提出ありがとうございます。機能要件の洗い出しや優先度決定には良い考えが盛り込まれています。`,
+    ],
+  },
 ];
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function main() {
+async function createProject(
+  projectName: string,
+  projectDescription: string,
+  tasks: Task[],
+  members: string[]
+) {
   const signers = await ethers.getSigners();
 
   if (!TRUSTX_CONTRACT_ADDRESS) {
@@ -283,18 +403,16 @@ async function main() {
   const instance = TrustX.attach(TRUSTX_CONTRACT_ADDRESS);
 
   // Create New DAO
-  const projectName = ProjectNames[2];
   const ipfsContent = await uploadData({
     name: projectName,
-    description:
-      "スマートフォンをカーキーとして使用することができるアプリで、対応車両を操作できます。",
+    description: projectDescription,
   });
 
   const createDAOTx = await instance.createDAO(
-    `${ProjectNames[2]} 開発プロジェクト`,
+    `${projectName} 開発プロジェクト`,
     `ipfs://${ipfsContent.cid.toString()}`,
     false,
-    Accounts.map((a) => a.address)
+    members
   );
   const receipt = await createDAOTx.wait();
   console.log(`${createDAOTx.hash} confirmed`);
@@ -311,7 +429,7 @@ async function main() {
   const daoID = await daoCreated.args![0].toHexString();
 
   let index = 0;
-  for (const task of TASKS) {
+  for (const task of tasks) {
     const taskMetadata = await uploadData({
       name: task.name,
       description: task.description,
@@ -343,7 +461,7 @@ async function main() {
 
     if (task.status === "todo") {
       index++;
-      console.log(`Task "${task.name} created (${index}/${TASKS.length})`);
+      console.log(`Task "${task.name} created (${index}/${tasks.length})`);
       continue;
     }
 
@@ -356,8 +474,12 @@ async function main() {
 
     if (task.status === "in_progress") {
       index++;
-      console.log(`Task "${task.name} created (${index}/${TASKS.length})`);
+      console.log(`Task "${task.name} created (${index}/${tasks.length})`);
       console.log("");
+      continue;
+    }
+
+    if (task.status !== "in_review" && task.status !== "done") {
       continue;
     }
 
@@ -407,11 +529,37 @@ async function main() {
     }
 
     index++;
-    console.log(`Task "${task.name} created (${index}/${TASKS.length})`);
+    console.log(`Task "${task.name} created (${index}/${tasks.length})`);
     console.log("");
   }
 
-  console.log("DAO Setup:", daoID);
+  return daoID;
+}
+
+async function main() {
+  const projectID1 = await createProject(
+    ProjectNames[2],
+    "スマートフォンをカーキーとして使用することができるアプリで、対応車両を操作できます。",
+    SMART_KEY_TASKS as any,
+    [
+      Accounts[0].address,
+      Accounts[1].address,
+      Accounts[2].address,
+      Accounts[3].address,
+      Accounts[4].address,
+      Accounts[5].address,
+    ]
+  );
+
+  const projectID2 = await createProject(
+    ProjectNames[3],
+    "駐車場情報や駐車料金の支払いができるアプリです。また、TOYOTAが提供するカーシェアリングサービスにも対応しています。",
+    PARK_TASKS as any,
+    [Accounts[4].address, Accounts[6].address, Accounts[7].address]
+  );
+
+  console.log("Project No.1 ", projectID1);
+  console.log("Project No.2 ", projectID2);
 }
 
 main().catch((error) => {
