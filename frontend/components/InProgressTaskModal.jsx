@@ -165,7 +165,7 @@ const InProgressTaskModal = ({
         if (isPrivate) {
           const asg = localStorage.getItem("lit-auth-signature");
           console.log("debug::local storage authSig", asg);
-          if (asg === null || JSON.parse(asg).address !== address) {
+          if (!asg || JSON.parse(asg).address !== address) {
             const networkVersion = await window.ethereum.request({
               method: "net_version",
             });
@@ -193,7 +193,7 @@ const InProgressTaskModal = ({
 
           const authSig = await LitJsSdk.checkAndSignAuthMessage({
             chain: "mumbai",
-            switchChain: false,
+            switchChain: true,
           });
 
           console.log("debug::authSig", authSig);

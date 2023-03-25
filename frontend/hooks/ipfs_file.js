@@ -35,7 +35,7 @@ async function tryDecrypt(
 
   const authSig = await LitJsSdk.checkAndSignAuthMessage({
     chain: "mumbai",
-    switchChain: false,
+    switchChain: true,
   });
 
   console.log("debug::authSig", authSig);
