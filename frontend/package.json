@@ -9,6 +9,7 @@
     "@apollo/client": "^3.7.10",
     "@headlessui/react": "^1.4.0",
     "@heroicons/react": "^1.0.4",
+    "@lit-protocol/lit-node-client": "^2.1.94",
     "@rainbow-me/rainbowkit": "^0.12.1",
     "@tailwindcss/forms": "^0.3.3",
     "@web3uikit/core": "^0.2.48",

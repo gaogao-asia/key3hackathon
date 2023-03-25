@@ -1,4 +1,6 @@
 export const uploadToIPFS = async (contents) => {
+  console.log("debug::uploadToIPFS", contents);
+
   const res = await fetch("/api/upload", {
     method: "POST",
     body: JSON.stringify(contents),
