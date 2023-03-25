@@ -6,6 +6,14 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
+interface IChainBridgeDepositable {
+    function deposit(
+        uint8 destinationDomainID,
+        bytes32 resourceID,
+        bytes calldata data
+    ) external payable;
+}
+
 contract TrustX is Initializable, PausableUpgradeable {
     using Counters for Counters.Counter;
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -73,6 +81,10 @@ contract TrustX is Initializable, PausableUpgradeable {
     }
 
     // State variables
+    address private _bridgeAddress;
+    uint8 private _bridgeDestinationDomainID;
+    bytes32 private _birdgeResourceID;
+
     Counters.Counter private _daoIDs;
 
     mapping(uint256 => DAO) private _daos; // DAO ID => DAO
@@ -218,7 +230,15 @@ contract TrustX is Initializable, PausableUpgradeable {
     // constructor
     constructor() {}
 
-    function initialize() public initializer {}
+    function initialize(
+        address bridgeAddress,
+        uint8 bridgeDestinationDomainID,
+        bytes32 birdgeResourceID
+    ) public initializer {
+        _bridgeAddress = bridgeAddress;
+        _bridgeDestinationDomainID = bridgeDestinationDomainID;
+        _birdgeResourceID = birdgeResourceID;
+    }
 
     // External functions
     function createDAO(
@@ -419,6 +439,18 @@ contract TrustX is Initializable, PausableUpgradeable {
         }
 
         emit DAOMembersAdded(daoID, members);
+
+        if (_bridgeAddress != address(0x0)) {
+            IChainBridgeDepositable bridge = IChainBridgeDepositable(
+                _bridgeAddress
+            );
+
+            bridge.deposit(
+                _bridgeDestinationDomainID,
+                _birdgeResourceID,
+                abi.encodePacked(daoID, members)
+            );
+        }
     }
 
     function _createTask(

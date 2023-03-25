@@ -127,6 +127,7 @@ export async function handleTaskCreated(
     createdTxHash: event.transactionHash,
     createdAt: BigInt(event.blockTimestamp.getTime()),
     createdBlockHeight: BigInt(event.blockNumber),
+    daoId: event.args.daoID.toHexString(),
   });
 
   await task.save();
@@ -441,6 +442,7 @@ export async function handleTaskApproved(
           event.args.approvedBy
         }_0x${i.toString(16)}`,
         score: score.toBigInt(),
+        reviewer: event.args.approvedBy,
         taskId: `${event.args.daoID.toHexString()}_${event.args.taskID.toHexString()}`,
         taskSkillId: taskSkillID,
       });

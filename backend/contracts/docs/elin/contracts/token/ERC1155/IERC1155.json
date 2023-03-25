@@ -1,0 +1,223 @@
+{
+    "methods": {
+        "balanceOf(address,uint256)": {
+            "stateMutability": "view",
+            "code": "function balanceOf(address account, uint256 id) external view returns (uint256)",
+            "inputs": {
+                "account": {
+                    "type": "address"
+                },
+                "id": {
+                    "type": "uint256"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            },
+            "details": "Returns the amount of tokens of token type `id` owned by `account`. Requirements: - `account` cannot be the zero address."
+        },
+        "balanceOfBatch(address[],uint256[])": {
+            "stateMutability": "view",
+            "code": "function balanceOfBatch(address[] accounts, uint256[] ids) external view returns (uint256[])",
+            "inputs": {
+                "accounts": {
+                    "type": "address[]"
+                },
+                "ids": {
+                    "type": "uint256[]"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "uint256[]"
+                }
+            },
+            "details": "xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {balanceOf}. Requirements: - `accounts` and `ids` must have the same length."
+        },
+        "isApprovedForAll(address,address)": {
+            "stateMutability": "view",
+            "code": "function isApprovedForAll(address account, address operator) external view returns (bool)",
+            "inputs": {
+                "account": {
+                    "type": "address"
+                },
+                "operator": {
+                    "type": "address"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "bool"
+                }
+            },
+            "details": "Returns true if `operator` is approved to transfer ``account``'s tokens. See {setApprovalForAll}."
+        },
+        "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": {
+            "stateMutability": "nonpayable",
+            "code": "function safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) external nonpayable",
+            "inputs": {
+                "from": {
+                    "type": "address"
+                },
+                "to": {
+                    "type": "address"
+                },
+                "ids": {
+                    "type": "uint256[]"
+                },
+                "amounts": {
+                    "type": "uint256[]"
+                },
+                "data": {
+                    "type": "bytes"
+                }
+            },
+            "outputs": {},
+            "details": "xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {safeTransferFrom}. Emits a {TransferBatch} event. Requirements: - `ids` and `amounts` must have the same length. - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the acceptance magic value."
+        },
+        "safeTransferFrom(address,address,uint256,uint256,bytes)": {
+            "stateMutability": "nonpayable",
+            "code": "function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) external nonpayable",
+            "inputs": {
+                "from": {
+                    "type": "address"
+                },
+                "to": {
+                    "type": "address"
+                },
+                "id": {
+                    "type": "uint256"
+                },
+                "amount": {
+                    "type": "uint256"
+                },
+                "data": {
+                    "type": "bytes"
+                }
+            },
+            "outputs": {},
+            "details": "Transfers `amount` tokens of token type `id` from `from` to `to`. Emits a {TransferSingle} event. Requirements: - `to` cannot be the zero address. - If the caller is not `from`, it must have been approved to spend ``from``'s tokens via {setApprovalForAll}. - `from` must have a balance of tokens of type `id` of at least `amount`. - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the acceptance magic value."
+        },
+        "setApprovalForAll(address,bool)": {
+            "stateMutability": "nonpayable",
+            "code": "function setApprovalForAll(address operator, bool approved) external nonpayable",
+            "inputs": {
+                "operator": {
+                    "type": "address"
+                },
+                "approved": {
+                    "type": "bool"
+                }
+            },
+            "outputs": {},
+            "details": "Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`, Emits an {ApprovalForAll} event. Requirements: - `operator` cannot be the caller."
+        },
+        "supportsInterface(bytes4)": {
+            "stateMutability": "view",
+            "code": "function supportsInterface(bytes4 interfaceId) external view returns (bool)",
+            "inputs": {
+                "interfaceId": {
+                    "type": "bytes4"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "bool"
+                }
+            },
+            "details": "Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section] to learn more about how these ids are created. This function call must use less than 30 000 gas."
+        }
+    },
+    "events": {
+        "ApprovalForAll": {
+            "code": "event ApprovalForAll(address indexed account, address indexed operator, bool approved)",
+            "inputs": {
+                "account": {
+                    "type": "address",
+                    "indexed": true
+                },
+                "operator": {
+                    "type": "address",
+                    "indexed": true
+                },
+                "approved": {
+                    "type": "bool",
+                    "indexed": false
+                }
+            },
+            "details": "Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`."
+        },
+        "TransferBatch": {
+            "code": "event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)",
+            "inputs": {
+                "operator": {
+                    "type": "address",
+                    "indexed": true
+                },
+                "from": {
+                    "type": "address",
+                    "indexed": true
+                },
+                "to": {
+                    "type": "address",
+                    "indexed": true
+                },
+                "ids": {
+                    "type": "uint256[]",
+                    "indexed": false
+                },
+                "values": {
+                    "type": "uint256[]",
+                    "indexed": false
+                }
+            },
+            "details": "Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all transfers."
+        },
+        "TransferSingle": {
+            "code": "event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)",
+            "inputs": {
+                "operator": {
+                    "type": "address",
+                    "indexed": true
+                },
+                "from": {
+                    "type": "address",
+                    "indexed": true
+                },
+                "to": {
+                    "type": "address",
+                    "indexed": true
+                },
+                "id": {
+                    "type": "uint256",
+                    "indexed": false
+                },
+                "value": {
+                    "type": "uint256",
+                    "indexed": false
+                }
+            },
+            "details": "Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`."
+        },
+        "URI": {
+            "code": "event URI(string value, uint256 indexed id)",
+            "inputs": {
+                "value": {
+                    "type": "string",
+                    "indexed": false
+                },
+                "id": {
+                    "type": "uint256",
+                    "indexed": true
+                }
+            },
+            "details": "Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI. If an {URI} event was emitted for `id`, the standard https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value returned by {IERC1155MetadataURI-uri}."
+        }
+    },
+    "errors": {},
+    "path": "elin/contracts/token/ERC1155",
+    "details": "Required interface of an ERC1155 compliant contract, as defined in the https://eips.ethereum.org/EIPS/eip-1155[EIP]. _Available since v3.1._",
+    "name": "IERC1155"
+}

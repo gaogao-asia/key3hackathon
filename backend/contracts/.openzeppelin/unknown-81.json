@@ -24,6 +24,61 @@
       "address": "0x45354E227CEc59369a439BeC5134D08Be293d4E0",
       "txHash": "0x3e6b7668ddbe804f9dbd4823dee865ace66cd9db24cb0e4a2846b07ae70cfb3d",
       "kind": "transparent"
+    },
+    {
+      "address": "0x9c9746B5c46F95b3AE503467fBFBB814e0613681",
+      "txHash": "0x12dae48e07c8a019b8d0ba75e7b40e73bb44e27a052ab4f1de60544d0808a0ad",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0E9E5Ba25c90E315a8170F711EBC96bE478E0f6B",
+      "txHash": "0x70a8298de950ead7a1742f2713b816aa53ebb95800751f0a06b71d607496deb7",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9F0a36E1A090dc5db4836A4D5c5bF88D21A68003",
+      "txHash": "0x9095466ccc6705ff470aea4cab84b2e6185cc65187f628c161a4bf61b1cc1f66",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xd46D117FA851FBFD33818261EfA26f9CC3Eb47A0",
+      "txHash": "0xb63b34dd5e97dc27849103e83ea7def1d917c8db713dda92618a46afa7b7fac7",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xaD5567C0E59B7eE3740412865d32750cEF9e8C9B",
+      "txHash": "0x15e3ad4996e68701e28a33b4a5bf23421abf092e22bcdb8c045cf948e4f0741f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa78b2fe0E49ef0E2e289B9f194c094aAbbb0FcCB",
+      "txHash": "0xe4401ee73ad8989607072d8306c529516d29e6d9fd70f99a6439456b3bb22d51",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf1F1A5216e4D8C1be036CcA0073120ba928732a7",
+      "txHash": "0x8f61d2a8fa2b5477139915fda93ab4ab8c0deda91532d30b1a7603b52a538ec4",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xefaD1207015F29357253E5Bc2232C01D27Ece280",
+      "txHash": "0x7b3d5d228eef0f5f75f344b58151569acd8b22c217572095077ef11ccae2608a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCe6A45FeF1db200b242a1b5869F7473DB105129C",
+      "txHash": "0x3000333d78847cf58e33267076633cf4ecab7dac30f8a1af92fee2815f46115e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf2d5DD9e4e7875a530eda1049Fb697CF726627F4",
+      "txHash": "0x553e13d80c17ac90f60c76465dc71b9e3e056902dbd58f125b3bc93f0735ef3b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf360836cAbF93b18455E1f4Ee3B4e11BE6DdCc15",
+      "txHash": "0xe6304a76e54bea37287b47f6d5d03d223c6294ef8e8c86bc1d9444b2485baee5",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -998,6 +1053,432 @@
               {
                 "label": "threadType",
                 "type": "t_enum(TaskThreadType)1387",
+                "offset": 20,
+                "slot": "0"
+              },
+              {
+                "label": "messageURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "isPrivate",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "1c0b73c9da8c5ff620f2745e060a7a5ee06cdf57532ab79dc173cbc0bcfb5c02": {
+      "address": "0x122657e7201289330914CF180753F8AA101cf312",
+      "txHash": "0x5326959e2f5eb79343d7a9698989496a572756070ed435a5bb0cfd265740d9c7",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_bridgeAddress",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:84"
+          },
+          {
+            "label": "_bridgeDestinationDomainID",
+            "offset": 20,
+            "slot": "101",
+            "type": "t_uint8",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:85"
+          },
+          {
+            "label": "_birdgeResourceID",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_bytes32",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:86"
+          },
+          {
+            "label": "_daoIDs",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_struct(Counter)627_storage",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:88"
+          },
+          {
+            "label": "_daos",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_uint256,t_struct(DAO)1406_storage)",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:90"
+          },
+          {
+            "label": "_daoMembers",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_uint256,t_struct(AddressSet)1021_storage)",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:92"
+          },
+          {
+            "label": "_taskIDs",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_uint256,t_struct(Counter)627_storage)",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:94"
+          },
+          {
+            "label": "_tasks",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Task)1423_storage))",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:96"
+          },
+          {
+            "label": "_reviewers",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(AddressSet)1021_storage))",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:98"
+          },
+          {
+            "label": "_taskApprovals",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(AddressSet)1021_storage))",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:101"
+          },
+          {
+            "label": "_threadIDs",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Counter)627_storage))",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:104"
+          },
+          {
+            "label": "_taskThreads",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_mapping(t_uint256,t_struct(TaskThread)1433_storage)))",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:106"
+          },
+          {
+            "label": "_skillScores",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_mapping(t_address,t_mapping(t_uint256,t_uint256))))",
+            "contract": "TrustX",
+            "src": "contracts/TrustX.sol:109"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_string_storage)dyn_storage": {
+            "label": "string[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_enum(TaskStatus)1392": {
+            "label": "enum TrustX.TaskStatus",
+            "members": [
+              "TODO",
+              "InProgress",
+              "InReview",
+              "Done"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(TaskThreadType)1397": {
+            "label": "enum TrustX.TaskThreadType",
+            "members": [
+              "Comment",
+              "ReviewRequest",
+              "ChangesRequest",
+              "Approve"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_mapping(t_uint256,t_uint256)))": {
+            "label": "mapping(uint256 => mapping(address => mapping(uint256 => uint256)))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_mapping(t_address,t_mapping(t_uint256,t_uint256))))": {
+            "label": "mapping(uint256 => mapping(uint256 => mapping(address => mapping(uint256 => uint256))))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_mapping(t_uint256,t_struct(TaskThread)1433_storage)))": {
+            "label": "mapping(uint256 => mapping(uint256 => mapping(uint256 => struct TrustX.TaskThread)))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(AddressSet)1021_storage))": {
+            "label": "mapping(uint256 => mapping(uint256 => struct EnumerableSet.AddressSet))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Counter)627_storage))": {
+            "label": "mapping(uint256 => mapping(uint256 => struct Counters.Counter))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Task)1423_storage))": {
+            "label": "mapping(uint256 => mapping(uint256 => struct TrustX.Task))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(TaskThread)1433_storage))": {
+            "label": "mapping(uint256 => mapping(uint256 => struct TrustX.TaskThread))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(AddressSet)1021_storage)": {
+            "label": "mapping(uint256 => struct EnumerableSet.AddressSet)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Counter)627_storage)": {
+            "label": "mapping(uint256 => struct Counters.Counter)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(DAO)1406_storage)": {
+            "label": "mapping(uint256 => struct TrustX.DAO)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Task)1423_storage)": {
+            "label": "mapping(uint256 => struct TrustX.Task)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(TaskThread)1433_storage)": {
+            "label": "mapping(uint256 => struct TrustX.TaskThread)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(AddressSet)1021_storage": {
+            "label": "struct EnumerableSet.AddressSet",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Set)706_storage",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(Counter)627_storage": {
+            "label": "struct Counters.Counter",
+            "members": [
+              {
+                "label": "_value",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(DAO)1406_storage": {
+            "label": "struct TrustX.DAO",
+            "members": [
+              {
+                "label": "createdBy",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "metadataURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "isPrivate",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(Set)706_storage": {
+            "label": "struct EnumerableSet.Set",
+            "members": [
+              {
+                "label": "_values",
+                "type": "t_array(t_bytes32)dyn_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_indexes",
+                "type": "t_mapping(t_bytes32,t_uint256)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(Task)1423_storage": {
+            "label": "struct TrustX.Task",
+            "members": [
+              {
+                "label": "createdBy",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "status",
+                "type": "t_enum(TaskStatus)1392",
+                "offset": 20,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "metadataURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "isPrivate",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "skills",
+                "type": "t_array(t_string_storage)dyn_storage",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "assigner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(TaskThread)1433_storage": {
+            "label": "struct TrustX.TaskThread",
+            "members": [
+              {
+                "label": "createdBy",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "threadType",
+                "type": "t_enum(TaskThreadType)1397",
                 "offset": 20,
                 "slot": "0"
               },

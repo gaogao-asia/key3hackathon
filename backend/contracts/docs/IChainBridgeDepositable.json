@@ -1,0 +1,24 @@
+{
+    "methods": {
+        "deposit(uint8,bytes32,bytes)": {
+            "stateMutability": "payable",
+            "code": "function deposit(uint8 destinationDomainID, bytes32 resourceID, bytes data) external payable",
+            "inputs": {
+                "destinationDomainID": {
+                    "type": "uint8"
+                },
+                "resourceID": {
+                    "type": "bytes32"
+                },
+                "data": {
+                    "type": "bytes"
+                }
+            },
+            "outputs": {}
+        }
+    },
+    "events": {},
+    "errors": {},
+    "path": "",
+    "name": "IChainBridgeDepositable"
+}
