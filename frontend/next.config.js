@@ -1,10 +1,12 @@
 const CONTRACTS = {
   dev: "0xCe6A45FeF1db200b242a1b5869F7473DB105129C",
-  demo: "0x9F0a36E1A090dc5db4836A4D5c5bF88D21A68003",
+  staging: "",
+  demo: "0xf2d5DD9e4e7875a530eda1049Fb697CF726627F4",
 };
 
 const SUB_QUERY_URLS = {
   dev: "https://api.subquery.network/sq/Kourin1996/gaogao-key3-hackathon",
+  staging: "",
   demo: "https://api.subquery.network/sq/Kourin1996/gaogao-key3-hackathon-demo",
 };
 
