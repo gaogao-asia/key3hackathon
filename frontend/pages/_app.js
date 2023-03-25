@@ -7,6 +7,7 @@ import "./style.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../clients/subquery";
+import { LitContextProvider } from "../contexts/lit_context";
 
 const { chains, provider } = configureChains([shibuya], [publicProvider()]);
 
@@ -26,7 +27,9 @@ function MyApp({ Component, pageProps }) {
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains}>
         <ApolloProvider client={client}>
-          <Component {...pageProps} />
+          <LitContextProvider>
+            <Component {...pageProps} />
+          </LitContextProvider>
         </ApolloProvider>
       </RainbowKitProvider>
     </WagmiConfig>

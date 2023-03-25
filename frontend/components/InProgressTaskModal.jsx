@@ -1,7 +1,16 @@
 // (レビュー依頼ボタンがある)
 // In Progressのタスクをクリックすると開く。
-import React from "react";
-import { Modal, Form, Input, Button, Divider, Layout, Spin } from "antd";
+import React, { useCallback } from "react";
+import {
+  Modal,
+  Form,
+  Input,
+  Button,
+  Divider,
+  Layout,
+  Spin,
+  Checkbox,
+} from "antd";
 import { useTask } from "../hooks/task";
 import { useDAOContext } from "../contexts/dao_context";
 import { uploadToIPFS } from "../clients/ipfs";
@@ -15,15 +24,21 @@ import { TxResult } from "./TxResult";
 import { ethers } from "ethers";
 import { TRUST_X_CONTRACT_SHIBUYA } from "../consts/contracts";
 import { TRUST_X_ABI } from "../consts/abis";
-import { useAccount, useSigner } from "wagmi";
+import { useAccount, useSigner, useSwitchNetwork } from "wagmi";
 import { useState } from "react";
 import { SideTaskOverview } from "./SideTaskOverview";
 import { TaskDescription } from "./TaskDescription";
 import { useIPFSData } from "../hooks/ipfs_file";
+import * as LitJsSdk from "@lit-protocol/lit-node-client";
+import { getACL } from "../consts/acl";
+import { DAO_ID } from "../consts/daos";
+import { useLitContext } from "../contexts/lit_context";
 
 const { Sider, Content } = Layout;
 
-const InputArtifact = () => {
+const InputArtifact = (props) => {
+  const { isPrivate, onIsPrivateChange } = props;
+
   return (
     <>
       <Form.Item
@@ -33,7 +48,12 @@ const InputArtifact = () => {
       >
         <Input.TextArea rows={6} />
       </Form.Item>
-      <div class="flex justify-end items-center">
+      <div class="flex justify-end">
+        <Checkbox checked={isPrivate} onChange={onIsPrivateChange}>
+          暗号化
+        </Checkbox>
+      </div>
+      <div class="mt-5 flex justify-end items-center">
         <Button type="primary" htmlType="submit">
           成果物を提出して、レビューを依頼する
         </Button>
@@ -43,8 +63,16 @@ const InputArtifact = () => {
 };
 
 const TaskView = (props) => {
-  const { form, onFinish, task, taskMetadata, loading, showsArtifactInput } =
-    props;
+  const {
+    isPrivate,
+    onIsPrivateChange,
+    form,
+    onFinish,
+    task,
+    taskMetadata,
+    loading,
+    showsArtifactInput,
+  } = props;
 
   if (loading) {
     return (
@@ -59,12 +87,17 @@ const TaskView = (props) => {
 
   return (
     <Layout>
-      <Content style={{backgroundColor: "white"}}>
+      <Content style={{ backgroundColor: "white" }}>
         <div style={{ paddingRight: "24px" }}>
           <TaskDescription text={taskMetadata?.description} />
           <Divider />
           <Form form={form} onFinish={onFinish} layout="vertical">
-            {showsArtifactInput && <InputArtifact />}
+            {showsArtifactInput && (
+              <InputArtifact
+                isPrivate={isPrivate}
+                onIsPrivateChange={onIsPrivateChange}
+              />
+            )}
           </Form>
         </div>
       </Content>
@@ -105,6 +138,13 @@ const InProgressTaskModal = ({
 
   const { data: signer } = useSigner();
 
+  const [isPrivate, setIsPrivate] = useState(false);
+  const onIsPrivateChange = useCallback((e) => {
+    setIsPrivate(e.target.checked);
+  }, []);
+
+  const litNodeClient = useLitContext();
+
   const onFinish = (values) => {
     setWaitingStep(WAITING_STEP_UPLOADING);
     setView(VIEW_WAITING);
@@ -119,8 +159,81 @@ const InProgressTaskModal = ({
 
     (async () => {
       try {
+        let artifact = values.artifact;
+        let esk = undefined;
+
+        if (isPrivate) {
+          const asg = localStorage.getItem("lit-auth-signature");
+          console.log("debug::local storage authSig", asg);
+          if (asg === null || JSON.parse(asg).address !== address) {
+            const networkVersion = await window.ethereum.request({
+              method: "net_version",
+            });
+
+            console.log("debug::networkVersion", networkVersion);
+
+            if (networkVersion != "80001") {
+              await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: "0x13881" }],
+              });
+
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+            }
+
+            console.log("debug::switched to mumbai");
+          }
+
+          console.log(
+            "current network ID",
+            await window.ethereum.request({
+              method: "net_version",
+            })
+          );
+
+          const authSig = await LitJsSdk.checkAndSignAuthMessage({
+            chain: "mumbai",
+            switchChain: false,
+          });
+
+          console.log("debug::authSig", authSig);
+
+          const networkVersion = await window.ethereum.request({
+            method: "net_version",
+          });
+
+          // switch to shibuya
+          if (networkVersion != "81") {
+            await window.ethereum.request({
+              method: "wallet_switchEthereumChain",
+              params: [{ chainId: "0x51" }],
+            });
+          }
+          console.log("debug::switched to shibuya");
+
+          const { encryptedString, symmetricKey } =
+            await LitJsSdk.encryptString(values.artifact);
+          console.log("debug::encryptedString", encryptedString);
+          console.log("debug::symmetricKey", symmetricKey);
+
+          const encryptedSymmetricKey = await litNodeClient.saveEncryptionKey({
+            accessControlConditions: getACL(DAO_ID),
+            symmetricKey,
+            authSig,
+            chain: "mumbai",
+          });
+
+          artifact = await LitJsSdk.blobToBase64String(encryptedString);
+          esk = LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "hex");
+
+          console.log("debug::artifact", artifact);
+          console.log("debug::decodedEncryptedSymmetricKey", esk);
+        }
+
         const cid = await uploadToIPFS({
-          description: values.artifact,
+          description: artifact,
+          isPrivate: isPrivate,
+          encryptedSymmetricKey: esk ? esk : null,
         });
 
         setCID(cid);
@@ -134,7 +247,7 @@ const InProgressTaskModal = ({
           // messageURI
           `ipfs://${cid}`,
           // isPrivate
-          false
+          isPrivate
         );
 
         console.log("debug::tx", tx);
@@ -162,6 +275,18 @@ const InProgressTaskModal = ({
         setIsSuccess(false);
       } finally {
         setView(VIEW_RESULT);
+
+        const networkVersion = await window.ethereum.request({
+          method: "net_version",
+        });
+
+        // switch to shibuya
+        if (networkVersion != "81") {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x51" }],
+          });
+        }
       }
     })();
   };
@@ -177,6 +302,7 @@ const InProgressTaskModal = ({
     setTxHash(null);
     setBlockHeight(null);
     setTxCost(null);
+    setIsPrivate(false);
   };
 
   const Views = [
@@ -187,6 +313,8 @@ const InProgressTaskModal = ({
       taskMetadata={metadata}
       loading={taskQuery.loading || isMetadataLoading}
       showsArtifactInput={taskQuery?.data?.task.assigner === address}
+      isPrivate={isPrivate}
+      onIsPrivateChange={onIsPrivateChange}
     />,
     <UploadingAndSendingTx
       current={waitingStep}
